@@ -1,7 +1,7 @@
 class IntList
 {
-    int head := 1;
-    IntList tail := nil;
+    int head;
+    IntList tail;
 }
 
 IntList MergeLists(IntList l1, IntList l2)

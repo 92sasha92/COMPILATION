@@ -2,10 +2,10 @@ array IntArray = int[]
 
 class Person
 {
-	int ID := 0;
-	int age := 0;
+	int ID;
+	int age;
 
-	IntArray lastYearSalaries := nil;
+	IntArray lastYearSalaries;
 
 	int getAge()  { return age;   }
 	int birthday(){ age := age+1; }
@@ -13,7 +13,7 @@ class Person
 
 class Student extends Person
 {
-	IntArray grades := nil;
+	IntArray grades;
 	int getAverage()
 	{
 		int i := 0;

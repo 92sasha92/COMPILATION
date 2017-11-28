@@ -8,12 +8,12 @@ public class Main
 {
 	static public void main(String argv[])
 	{
-		Lexer l;
+		Lexer l = null;
 		Parser p;
 		Symbol s;
-		AST_STMT_LIST AST;
+		AST_PROG AST;
 		FileReader file_reader;
-		PrintWriter file_writer;
+		PrintWriter file_writer = null;
 		String inputFilename = argv[0];
 		String outputFilename = argv[1];
 		
@@ -42,12 +42,12 @@ public class Main
 			/***********************************/
 			/* [5] 3 ... 2 ... 1 ... Parse !!! */
 			/***********************************/
-			AST = (AST_STMT_LIST) p.parse().value;
-			
+			AST = (AST_PROG) p.parse().value;
+			file_writer.print("OK\r\n");
 			/*************************/
 			/* [6] Print the AST ... */
 			/*************************/
-			AST.PrintMe();
+			//AST.PrintMe();
 			
 			/*************************/
 			/* [7] Close output file */
@@ -57,11 +57,13 @@ public class Main
 			/*************************************/
 			/* [8] Finalize AST GRAPHIZ DOT file */
 			/*************************************/
-			AST_GRAPHVIZ.getInstance().finalizeFile();
+			//AST_GRAPHVIZ.getInstance().finalizeFile();
     	}
 			     
 		catch (Exception e)
 		{
+			file_writer.print("ERROR(" + l.getLine() + ")\r\n");
+			file_writer.close();
 			e.printStackTrace();
 		}
 	}

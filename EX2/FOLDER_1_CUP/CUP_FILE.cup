@@ -53,6 +53,16 @@ terminal LBRACE;
 terminal RBRACE;
 terminal SEMICOLON;
 terminal ASSIGN;
+terminal CLASS;
+terminal EXTENDS;
+terminal COMMA;
+terminal ARRAY;
+terminal LT;
+terminal GT;
+terminal NIL;
+terminal STRING;
+terminal NEW;
+terminal RETURN;
 
 /*************/
 /* TERMINALS */
@@ -68,6 +78,17 @@ non terminal AST_EXP exp;
 non terminal AST_VAR var;
 non terminal AST_STMT stmt;
 non terminal AST_STMT_LIST stmtList;
+non terminal AST_PROG Program;
+non terminal AST_DEC dec;
+non terminal AST_DEC_VAR varDec;
+non terminal idList;
+non terminal cFieldList;
+non terminal funcDec;
+non terminal classDec;
+non terminal arrayDec;
+non terminal expList;
+non terminal cField;
+non terminal BINOP;
 
 /***********************/
 /* OPERATOR PRECEDENCE */
@@ -77,32 +98,109 @@ precedence left MINUS;
 precedence left TIMES;
 precedence left DIVIDE;
 precedence left UMINUS;
+precedence left EQ;
+precedence left GT;
+precedence left LT;
 
 /************************/
 /* START WITH: stmtList */
 /************************/
-start with stmtList;
+start with Program;
+//start with stmtList;
 
 /********************/
 /* DERIVATION RULES */
 /********************/
 
-stmtList	::=		stmt:s	stmtList:l		{: RESULT = new AST_STMT_LIST(s,l);    :}
+Program		::=		dec:d Program:p		{: RESULT = new AST_PROG(d, p);     :}
+					| dec:d				{: RESULT = new AST_PROG(d, null);     :}
+					;
+					
+dec			::=		funcDec {: RESULT = null;    :}
+					| varDec:v {: RESULT = new AST_DEC_CHILD(v);   :}
+					| classDec {: RESULT = null;  :} 
+					| arrayDec {: RESULT = null;  :}
+					;
+
+varDec		::=		ID:n1 ID:name ASSIGN exp:e SEMICOLON {: RESULT = new AST_DEC_VAR(n1, name, e); :}
+					| ID:n1 ID:name SEMICOLON            {: RESULT = new AST_DEC_VAR(n1, name, null); :}
+					;
+	
+idList		::=		ID:n1 ID:n2 COMMA idList:l		{: RESULT = null;     :}
+					| ID:n1 ID:n2				{: RESULT = null;     :}
+					;
+
+cFieldList	::=		cField:f cFieldList:l		{: RESULT = null;     :}
+				    | cField:f				    {: RESULT = null;     :}
+					;					
+					
+funcDec		::=		ID:n1 ID:n2 LPAREN idList:l RPAREN LBRACE stmtList:s RBRACE	    {: RESULT = null; :}
+                    | ID:n1 ID:n2 LPAREN RPAREN LBRACE stmtList:s RBRACE	            {: RESULT = null; :}
+					;	
+
+classDec	::=		CLASS ID:n1 EXTENDS ID:n2 LBRACE cFieldList:l RBRACE 	{: RESULT = null; :}
+					|CLASS ID:n1 LBRACE cFieldList:l RBRACE 	            {: RESULT = null; :}
+					;
+					
+arrayDec	::=		ARRAY ID:n1 EQ ID:n2 LBRACK RBRACK {: RESULT = null; :}
+					;
+					
+stmtList	::=		stmt:s stmtList:l		{: RESULT = new AST_STMT_LIST(s,l);    :}
 					| stmt:s				{: RESULT = new AST_STMT_LIST(s,null); :}
 					;
 
+expList 	::=		 exp:e COMMA expList:l		    {: RESULT = null;:}
+					| exp:e				            {: RESULT = null;:}
+					;
+					
+exp			::=		var:v												{: RESULT = new AST_EXP_VAR(v);          :}
+                    | LPAREN exp:e RPAREN								{: RESULT = null;             :}
+					| exp:e1 PLUS  exp:e2								{: RESULT = new AST_EXP_BINOP(e1, e2, 0);:}
+					| exp:e1 MINUS exp:e2								{: RESULT = new AST_EXP_BINOP(e1, e2, 1);:}
+					| exp:e1 TIMES exp:e2								{: RESULT = new AST_EXP_BINOP(e1, e2, 2);:}
+					| exp:e1 DIVIDE exp:e2								{: RESULT = new AST_EXP_BINOP(e1, e2, 3);:}
+					| exp:e1 LT exp:e2									{: RESULT = new AST_EXP_BINOP(e1, e2, 4);:}
+					| exp:e1 GT exp:e2									{: RESULT = new AST_EXP_BINOP(e1, e2, 5);:}
+					| exp:e1 EQ exp:e2									{: RESULT = new AST_EXP_BINOP(e1, e2, 6);:}
+					| var:v DOT ID LPAREN expList:el RPAREN				{: RESULT = null;          			     :}
+					| var:v DOT ID LPAREN RPAREN				        {: RESULT = null;          			     :}
+					| ID LPAREN expList:el RPAREN				        {: RESULT = null;          			     :}
+					| ID LPAREN RPAREN				                    {: RESULT = null;          			     :}
+					| INT:i												{: RESULT = new AST_EXP_INT(i);          :}
+					| MINUS INT:i		                                {: RESULT = new AST_EXP_INT(-i);         :}
+					| NIL		                                        {: RESULT = null;                  		 :}
+					| STRING:s		                                    {: RESULT = null;      					 :}
+					| NEW ID:name		                                {: RESULT = null;        				 :}
+					| NEW ID:name LBRACK exp:e RBRACK	 		        {: RESULT = null;       				 :}
+					;
+					
 var			::=		ID:name								{: RESULT = new AST_VAR_SIMPLE(name);       :}
 					| var:v DOT ID:fieldName			{: RESULT = new AST_VAR_FIELD(v,fieldName); :} 
 					| var:v LBRACK exp:e RBRACK			{: RESULT = new AST_VAR_SUBSCRIPT(v,e);     :} 
 					;
 					
-stmt		::=		var:v ASSIGN exp:e SEMICOLON								{: RESULT = new AST_STMT_ASSIGN(v,e); :}
+stmt		::=		var:v ASSIGN exp:e SEMICOLON								{: RESULT = new AST_STMT_ASSIGN(v,e);      :}
 					| IF    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_IF(   cond,body); :}
 					| WHILE LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_WHILE(cond,body); :}
+					| varDec	                                                {: RESULT = null;                          :}
+					| RETURN exp:e SEMICOLON	                                {: RESULT = null;                          :}
+					| RETURN SEMICOLON	                                        {: RESULT = null;                          :}
+					| var:v DOT ID LPAREN expList:el RPAREN	SEMICOLON			{: RESULT = null;          			       :}
+					| var:v DOT ID LPAREN RPAREN SEMICOLON				        {: RESULT = null;          			       :}
+					| ID LPAREN expList:el RPAREN SEMICOLON				        {: RESULT = null;          			       :}
+					| ID LPAREN RPAREN SEMICOLON				                {: RESULT = null;          			       :}
 					;
 
-exp			::=		INT:i								{: RESULT = new AST_EXP_INT(i);          :}
-					| var:v								{: RESULT = new AST_EXP_VAR(v);          :}
-					| exp:e1 PLUS  exp:e2				{: RESULT = new AST_EXP_BINOP(e1, e2, 0);:}
-					| exp:e1 MINUS exp:e2				{: RESULT = new AST_EXP_BINOP(e1, e2, 1);:}
+cField		::=		varDec	  {: RESULT = null; :}
+					|funcDec  {: RESULT = null; :}
 					;
+					
+BINOP		::=		PLUS 		                                        {: RESULT = null;       				 :}
+                    | MINUS 		                                    {: RESULT = null;       				 :}
+					| TIMES 		                                    {: RESULT = null;       				 :}
+					| DIVIDE 		                                    {: RESULT = null;       				 :}
+					| LT     		                                    {: RESULT = null;      					 :}
+					| GT     		                                    {: RESULT = null;      					 :}
+					| EQ     		                                    {: RESULT = null;      					 :}
+					;
+							
