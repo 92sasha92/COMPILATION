@@ -1,0 +1,16 @@
+digraph
+{
+graph [ordering = "out"]
+v0 [label = "INT(10)"];
+v1 [label = "NEW(int[])
+"];
+v1 -> v0;
+v2 [label = "VAR
+DEC(arr)
+:int"];
+v2 -> v1;
+v3 [label = "DEC
+LIST
+"];
+v3 -> v2;
+}
