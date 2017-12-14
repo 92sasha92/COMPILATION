@@ -162,8 +162,8 @@ funcDec		::=		ID:n1 ID:n2 LPAREN typeNameListComma:l RPAREN LBRACE stmtList:s RB
                     | ID:n1 ID:n2 LPAREN RPAREN LBRACE stmtList:s RBRACE	            {: RESULT = new AST_DEC_FUNC(n1, n2, null, s); :}
 					;	
 
-classDec	::=		CLASS ID:n1 EXTENDS ID:n2 LBRACE cFieldList:l RBRACE 	{: RESULT = null; :}
-					|CLASS ID:n1 LBRACE cFieldList:l RBRACE 	            {: RESULT = null; :}
+classDec	::=		CLASS ID:n1 EXTENDS ID:n2 LBRACE cFieldList:l RBRACE 	{: RESULT = new AST_DEC_CLASS(n1, n2, l); :}
+					|CLASS ID:n1 LBRACE cFieldList:l RBRACE 	            {: RESULT = new AST_DEC_CLASS(n1, null, l); :}
 					;
 					
 arrayDec	::=		ARRAY ID:name EQ ID:type LBRACK RBRACK {: RESULT = new AST_DEC_ARRAY(name, type); :}

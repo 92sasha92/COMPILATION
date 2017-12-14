@@ -8,7 +8,8 @@ public class AST_DEC_CLASS extends AST_DEC
 	/********/
 	/* NAME */
 	/********/
-	public String name;
+	public String className;
+	public String extendName;
 
 	/****************/
 	/* DATA MEMBERS */
@@ -18,14 +19,15 @@ public class AST_DEC_CLASS extends AST_DEC
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_DEC_CLASS(String name,AST_TYPE_NAME_LIST data_members)
+	public AST_DEC_CLASS(String className, String extendName, AST_TYPE_NAME_LIST data_members)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 	
-		this.name = name;
+		this.className = className;
+		this.className = extendName;
 		this.data_members = data_members;
 	}
 
@@ -37,15 +39,19 @@ public class AST_DEC_CLASS extends AST_DEC
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		System.out.format("CLASS DEC = %s\n",name);
+		System.out.format("CLASS DEC = %s\n",className);
+		if (extendName != null) System.out.format("CLASS EXTENDS = %s\n",extendName);
 		if (data_members != null) data_members.PrintMe();
 		
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
 		/***************************************/
-		AST_GRAPHVIZ.getInstance().logNode(
+		if (extendName != null)AST_GRAPHVIZ.getInstance().logNode(
 			SerialNumber,
-			String.format("CLASS\n%s",name));
+			String.format("CLASS\n%s\nEXTENDS%s",className,extendName));
+		if (extendName == null)AST_GRAPHVIZ.getInstance().logNode(
+			SerialNumber,
+			String.format("CLASS\n%s",className));
 		
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
@@ -63,7 +69,7 @@ public class AST_DEC_CLASS extends AST_DEC
 		/***************************/
 		/* [2] Semant Data Members */
 		/***************************/
-		TYPE_CLASS t = new TYPE_CLASS(null,name,data_members.SemantMe());
+		TYPE_CLASS t = new TYPE_CLASS(null,className,data_members.SemantMe());
 
 		/*****************/
 		/* [3] End Scope */
@@ -73,7 +79,7 @@ public class AST_DEC_CLASS extends AST_DEC
 		/************************************************/
 		/* [4] Enter the Class Type to the Symbol Table */
 		/************************************************/
-		SYMBOL_TABLE.getInstance().enter(name,t);
+		SYMBOL_TABLE.getInstance().enter(className,t);
 
 		/*********************************************************/
 		/* [5] Return value is irrelevant for class declarations */
