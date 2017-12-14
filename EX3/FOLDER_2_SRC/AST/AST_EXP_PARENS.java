@@ -40,7 +40,7 @@ public class AST_EXP_PARENS extends AST_EXP
 		/***************************************/
 		if(exp != null) AST_GRAPHVIZ.getInstance().logNode(
 			SerialNumber,
-			String.format("(exp)\n");
+			String.format("(exp)\n"));
 		
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
