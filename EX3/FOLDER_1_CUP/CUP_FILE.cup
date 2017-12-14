@@ -106,6 +106,7 @@ non terminal AST_EXP_CALL	callExp;
 non terminal AST_EXP_BINOP	binopExp;
 non terminal AST_EXP_NEW    newExp;
 non terminal AST_EXP_LIST   expList;
+non terminal AST_EXP_METHOD methodExp;
 
 /*****************/
 /* NON TERMINALS */
@@ -177,26 +178,28 @@ expList 	::=		 exp:e COMMA expList:el		    {: RESULT = new AST_EXP_LIST(e,el); :
 					;
 					
 exp			::=		varExp:v											{: RESULT = v;          :}
-                    | LPAREN exp:e RPAREN								{: RESULT = null;             :}
+                    | LPAREN exp:e RPAREN								{: RESULT = new AST_EXP_PARENS(e);  :}
 					| binopExp:e	                                    {: RESULT = e; :}
-					| varExp:v DOT ID LPAREN expList:el RPAREN		    {: RESULT = null;          			     :}
-					| varExp:v DOT ID LPAREN RPAREN				        {: RESULT = null;          			     :}
+					| methodExp:m										{: RESULT = m; :}
 					| callExp:e				                            {: RESULT = e;          			     :}
-					| ID LPAREN RPAREN				                    {: RESULT = null;          			     :}
 					| INT:i												{: RESULT = new AST_EXP_INT(i);          :}
 					| MINUS INT:i		                                {: RESULT = new AST_EXP_INT(-i);         :}
 					| NIL		                                        {: RESULT = null;                  		 :}
 					| STRING:s		                                    {: RESULT = new AST_EXP_STRING(s);       :}
 					| newExp:e                                          {: RESULT = e; :}
 					;
+
+methodExp   ::=      varExp:v DOT ID LPAREN expList:el RPAREN	    {: RESULT = new AST_EXP_METHOD(v, el);      :}
+					| varExp:v DOT ID LPAREN RPAREN				    {: RESULT = new AST_EXP_METHOD(v, null);    :}
+                    ; 	
 					
-varExp			::=		ID:name								{: RESULT = new AST_EXP_VAR_SIMPLE(name);       :}
+varExp			::=	ID:name								{: RESULT = new AST_EXP_VAR_SIMPLE(name);       :}
 					| varExp:v DOT ID:fieldName			{: RESULT = new AST_EXP_VAR_FIELD(v,fieldName); :} 
-					| varExp:v LBRACK exp:e RBRACK			{: RESULT = new AST_EXP_VAR_SUBSCRIPT(v,e);     :} 
+					| varExp:v LBRACK exp:e RBRACK		{: RESULT = new AST_EXP_VAR_SUBSCRIPT(v,e);     :} 
 					;
 
 newExp			::=  NEW ID:type		                                {: RESULT = new AST_EXP_NEW(type, null);  :}
-					| NEW ID:type LBRACK exp:e RBRACK	 		        {: RESULT = new AST_EXP_NEW(type, e);    :}
+					 | NEW ID:type LBRACK exp:e RBRACK	 		        {: RESULT = new AST_EXP_NEW(type, e);    :}
 					;
 binopExp	::=		  exp:e1 PLUS  exp:e2			{: RESULT = new AST_EXP_BINOP(e1, e2, 0);:}
 					| exp:e1 MINUS exp:e2			{: RESULT = new AST_EXP_BINOP(e1, e2, 1);:}
@@ -207,7 +210,9 @@ binopExp	::=		  exp:e1 PLUS  exp:e2			{: RESULT = new AST_EXP_BINOP(e1, e2, 0);:
 					| exp:e1 EQ exp:e2				{: RESULT = new AST_EXP_BINOP(e1, e2, 6);:}
 					;
 					
-callExp		::=		ID:funcName LPAREN expList:el RPAREN	{: RESULT = new AST_EXP_CALL(funcName,el); :};
+callExp		::=		ID:funcName LPAREN expList:el RPAREN	{: RESULT = new AST_EXP_CALL(funcName,el);     :}
+                    | ID:funcName LPAREN RPAREN				{: RESULT = new AST_EXP_CALL(funcName,null);   :}
+					;
 					
 stmt		::=		varExp:v ASSIGN exp:e SEMICOLON								{: RESULT = new AST_STMT_ASSIGN(v,e);      :}
 					| IF    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_IF(   cond,body); :}
