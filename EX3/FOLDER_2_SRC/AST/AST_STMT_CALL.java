@@ -1,25 +1,26 @@
 package AST;
 
+import TYPES.*;
+import SYMBOL_TABLE.*;
+
 public class AST_STMT_CALL extends AST_STMT
 {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
-	public String funcName;
-	public AST_EXP_LIST params;
-/**********************************************change the law to exp_call****************************/
+	public AST_EXP_CALL expCall;
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_STMT_CALL(String funcName,AST_EXP_LIST params)
+	public AST_STMT_CALL(AST_EXP_CALL expCall)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
-		this.funcName = funcName;
-		this.params = params;
+		this.expCall = expCall;
 	}
 
 	/************************************************************/
@@ -30,23 +31,27 @@ public class AST_STMT_CALL extends AST_STMT
 		/*************************************************/
 		/* AST NODE TYPE = AST NODE FUNCTION DECLARATION */
 		/*************************************************/
-		System.out.format("CALL(%s)\nWITH:\n",funcName);
+		System.out.format("STMT\nCALL\n");
 
 		/***************************************/
 		/* RECURSIVELY PRINT params + body ... */
 		/***************************************/
-		if (params != null) params.PrintMe();
+		if (expCall != null) expCall.PrintMe();
 		
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
 		/***************************************/
 		AST_GRAPHVIZ.getInstance().logNode(
 			SerialNumber,
-			String.format("CALL(%s)\nWITH",funcName));
+			String.format("STMT\nCALL"));
 		
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,params.SerialNumber);		
+		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,expCall.SerialNumber);		
+	}
+	
+	public TYPE SemantMe() throws AST_EXCEPTION{
+		return expCall.SemantMe();
 	}
 }
