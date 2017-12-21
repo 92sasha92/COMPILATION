@@ -49,7 +49,7 @@ public class AST_DEC_ARRAY extends AST_DEC
 			
 	}
 
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{
 		TYPE t, scope;
 
@@ -61,7 +61,7 @@ public class AST_DEC_ARRAY extends AST_DEC
 		if (t == null)
 		{
 			throw new AST_EXCEPTION(String.format("Non existing type %s\n", type), this.lineNum);
-		} else if (!(varType instanceof TYPE_INT) && !(varType instanceof TYPE_STRING) && !(varType instanceof TYPE_ARRAY) && !(varType instanceof TYPE_CLASS)) {
+		} else if (!(t instanceof TYPE_INT) && !(t instanceof TYPE_STRING) && !(t instanceof TYPE_ARRAY) && !(t instanceof TYPE_CLASS)) {
 			throw new AST_EXCEPTION(String.format("'%s' is not a array type\n", type), this.lineNum);
 		}
 
@@ -78,13 +78,13 @@ public class AST_DEC_ARRAY extends AST_DEC
 		/**************************************/
 		if (SYMBOL_TABLE.getInstance().find(name) != null)
 		{
-			throw new AST_EXCEPTION(String.format("array %s already exists", name));			
+			throw new AST_EXCEPTION(String.format("array %s already exists", name), this.lineNum);			
 		}
 
 		/***************************************************/
 		/* [3] Enter the Array Type to the Symbol Table */
 		/***************************************************/
-		SYMBOL_TABLE.getInstance().enter(name, new TYPE_ARRAY(type, name));
+		SYMBOL_TABLE.getInstance().enter(name, new TYPE_ARRAY(name, t));
 
 		/*********************************************************/
 		/* [4] Return value is irrelevant for class declarations */
