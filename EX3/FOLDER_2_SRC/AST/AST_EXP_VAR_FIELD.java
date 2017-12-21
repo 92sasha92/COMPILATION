@@ -50,7 +50,7 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 		/****************************************/
 		if (var  != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);		
 	}
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{
 		TYPE t = null;
 		TYPE_CLASS tc = null;
@@ -59,14 +59,13 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 		/* [1] Recursively semant var */
 		/******************************/
 		if (var != null) t = var.SemantMe();
-		
+
 		/*********************************/
 		/* [2] Make sure type is a class */
 		/*********************************/
-		if (t.isClass() == false)
+		if (!(t instanceof TYPE_CLASS))
 		{
-			System.out.format(">> ERROR [%d:%d] access %s field of a non-class variable\n",6,6,fieldName);
-			System.exit(0);
+			throw new AST_EXCEPTION(String.format("access %s field of a non-class variable\n", fieldName), this.lineNum);
 		}
 		else
 		{
@@ -76,19 +75,17 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 		/************************************/
 		/* [3] Look for fiedlName inside tc */
 		/************************************/
-		for (TYPE_LIST it=tc.data_members;it != null;it=it.tail)
+		for (TYPE_LIST it = tc.data_members; it != null; it = it.tail)
 		{
-			if (it.head.name == fieldName)
+			if (((TYPE_VAR_DEC)(it).head).name.equals(fieldName))
 			{
-				return it.head;
+				return ((TYPE_VAR_DEC)it.head).t;
 			}
 		}
 		
 		/*********************************************/
 		/* [4] fieldName does not exist in class var */
 		/*********************************************/
-		System.out.format(">> ERROR [%d:%d] field %s does not exist in class\n",6,6,fieldName);							
-		System.exit(0);
-		return null;
+		throw new AST_EXCEPTION(String.format("field %s does not exist in class\n", fieldName), this.lineNum);
 	}
 }

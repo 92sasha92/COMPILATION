@@ -100,7 +100,7 @@ public class AST_DEC_VAR extends AST_DEC
 			return null;	
 		} else if(varType != expType) {
 			if((expType == null) || varType.getClass().isAssignableFrom(expType.getClass())){
-				return null;
+				return new TYPE_VAR_DEC(varType, this.name);
 			} else {
 				throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
 			}
@@ -110,7 +110,7 @@ public class AST_DEC_VAR extends AST_DEC
 		/*********************************************************/
 		/* [4] Return value is irrelevant for class declarations */
 		/*********************************************************/
-		return null;		
+		return new TYPE_VAR_DEC(varType, this.name);		
 	}
 	
 }
