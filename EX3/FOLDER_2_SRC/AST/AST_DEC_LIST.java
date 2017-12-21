@@ -24,7 +24,7 @@ public class AST_DEC_LIST extends AST_Node
 		this.tail = tail;
 	}
 
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{		
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */

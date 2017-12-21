@@ -63,55 +63,71 @@ public class AST_DEC_FUNC extends AST_DEC
 		if (body   != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,body.SerialNumber);		
 	}
 
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{
-		TYPE t;
+		TYPE t, paramT;
 		TYPE returnType = null;
 		TYPE_LIST type_list = null;
-
+		int paramIndex = 0;
+		int scopeIndex = 0;
 		/*******************/
 		/* [0] return type */
 		/*******************/
 		returnType = SYMBOL_TABLE.getInstance().find(returnTypeName);
 		if (returnType == null)
 		{
-			System.out.format(">> ERROR [%d:%d] non existing return type %s\n",6,6,returnType);				
+            throw new AST_EXCEPTION(String.format("Non existing return type %s\n", returnType), this.lineNum);			
 		}
-	
-		/****************************/
-		/* [1] Begin Function Scope */
-		/****************************/
-		SYMBOL_TABLE.getInstance().beginScope();
+	    /*******************/
+		/* [1] func dec */
+		/*******************/
+		scopeIndex = SYMBOL_TABLE.getInstance().findIndex("SCOPE-BOUNDARY");
+		paramT = SYMBOL_TABLE.getInstance().find(name);
+		paramIndex = SYMBOL_TABLE.getInstance().findIndex(name); 
+		if(paramT != null && paramIndex >= scopeIndex){
+			throw new AST_EXCEPTION(String.format("function %s already exists in the scope\n", name), this.lineNum);
+		}
 
+		/****************************/
+		/* [2] Begin Function Scope */
+		/****************************/
+		SYMBOL_TABLE.getInstance().beginFuncScope(returnType);
+		int index = SYMBOL_TABLE.getInstance().getTopIndex();
 		/***************************/
-		/* [2] Semant Input Params */
+		/* [3] Semant Input Params */
 		/***************************/
 		for (AST_TYPE_NAME_LIST it = params; it  != null; it = it.tail)
 		{
 			t = SYMBOL_TABLE.getInstance().find(it.head.type);
 			if (t == null)
-			{
-				System.out.format(">> ERROR [%d:%d] non existing type %s\n",2,2,it.head.type);				
+			{	
+				throw new AST_EXCEPTION(String.format("Non existing type %s\n",it.head.type), this.lineNum);
 			}
 			else
 			{
+				paramT = SYMBOL_TABLE.getInstance().find(it.head.name);
+				paramIndex = SYMBOL_TABLE.getInstance().findIndex(it.head.name);
+				if (paramT != null && paramIndex >= index)
+				{
+					throw new AST_EXCEPTION(String.format("variable %s already exists in function scope\n", it.head.name), this.lineNum);			
+				}
 				type_list = new TYPE_LIST(t,type_list);
 				SYMBOL_TABLE.getInstance().enter(it.head.name,t);
 			}
 		}
 
 		/*******************/
-		/* [3] Semant Body */
+		/* [4] Semant Body */
 		/*******************/
 		body.SemantMe();
 
 		/*****************/
-		/* [4] End Scope */
+		/* [5] End Scope */
 		/*****************/
 		SYMBOL_TABLE.getInstance().endScope();
 
 		/***************************************************/
-		/* [5] Enter the Function Type to the Symbol Table */
+		/* [6] Enter the Function Type to the Symbol Table */
 		/***************************************************/
 		SYMBOL_TABLE.getInstance().enter(name,new TYPE_FUNCTION(returnType,name,type_list));
 

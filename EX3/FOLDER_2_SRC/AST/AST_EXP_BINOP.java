@@ -74,20 +74,39 @@ public class AST_EXP_BINOP extends AST_EXP
 		if (left  != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,left.SerialNumber);
 		if (right != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,right.SerialNumber);
 	}
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{
 		TYPE t1 = null;
 		TYPE t2 = null;
 		
 		if (left  != null) t1 = left.SemantMe();
 		if (right != null) t2 = right.SemantMe();
-		
-		if ((t1 == TYPE_INT.getInstance()) && (t2 == TYPE_INT.getInstance()))
-		{
+		//op = 6 is "="
+		if(OP == 6){
+			if(t1 == null || t2 == null){
+				if(t1 instanceof TYPE_INT || t2 instanceof TYPE_INT 
+				|| t1 instanceof TYPE_STRING || t2 instanceof TYPE_STRING){
+					throw new AST_EXCEPTION("Primitive type cannot be compared to null", this.lineNum);
+				} else {
+					return TYPE_INT.getInstance();
+				}
+			} else if(t1 != t2){
+				if(t2.getClass().isAssignableFrom(t1.getClass()) || t1.getClass().isAssignableFrom(t2.getClass())  ){
+					return TYPE_INT.getInstance();
+				} else {
+					throw new AST_EXCEPTION("Non matching types", this.lineNum);
+				}
+			} else {
+				return TYPE_INT.getInstance();
+			}
+
+		} else if ((t1 == TYPE_INT.getInstance()) && (t2 == TYPE_INT.getInstance())) {
 			return TYPE_INT.getInstance();
+		} else if((t1 == TYPE_STRING.getInstance()) && (t2 == TYPE_STRING.getInstance()) && OP == 0) {
+			return TYPE_STRING.getInstance();
+		} else {
+			throw new AST_EXCEPTION("Non matching types", this.lineNum);
 		}
-		System.exit(0);
-		return null;
 	}
 
 }

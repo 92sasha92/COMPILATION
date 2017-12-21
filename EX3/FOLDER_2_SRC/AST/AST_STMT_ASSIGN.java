@@ -58,20 +58,32 @@ public class AST_STMT_ASSIGN extends AST_STMT
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
-		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,exp.SerialNumber);
+		if (var != null)AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
+		if (exp != null)AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,exp.SerialNumber);
 	}
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{
-		TYPE t1 = null;
-		TYPE t2 = null;
+		TYPE varType = null;
+		TYPE expType = null;
 		
-		if (var != null) t1 = var.SemantMe();
-		if (exp != null) t2 = exp.SemantMe();
+		if (var != null) varType = var.SemantMe();
+		if (exp != null){
+			expType = exp.SemantMe();
+		} else{
+			return null;
+		}
 		
-		if (t1 != t2)
-		{
-			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n",6,6);				
+		if(expType == TYPE_NIL.getInstance()){
+			if(varType instanceof TYPE_INT || varType instanceof TYPE_STRING){
+				throw new AST_EXCEPTION("Primitive type cannot be defined to be nil", this.lineNum);
+			}
+			return null;	
+		} else if(varType != expType) {
+			if(varType.getClass().isAssignableFrom(expType.getClass())){
+				return null;
+			} else {
+				throw new AST_EXCEPTION("type mismatch for var := exp\n", this.lineNum);
+			}
 		}
 		return null;
 	}

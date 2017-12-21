@@ -33,7 +33,7 @@ public class AST_DEC_ARRAY extends AST_DEC
 		/********************************/
 		/* AST NODE TYPE = AST DEC LIST */
 		/********************************/
-		System.out.format("ARRAY-DEC(%s):%s                \n",name,type);
+		System.out.format("ARRAY-DEC(%s):%s\n",name,type);
 
 		/**************************************/
 		/* RECURSIVELY PRINT initialValue ... */
@@ -46,11 +46,6 @@ public class AST_DEC_ARRAY extends AST_DEC
 		AST_GRAPHVIZ.getInstance().logNode(
 			SerialNumber,
 			String.format("ARRAY\nDEC(%s)\n:%s",name,type));
-
-		/****************************************/
-		/* PRINT Edges to AST GRAPHVIZ DOT file */
-		/****************************************/
-	
 			
 	}
 

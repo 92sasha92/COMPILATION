@@ -14,12 +14,12 @@ public class AST_DEC_CLASS extends AST_DEC
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
-	public AST_TYPE_NAME_LIST data_members;
+	public AST_CFIELD_LIST data_members;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_DEC_CLASS(String className, String extendName, AST_TYPE_NAME_LIST data_members)
+	public AST_DEC_CLASS(String className, String extendName, AST_CFIELD_LIST data_members)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
@@ -27,7 +27,7 @@ public class AST_DEC_CLASS extends AST_DEC
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 	
 		this.className = className;
-		this.className = extendName;
+		this.extendName = extendName;
 		this.data_members = data_members;
 	}
 
@@ -48,7 +48,7 @@ public class AST_DEC_CLASS extends AST_DEC
 		/***************************************/
 		if (extendName != null)AST_GRAPHVIZ.getInstance().logNode(
 			SerialNumber,
-			String.format("CLASS\n%s\nEXTENDS%s",className,extendName));
+			String.format("CLASS:%s\nEXTENDS:%s",className,extendName));
 		if (extendName == null)AST_GRAPHVIZ.getInstance().logNode(
 			SerialNumber,
 			String.format("CLASS\n%s",className));
@@ -59,7 +59,7 @@ public class AST_DEC_CLASS extends AST_DEC
 		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,data_members.SerialNumber);		
 	}
 	
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{	
 		/*************************/
 		/* [1] Begin Class Scope */

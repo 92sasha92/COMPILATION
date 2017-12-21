@@ -8,6 +8,7 @@ public abstract class AST_Node
 	/* a graphviz dot format of the AST ...    */
 	/*******************************************/
 	public int SerialNumber;
+	public int lineNum = 0;
 	
 	/***********************************************/
 	/* The default message for an unknown AST node */
@@ -16,4 +17,8 @@ public abstract class AST_Node
 	{
 		System.out.print("AST NODE UNKNOWN\n");
 	}
+	
+	//public Type SemantMe() throws Exception {
+	//	return null;
+	//}
 }

@@ -57,32 +57,55 @@ public class AST_DEC_VAR extends AST_DEC
 			
 	}
 
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{
-		TYPE t;
-	
+		TYPE varType, expType = null, paramT;
+		int scopeIndex, paramIndex;
 		/****************************/
 		/* [1] Check If Type exists */
 		/****************************/
-		t = SYMBOL_TABLE.getInstance().find(type);
-		if (t == null)
+		varType = SYMBOL_TABLE.getInstance().find(type);
+		if (varType == null)
 		{
-			System.out.format(">> ERROR [%d:%d] non existing type %s\n",2,2,type);
-			System.exit(0);
+			throw new AST_EXCEPTION(String.format("Non existing type %s\n", type), this.lineNum);
+		} else if (!(varType instanceof TYPE_INT) && !(varType instanceof TYPE_VOID) && !(varType instanceof TYPE_CLASS) && !(varType instanceof TYPE_STRING)) {//add for array as well
+			throw new AST_EXCEPTION(String.format("'%s' is not a variable type\n", type), this.lineNum);
 		}
 		
 		/**************************************/
 		/* [2] Check That Name does NOT exist */
 		/**************************************/
-		if (SYMBOL_TABLE.getInstance().find(name) != null)
+		scopeIndex = SYMBOL_TABLE.getInstance().findIndex("SCOPE-BOUNDARY");
+		paramT = SYMBOL_TABLE.getInstance().find(name);
+		paramIndex = SYMBOL_TABLE.getInstance().findIndex(name); 
+
+		if (SYMBOL_TABLE.getInstance().find(name) != null && paramIndex >= scopeIndex)
 		{
-			System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n",2,2,name);				
+			throw new AST_EXCEPTION(String.format("variable %s already exists in scope\n", name), this.lineNum);			
 		}
+		
 
 		/***************************************************/
-		/* [3] Enter the Function Type to the Symbol Table */
+		/* [3] Enter the Var Type to the Symbol Table */
 		/***************************************************/
-		SYMBOL_TABLE.getInstance().enter(name,t);
+		SYMBOL_TABLE.getInstance().enter(name,varType);
+		
+		
+		if (initialValue != null) expType = initialValue.SemantMe();
+		
+		if(expType == TYPE_NIL.getInstance()){
+			if(varType instanceof TYPE_INT || varType instanceof TYPE_STRING){
+				throw new AST_EXCEPTION("Primitive type cannot be defined to be nil", this.lineNum);
+			}
+			return null;	
+		} else if(varType != expType) {
+			if(varType.getClass().isAssignableFrom(expType.getClass())){
+				return null;
+			} else {
+				throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
+			}
+		}
+
 
 		/*********************************************************/
 		/* [4] Return value is irrelevant for class declarations */

@@ -97,6 +97,25 @@ public class SYMBOL_TABLE
 		
 		return null;
 	}
+	
+	public int findIndex(String name)
+	{
+		SYMBOL_TABLE_ENTRY e;
+				
+		for (e = table[hash(name)]; e != null; e = e.next)
+		{
+			if (name.equals(e.name))
+			{
+				return e.prevtop_index;
+			}
+		}
+		
+		return 0;
+	}
+	
+	public int getTopIndex(){
+		return top_index;
+	}
 
 	/***************************************************************************/
 	/* begine scope = Enter the <SCOPE-BOUNDARY> element to the data structure */
@@ -111,12 +130,40 @@ public class SYMBOL_TABLE
 		/************************************************************************/
 		enter(
 			"SCOPE-BOUNDARY",
-			new TYPE_FOR_SCOPE_BOUNDARIES("NONE"));
+			new TYPE_FOR_SCOPE_BOUNDARIES("NONE", null));
 
 		/*********************************************/
 		/* Print the symbol table after every change */
 		/*********************************************/
 		PrintMe();
+	}
+	
+	public void beginFuncScope(TYPE returnType)
+	{
+
+		enter(
+			"SCOPE-BOUNDARY",
+			new TYPE_FOR_SCOPE_BOUNDARIES("Function", returnType));
+
+		/*********************************************/
+		/* Print the symbol table after every change */
+		/*********************************************/
+		PrintMe();
+	}
+	
+	public TYPE findFuncBoundry()
+	{
+		SYMBOL_TABLE_ENTRY e;
+		String name = "SCOPE-BOUNDARY";
+		for (e = table[hash(name)]; e != null; e = e.next)
+		{
+			if (name.equals(e.name) && e.type.name == "Function")
+			{
+				return e.type;
+			}
+		}
+		
+		return null;
 	}
 
 	/********************************************************************************/
@@ -252,6 +299,7 @@ public class SYMBOL_TABLE
 			/*****************************************/
 			instance.enter("int",   TYPE_INT.getInstance());
 			instance.enter("string",TYPE_STRING.getInstance());
+			instance.enter("void",TYPE_VOID.getInstance());
 
 			/*************************************/
 			/* [2] How should we handle void ??? */
@@ -268,6 +316,15 @@ public class SYMBOL_TABLE
 					new TYPE_LIST(
 						TYPE_INT.getInstance(),
 						null)));
+			instance.enter(
+				"PrintString",
+				new TYPE_FUNCTION(
+					TYPE_VOID.getInstance(),
+					"PrintString",
+					new TYPE_LIST(
+						TYPE_STRING.getInstance(),
+						null)));
+		
 			
 		}
 		return instance;
