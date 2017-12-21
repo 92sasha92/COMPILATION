@@ -1,4 +1,3 @@
-   
 import java.io.*;
 import java.io.PrintWriter;
 import java_cup.runtime.Symbol;
@@ -43,27 +42,34 @@ public class Main
 			/* [5] 3 ... 2 ... 1 ... Parse !!! */
 			/***********************************/
 			AST = (AST_DEC_LIST) p.parse().value;
-			file_writer.print("OK\r\n");
 			/*************************/
 			/* [6] Print the AST ... */
 			/*************************/
 			AST.PrintMe();
-			
+			/**************************/
+			/* [7] Semant the AST ... */
+			/**************************/
+			AST.SemantMe();
+			file_writer.print("OK\r\n");
+			System.out.println("OK\r\n");
 			/*************************/
-			/* [7] Close output file */
+			/* [8] Close output file */
 			/*************************/
 			file_writer.close();
 			
 			/*************************************/
-			/* [8] Finalize AST GRAPHIZ DOT file */
+			/* [9] Finalize AST GRAPHIZ DOT file */
 			/*************************************/
-			AST_GRAPHVIZ.getInstance().finalizeFile();
+			AST_GRAPHVIZ.getInstance().finalizeFile();		
     	}
 			     
 		catch (Exception e)
 		{
-			file_writer.print("ERROR(" + l.getLine() + ")\r\n");
-			file_writer.close();
+			if(e instanceof AST_EXCEPTION ) {
+			    file_writer.print("ERROR(" + ((AST_EXCEPTION)e).lineNum + ")\r\n");
+				System.out.println("ERROR(" + ((AST_EXCEPTION)e).lineNum + ")\r\n");
+			}
+            file_writer.close();
 			e.printStackTrace();
 		}
 	}

@@ -1,4 +1,7 @@
 package AST;
+import TYPES.*;
+import SYMBOL_TABLE.*;
+
 
 public class AST_EXP_NEW extends AST_EXP
 {
@@ -54,4 +57,45 @@ public class AST_EXP_NEW extends AST_EXP
 		/****************************************/
 		if(exp != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,exp.SerialNumber);		
 	}
+        public TYPE SemantMe() throws AST_EXCEPTION{
+            // type is Son or int
+            // exp is 8 or 3+3
+
+            /**************************************/
+            /* [1] if the brackets are not empty, check that have INT inside */
+            /**************************************/
+            if (exp != null) { 
+                TYPE expType = exp.SemantMe();
+                if (!(expType instanceof TYPE_INT)) {
+	            throw new AST_EXCEPTION(String.format("Array size must be of integral size. got %s instead\n", expType.name), this.lineNum);
+                }
+            }
+	
+            /**************************************/
+            /* [2] check that type is in the scope */
+            /**************************************/
+
+            TYPE varType = SYMBOL_TABLE.getInstance().find(type);
+            if (varType == null)
+            {
+                throw new AST_EXCEPTION(String.format("Non existing type %s\n", type), this.lineNum);
+            
+                /**************************************/
+                /* [3] if our type is class and the brackets are empty, we return TYPE_CLASS */
+                /**************************************/
+            } else if (varType instanceof TYPE_CLASS && exp == null) {
+                return varType;
+                /**************************************/
+                /* [3] otherwise we have brackets so we return TYPE_ARRAY for valid types */
+                /**************************************/
+            } else if ((varType instanceof TYPE_INT) || (varType instanceof TYPE_ARRAY) || (varType instanceof TYPE_CLASS) || (varType instanceof TYPE_STRING)) {
+                return new TYPE_ARRAY();
+                /**************************************/
+                /* [3] otherwise we have brackets but invalid type */
+                /**************************************/
+            } else { 
+                throw new AST_EXCEPTION(String.format("'%s' is not a variable type\n", type), this.lineNum);
+            }
+            
+        }
 }
