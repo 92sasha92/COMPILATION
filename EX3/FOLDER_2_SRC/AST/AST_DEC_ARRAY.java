@@ -51,7 +51,8 @@ public class AST_DEC_ARRAY extends AST_DEC
 
 	public TYPE SemantMe()
 	{
-		TYPE t;
+		TYPE t, scope;
+
 	
 		/****************************/
 		/* [1] Check If Type exists */
@@ -59,8 +60,17 @@ public class AST_DEC_ARRAY extends AST_DEC
 		t = SYMBOL_TABLE.getInstance().find(type);
 		if (t == null)
 		{
-			System.out.format(">> ERROR [%d:%d] non existing type %s\n",2,2,type);
-			System.exit(0);
+			throw new AST_EXCEPTION(String.format("Non existing type %s\n", type), this.lineNum);
+		} else if (!(varType instanceof TYPE_INT) && !(varType instanceof TYPE_STRING) && !(varType instanceof TYPE_ARRAY) && !(varType instanceof TYPE_CLASS)) {
+			throw new AST_EXCEPTION(String.format("'%s' is not a array type\n", type), this.lineNum);
+		}
+
+		/**************************************/
+		/* [1.5] Check That Array is global */
+		/**************************************/
+		scope = SYMBOL_TABLE.getInstance().find("SCOPE-BOUNDARY");
+		if (scope != null) {
+			throw new AST_EXCEPTION(String.format("'%s' array should be global \n", type), this.lineNum);
 		}
 		
 		/**************************************/
@@ -68,13 +78,13 @@ public class AST_DEC_ARRAY extends AST_DEC
 		/**************************************/
 		if (SYMBOL_TABLE.getInstance().find(name) != null)
 		{
-			System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n",2,2,name);				
+			throw new AST_EXCEPTION(String.format("array %s already exists", name));			
 		}
 
 		/***************************************************/
-		/* [3] Enter the Function Type to the Symbol Table */
+		/* [3] Enter the Array Type to the Symbol Table */
 		/***************************************************/
-		SYMBOL_TABLE.getInstance().enter(name,t);
+		SYMBOL_TABLE.getInstance().enter(name, new TYPE_ARRAY(type, name));
 
 		/*********************************************************/
 		/* [4] Return value is irrelevant for class declarations */
