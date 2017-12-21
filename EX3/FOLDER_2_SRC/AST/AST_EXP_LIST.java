@@ -6,7 +6,7 @@ public class AST_EXP_LIST extends AST_Node
 	/* DATA MEMBERS */
 	/****************/
 	public AST_EXP head;
-	public AST_EXP_LIST tail;
+	public AST_EXP_LIST tail = null;
 
 	/******************/
 	/* CONSTRUCTOR(S) */

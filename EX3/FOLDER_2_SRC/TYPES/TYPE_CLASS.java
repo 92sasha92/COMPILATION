@@ -14,13 +14,16 @@ public class TYPE_CLASS extends TYPE
 	/**************************************************/
 	public TYPE_LIST data_members;
 	
+	public TYPE_LIST method_List;
+	
 	/****************/
 	/* CTROR(S) ... */
 	/****************/
-	public TYPE_CLASS(TYPE_CLASS father,String name,TYPE_LIST data_members)
+	public TYPE_CLASS(TYPE_CLASS father,String name,TYPE_LIST data_members, TYPE_LIST method_List)
 	{
 		this.name = name;
 		this.father = father;
 		this.data_members = data_members;
+		this.method_List = method_List;
 	}
 }

@@ -9,7 +9,7 @@ public class AST_DEC_CLASS extends AST_DEC
 	/* NAME */
 	/********/
 	public String className;
-	public String extendName;
+	public String extendName = null;
 
 	/****************/
 	/* DATA MEMBERS */
@@ -61,28 +61,92 @@ public class AST_DEC_CLASS extends AST_DEC
 	
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{	
+	
+		TYPE classType, extendsType, scope, t;
+		int scopeIndex, paramIndex;
+		TYPE_LIST param_List = null;
+		TYPE_LIST method_List = null;
+		TYPE_LIST p = null; 
+		/****************************/
+		/* [1] Check If name of the class exists */
+		/****************************/
+		classType = SYMBOL_TABLE.getInstance().find(className);
+		if(classType != null){
+			throw new AST_EXCEPTION(String.format("variable name %s already exists in the scope\n", className), this.lineNum);
+		}
+		
+		/*****************************************/
+		/* [2] Check If the extend class exists */
+		/****************************************/
+		
+		if(extendName != null){
+			extendsType = SYMBOL_TABLE.getInstance().find(extendName);
+			if(extendsType == null){
+				throw new AST_EXCEPTION(String.format("type of extends class %s doesnt exists\n", extendName), this.lineNum);
+			} else if(!(extendsType instanceof TYPE_CLASS)) {
+				throw new AST_EXCEPTION(String.format("type of extends '%s' is not a class type\n", extendName), this.lineNum);
+			}
+		}
+		
+		
 		/*************************/
-		/* [1] Begin Class Scope */
+		/* [3] Begin Class Scope */
 		/*************************/
 		SYMBOL_TABLE.getInstance().beginScope();
 
 		/***************************/
-		/* [2] Semant Data Members */
+		/* [4] Semant Data Members */
 		/***************************/
-		TYPE_CLASS t = new TYPE_CLASS(null,className,data_members.SemantMe());
+
+
+		for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
+			if(l.head.varDec != null){
+				t = l.head.varDec.SemantMe();
+				if (param_List == null){
+					param_List = new TYPE_LIST(t, null);
+					p = param_List;
+				} else {
+					p.tail = new TYPE_LIST(t, null); 
+					p = p.tail;
+				}
+			}
+
+
+		}
+
+		for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
+			if(l.head.funcDec != null){
+				t = l.head.funcDec.SemantMe();
+				if (method_List == null){
+					method_List = new TYPE_LIST(t, null);
+					p = method_List;
+				} else {
+					p.tail = new TYPE_LIST(t, null); 
+					p = p.tail;
+				}
+			}
+
+
+		}
+
+		TYPE_CLASS cT = new TYPE_CLASS(null,className, param_List, method_List);
+
+
+
+
 
 		/*****************/
-		/* [3] End Scope */
+		/* [5] End Scope */
 		/*****************/
 		SYMBOL_TABLE.getInstance().endScope();
 
 		/************************************************/
-		/* [4] Enter the Class Type to the Symbol Table */
+		/* [6] Enter the Class Type to the Symbol Table */
 		/************************************************/
-		SYMBOL_TABLE.getInstance().enter(className,t);
+		SYMBOL_TABLE.getInstance().enter(className,cT);
 
 		/*********************************************************/
-		/* [5] Return value is irrelevant for class declarations */
+		/* [7] Return value is irrelevant for class declarations */
 		/*********************************************************/
 		return null;		
 	}

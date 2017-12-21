@@ -99,7 +99,7 @@ public class AST_DEC_VAR extends AST_DEC
 			}
 			return null;	
 		} else if(varType != expType) {
-			if(expType == null || varType.getClass().isAssignableFrom(expType.getClass())){
+			if((expType == null) || varType.getClass().isAssignableFrom(expType.getClass())){
 				return null;
 			} else {
 				throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);

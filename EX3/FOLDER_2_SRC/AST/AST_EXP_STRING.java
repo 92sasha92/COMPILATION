@@ -37,7 +37,7 @@ public class AST_EXP_STRING extends AST_EXP
 			SerialNumber,
 			String.format("STRING\n%s",value.replace('"','\'')));
 	}
-	public TYPE SemantMe()
+	public TYPE SemantMe() throws AST_EXCEPTION
 	{
 		return TYPE_STRING.getInstance();
 	}

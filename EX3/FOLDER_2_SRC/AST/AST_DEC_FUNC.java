@@ -10,17 +10,13 @@ public class AST_DEC_FUNC extends AST_DEC
 	/****************/
 	public String returnTypeName;
 	public String name;
-	public AST_TYPE_NAME_LIST params;
+	public AST_TYPE_NAME_LIST params = null;
 	public AST_STMT_LIST body;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_DEC_FUNC(
-		String returnTypeName,
-		String name,
-		AST_TYPE_NAME_LIST params,
-		AST_STMT_LIST body)
+	public AST_DEC_FUNC(String returnTypeName, String name, AST_TYPE_NAME_LIST params, AST_STMT_LIST body)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
@@ -68,6 +64,7 @@ public class AST_DEC_FUNC extends AST_DEC
 		TYPE t, paramT;
 		TYPE returnType = null;
 		TYPE_LIST type_list = null;
+		TYPE_LIST p = null;
 		int paramIndex = 0;
 		int scopeIndex = 0;
 		/*******************/
@@ -111,7 +108,14 @@ public class AST_DEC_FUNC extends AST_DEC
 				{
 					throw new AST_EXCEPTION(String.format("variable %s already exists in function scope\n", it.head.name), this.lineNum);			
 				}
-				type_list = new TYPE_LIST(t,type_list);
+				
+				if (type_list == null){
+					type_list = new TYPE_LIST(t, null);
+					p = type_list;
+				} else {
+					p.tail = new TYPE_LIST(t, null); 
+					p = p.tail;
+				}
 				SYMBOL_TABLE.getInstance().enter(it.head.name,t);
 			}
 		}
