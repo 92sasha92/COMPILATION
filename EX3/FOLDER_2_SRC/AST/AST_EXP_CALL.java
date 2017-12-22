@@ -75,12 +75,9 @@ public class AST_EXP_CALL extends AST_EXP
 			} else if(paramType == TYPE_NIL.getInstance()){
 			    if(typeList.head instanceof TYPE_INT || typeList.head instanceof TYPE_STRING){
 				   throw new AST_EXCEPTION("Primitive type of an argument cannot be defined to be nil", this.lineNum);
-			    }
-			    return null;	
+			    }	
 			} else if(paramType != typeList.head) {
-				if(paramType.getClass().isAssignableFrom(typeList.head.getClass())){
-					return null;
-				} else {
+				if((paramType instanceof TYPE_ARRAY) || !(paramType.getClass().isAssignableFrom(typeList.head.getClass()))){
 					throw new AST_EXCEPTION("Type mismatch for call func with wrong parameters;\n", this.lineNum);
 				}
 			}

@@ -1,5 +1,8 @@
 package AST;
 
+import TYPES.*;
+import SYMBOL_TABLE.*;
+
 public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 {
 	public AST_EXP_VAR var;
@@ -40,5 +43,31 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 		/****************************************/
 		if (var != null)AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
 		if (index != null)AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,index.SerialNumber);
+	}
+	
+	public TYPE SemantMe() throws AST_EXCEPTION {
+		TYPE t = null, iType;
+		TYPE_ARRAY arrayType = null;
+		/******************************/
+		/* [1] Recursively semant var */
+		/******************************/
+		if (this.var != null) t = var.SemantMe();
+		if (!(t instanceof TYPE_ARRAY))
+		{
+			throw new AST_EXCEPTION(String.format("%s is non-array variable\n", t.name), this.lineNum);
+		} else {
+			arrayType = (TYPE_ARRAY) t;
+		}
+
+		iType = this.index.SemantMe();
+		if(!(iType instanceof TYPE_INT)) {
+			throw new AST_EXCEPTION(String.format("index is not an integer\n"), this.lineNum);
+		}
+
+
+		
+
+		return arrayType.type;
+
 	}
 }

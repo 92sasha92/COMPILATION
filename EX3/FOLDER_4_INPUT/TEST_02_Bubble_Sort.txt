@@ -8,7 +8,7 @@ void BubbleSort(IntArray arr, int size)
     
     while (i < size)
     {
-        int j := i+;
+        int j := i+1;
         while (j<size)
         {
             if (arr[j] < min)
@@ -33,5 +33,5 @@ void main()
     arr[5] := 30;
     arr[6] := -580;
     
-    PrintPrimes(2,100);
+    BubbleSort(arr,7);
 }

@@ -1238,7 +1238,7 @@ class CUP$Parser$actions {
 		int celeft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).left;
 		int ceright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).right;
 		AST_EXP_CALL ce = (AST_EXP_CALL)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
-		 RESULT = new AST_STMT_CALL(ce.funcName, ce.params);    RESULT.lineNum = ce.lineNum; 
+		 RESULT = new AST_STMT_CALL(ce);    RESULT.lineNum = ce.lineNum; 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("callStmt",10, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

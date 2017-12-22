@@ -3,7 +3,7 @@ package TYPES;
 public class TYPE_ARRAY extends TYPE
 {
 
-	TYPE type;
+	public TYPE type;
 	
 	/****************/
 	/* CTROR(S) ... */
