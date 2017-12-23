@@ -1,4 +1,5 @@
 package AST;
+import TYPES.*;
 
 public class AST_STMT_METHOD extends AST_STMT
 {
@@ -53,4 +54,39 @@ public class AST_STMT_METHOD extends AST_STMT
 		if (var != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
 		if (expList != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,expList.SerialNumber);
 	}
+        public TYPE SemantMe() {
+            TYPE varType = null;
+            TYPE_CLASS classType = null;
+            TYPE_FUNCTION currentMethod = null;
+
+            /****************************/
+            /* [1] Semant var */
+            /****************************/
+            varType = var.SemantMe();
+
+            /****************************/
+            /* [2] Check if var is of type class */
+            /****************************/
+            if (!(varType instanceof TYPE_CLASS))
+            {
+		throw new AST_EXCEPTION(String.format("'%s' is not of class type\n", varType.name), this.lineNum);
+            }
+            
+            /****************************/
+            /* [3] check if the method is in the class hierarchy, starting from the bottom and going up */
+            /****************************/
+            for (classType = (TYPE_CLASS)varType; classType != null ; classType = classType.father) {
+		for (TYPE_LIST methodList = classType.method_List; methodList  != null; methodList = methodList.tail){
+                    if (!(methodList.head instanceof TYPE_FUNCTION)) {
+                        throw new AST_EXCEPTION(String.format("Found a method with type %s instead of TYPE_FUNCTION\n", methodList.head.name), this.lineNum);
+                    }
+                    currentMethod = methodList.head;
+                    if (currentMethod.name.equals(methodName)) {
+                        // found the method
+                        return null;
+                    }
+                }
+            }
+            throw new AST_EXCEPTION(String.format("Couldn't find the method %s in the class %s\n", methodName, classType.name), this.lineNum);
+        }
 }
