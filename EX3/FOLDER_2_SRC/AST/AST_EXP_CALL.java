@@ -64,21 +64,22 @@ public class AST_EXP_CALL extends AST_EXP
 		TYPE funcType = null;
 		TYPE_LIST typeList = null;
 		TYPE paramType = null;
+		TYPE_CLASS classTypeArg = null, classType = null;
 		/****************************/
 		/* [1] Check If Type exists */
 		/****************************/
-                if (stmtMethod == null) {
-                    funcType = SYMBOL_TABLE.getInstance().find(funcName);
-                    if (funcType == null)
-                    {
-                        throw new AST_EXCEPTION(String.format("Non existing function %s\n", funcName), this.lineNum);
-                    } else if(!(funcType instanceof TYPE_FUNCTION)) {
-                        throw new AST_EXCEPTION(String.format("'%s' is not a function type\n", funcType.name), this.lineNum);
-                    }
-                }
-                else {
-                    funcType = stmtMethod;
-                }
+       if (stmtMethod == null) {
+            funcType = SYMBOL_TABLE.getInstance().find(funcName);
+            if (funcType == null)
+            {
+				throw new AST_EXCEPTION(String.format("Non existing function %s\n", funcName), this.lineNum);
+            } else if(!(funcType instanceof TYPE_FUNCTION)) {
+                throw new AST_EXCEPTION(String.format("'%s' is not a function type\n", funcType.name), this.lineNum);
+            }
+        }
+        else {
+			funcType = stmtMethod;
+        }
 		typeList = ((TYPE_FUNCTION)funcType).params;
 		for (AST_EXP_LIST it = params; it  != null; it = it.tail){
 			paramType = it.head.SemantMe();
@@ -88,6 +89,12 @@ public class AST_EXP_CALL extends AST_EXP
 			    if(typeList.head instanceof TYPE_INT || typeList.head instanceof TYPE_STRING){
 				   throw new AST_EXCEPTION("Primitive type of an argument cannot be defined to be nil", this.lineNum);
 			    }	
+			} else if(typeList.head instanceof TYPE_CLASS && paramType instanceof TYPE_CLASS){
+				classTypeArg = (TYPE_CLASS) paramType;
+				classType = (TYPE_CLASS) typeList.head;
+				if(!(classTypeArg.isSonOf(classType.name))) {
+					throw new AST_EXCEPTION(String.format("%s is not a child class of %s", classTypeArg.name, classType.name), this.lineNum);
+				}
 			} else if(paramType != typeList.head) {
 				if((paramType instanceof TYPE_ARRAY) || !(paramType.getClass().isAssignableFrom(typeList.head.getClass()))){
 					throw new AST_EXCEPTION("Type mismatch for call func with wrong parameters;\n", this.lineNum);

@@ -26,4 +26,15 @@ public class TYPE_CLASS extends TYPE
 		this.data_members = data_members;
 		this.method_List = method_List;
 	}
+	
+	
+	public boolean isSonOf(String name){
+		TYPE_CLASS classType;
+		for (classType = this; classType != null ; classType = classType.father) {
+			if(classType.name.equals(name)){
+				return true;
+			}
+		}
+		return false;
+	}
 }

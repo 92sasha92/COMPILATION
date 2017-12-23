@@ -7,7 +7,7 @@ public class AST_EXP_METHOD extends AST_EXP
 	/* DATA MEMBERS */
 	/****************/
 	public AST_EXP_VAR var;
-        public AST_EXP_CALL expCall;
+    public AST_EXP_CALL expCall;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -20,7 +20,7 @@ public class AST_EXP_METHOD extends AST_EXP
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
 		this.var = var;
-                this.expCall = new AST_EXP_CALL(methodName, expList);
+        this.expCall = new AST_EXP_CALL(methodName, expList);
 	}
 	/******************************************************/
 	/* The printing message for a statement list AST node */
@@ -67,7 +67,7 @@ public class AST_EXP_METHOD extends AST_EXP
             /****************************/
             if (!(varType instanceof TYPE_CLASS))
             {
-		throw new AST_EXCEPTION(String.format("'%s' is not of class type\n", varType.name), this.lineNum);
+				throw new AST_EXCEPTION(String.format("'%s' is not of class type\n", varType.name), this.lineNum);
             }
             
             /****************************/
@@ -75,7 +75,7 @@ public class AST_EXP_METHOD extends AST_EXP
             /****************************/
             TYPE_CLASS firstClass = (TYPE_CLASS)varType;
             for (classType = firstClass; classType != null ; classType = classType.father) {
-		for (TYPE_LIST methodList = classType.method_List; methodList  != null; methodList = methodList.tail){
+				for (TYPE_LIST methodList = classType.method_List; methodList  != null; methodList = methodList.tail){
                     if (!(methodList.head instanceof TYPE_FUNCTION)) {
                         throw new AST_EXCEPTION(String.format("Found a method with type %s instead of TYPE_FUNCTION\n", methodList.head.name), this.lineNum);
                     }
