@@ -98,7 +98,7 @@ public class AST_DEC_CLASS extends AST_DEC
 		/* [4] Semant Data Members */
 		/***************************/
 
-
+		SYMBOL_TABLE.getInstance().enter(className,new TYPE_CLASS(null, className, null, null));
 		for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
 			if(l.head.varDec != null){
 				t = l.head.varDec.SemantMe();
