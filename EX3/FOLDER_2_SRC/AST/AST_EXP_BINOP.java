@@ -83,7 +83,7 @@ public class AST_EXP_BINOP extends AST_EXP
 		if (right != null) t2 = right.SemantMe();
 		//op = 6 is "="
 		if(OP == 6){
-			if(t1 == null || t2 == null){
+			if(t1 == TYPE_NIL.getInstance() || t2 == TYPE_NIL.getInstance()){
 				if(t1 instanceof TYPE_INT || t2 instanceof TYPE_INT 
 				|| t1 instanceof TYPE_STRING || t2 instanceof TYPE_STRING){
 					throw new AST_EXCEPTION("Primitive type cannot be compared to null", this.lineNum);

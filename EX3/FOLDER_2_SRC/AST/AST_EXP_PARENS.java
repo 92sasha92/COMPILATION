@@ -1,5 +1,8 @@
 package AST;
 
+import TYPES.*;
+import SYMBOL_TABLE.*;
+
 public class AST_EXP_PARENS extends AST_EXP
 {
 	/****************/
@@ -46,5 +49,10 @@ public class AST_EXP_PARENS extends AST_EXP
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
 		if(exp != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,exp.SerialNumber);		
+	}
+	
+	public TYPE SemantMe() throws AST_EXCEPTION {
+		if(exp != null) return exp.SemantMe();
+		return null;
 	}
 }

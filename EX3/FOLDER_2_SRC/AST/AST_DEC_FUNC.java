@@ -90,6 +90,7 @@ public class AST_DEC_FUNC extends AST_DEC
 		/****************************/
 		SYMBOL_TABLE.getInstance().beginFuncScope(returnType);
 		int index = SYMBOL_TABLE.getInstance().getTopIndex();
+		
 		/***************************/
 		/* [3] Semant Input Params */
 		/***************************/
@@ -119,7 +120,7 @@ public class AST_DEC_FUNC extends AST_DEC
 				SYMBOL_TABLE.getInstance().enter(it.head.name,t);
 			}
 		}
-
+		SYMBOL_TABLE.getInstance().enter(name,new TYPE_FUNCTION(returnType,name,type_list));
 		/*******************/
 		/* [4] Semant Body */
 		/*******************/
