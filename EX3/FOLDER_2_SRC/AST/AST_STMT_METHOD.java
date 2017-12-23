@@ -7,8 +7,9 @@ public class AST_STMT_METHOD extends AST_STMT
 	/* DATA MEMBERS */
 	/****************/
 	public AST_EXP_VAR var;
-	public String methodName;
-	public AST_EXP_LIST expList;
+	// public String methodName;
+	// public AST_EXP_LIST expList;
+        public AST_EXP_CALL expCall;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -22,8 +23,9 @@ public class AST_STMT_METHOD extends AST_STMT
 		if(expList == null) System.out.println("================STMT -> varExp DOT ID ();");
 		if(expList != null) System.out.println("================STMT -> varExp DOT ID (expList);");
 		this.var = var;
-		this.methodName = methodName;
-		this.expList = expList;
+		// this.methodName = methodName;
+		// this.expList = expList;
+                this.expCall = new AST_EXP_CALL(methodName, expList);
 	}
 	/******************************************************/
 	/* The printing message for a statement list AST node */
@@ -33,28 +35,28 @@ public class AST_STMT_METHOD extends AST_STMT
 		/********************************/
 		/* AST NODE TYPE = AST EXP METHOD */
 		/********************************/
-		System.out.format("STMT\nMETHOD\n(___.%s())\n",methodName);
+		// System.out.format("STMT\nMETHOD\n(___.%s())\n",methodName);
 
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
 		if (var != null) var.PrintMe();
-		if (expList != null) expList.PrintMe();
+		// if (expList != null) expList.PrintMe();
 
 		/**********************************/
 		/* PRINT to AST GRAPHVIZ DOT file */
 		/**********************************/
-		AST_GRAPHVIZ.getInstance().logNode(
-			SerialNumber,
-			String.format("STMT\nMETHOD(___.%s())\n", methodName));
+		// AST_GRAPHVIZ.getInstance().logNode(
+			// SerialNumber,
+			// String.format("STMT\nMETHOD(___.%s())\n", methodName));
 		
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
 		if (var != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
-		if (expList != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,expList.SerialNumber);
+		// if (expList != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,expList.SerialNumber);
 	}
-        public TYPE SemantMe() {
+        public TYPE SemantMe() throws AST_EXCEPTION {
             TYPE varType = null;
             TYPE_CLASS classType = null;
             TYPE_FUNCTION currentMethod = null;
@@ -75,18 +77,23 @@ public class AST_STMT_METHOD extends AST_STMT
             /****************************/
             /* [3] check if the method is in the class hierarchy, starting from the bottom and going up */
             /****************************/
-            for (classType = (TYPE_CLASS)varType; classType != null ; classType = classType.father) {
+            TYPE_CLASS firstClass = (TYPE_CLASS)varType;
+            for (classType = firstClass; classType != null ; classType = classType.father) {
 		for (TYPE_LIST methodList = classType.method_List; methodList  != null; methodList = methodList.tail){
                     if (!(methodList.head instanceof TYPE_FUNCTION)) {
                         throw new AST_EXCEPTION(String.format("Found a method with type %s instead of TYPE_FUNCTION\n", methodList.head.name), this.lineNum);
                     }
-                    currentMethod = methodList.head;
-                    if (currentMethod.name.equals(methodName)) {
+                    currentMethod = (TYPE_FUNCTION)methodList.head;
+                    if (currentMethod.name.equals(expCall.funcName)) {
+                        /****************************/
+                        /* [4] Found the method, semant the method call */
+                        /****************************/
                         // found the method
-                        return null;
+                        expCall.setStmtMethod(currentMethod);
+                        return expCall.SemantMe();
                     }
                 }
             }
-            throw new AST_EXCEPTION(String.format("Couldn't find the method %s in the class %s\n", methodName, classType.name), this.lineNum);
+            throw new AST_EXCEPTION(String.format("Couldn't find the method %s in the class %s\n", expCall.funcName, firstClass.name), this.lineNum);
         }
 }

@@ -10,6 +10,9 @@ public class AST_EXP_CALL extends AST_EXP
 	public String funcName;
 	public AST_EXP_LIST params;
 
+        // AST_EXP_CALL is sometimes used from AST_STMT_METHOD, in that case we already have the TYPE_FUNCTION and we should use it
+        public TYPE_FUNCTION stmtMethod;
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
@@ -23,6 +26,10 @@ public class AST_EXP_CALL extends AST_EXP
 		this.funcName = funcName;
 		this.params = params;
 	}
+
+        public void setStmtMethod(TYPE_FUNCTION stmtMethod) {
+            this.stmtMethod = stmtMethod;
+        }
 
 	/************************************************************/
 	/* The printing message for a function declaration AST node */
@@ -60,13 +67,18 @@ public class AST_EXP_CALL extends AST_EXP
 		/****************************/
 		/* [1] Check If Type exists */
 		/****************************/
-		funcType = SYMBOL_TABLE.getInstance().find(funcName);
-		if (funcType == null)
-		{
-			throw new AST_EXCEPTION(String.format("Non existing function %s\n", funcName), this.lineNum);
-		} else if(!(funcType instanceof TYPE_FUNCTION)) {
-			throw new AST_EXCEPTION(String.format("'%s' is not a function type\n", funcType.name), this.lineNum);
-		}
+                if (stmtMethod == null) {
+                    funcType = SYMBOL_TABLE.getInstance().find(funcName);
+                    if (funcType == null)
+                    {
+                        throw new AST_EXCEPTION(String.format("Non existing function %s\n", funcName), this.lineNum);
+                    } else if(!(funcType instanceof TYPE_FUNCTION)) {
+                        throw new AST_EXCEPTION(String.format("'%s' is not a function type\n", funcType.name), this.lineNum);
+                    }
+                }
+                else {
+                    funcType = stmtMethod;
+                }
 		typeList = ((TYPE_FUNCTION)funcType).params;
 		for (AST_EXP_LIST it = params; it  != null; it = it.tail){
 			paramType = it.head.SemantMe();

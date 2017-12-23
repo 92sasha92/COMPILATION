@@ -1,6 +1,16 @@
 int h := 90;
 int l := 90;
 array IntArray = int[]
+class Father {
+    int foo(int a) {
+    return 9;
+    }
+}
+
+void main() {
+Father f := new Father;
+f.foo(34);
+}
 
 string g(int h, string k, string p){
 	string l := "90";
