@@ -35,7 +35,7 @@ public class AST_STMT_METHOD extends AST_STMT
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		if (var != null) var.PrintMe();
+		// if (var != null) var.PrintMe();
 		// if (expList != null) expList.PrintMe();
 
 		/**********************************/
@@ -48,7 +48,7 @@ public class AST_STMT_METHOD extends AST_STMT
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (var != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
+		// if (var != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
 		// if (expList != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,expList.SerialNumber);
 	}
         public TYPE SemantMe() throws AST_EXCEPTION {

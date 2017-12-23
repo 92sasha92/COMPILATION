@@ -62,7 +62,7 @@ public class AST_DEC_CLASS extends AST_DEC
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{	
 	
-		TYPE classType, extendsType, scope, t;
+		TYPE classType, extendsType = null, scope, t;
 		int scopeIndex, paramIndex;
 		TYPE_LIST param_List = null;
 		TYPE_LIST method_List = null;
@@ -130,7 +130,7 @@ public class AST_DEC_CLASS extends AST_DEC
 
 		}
 
-		TYPE_CLASS cT = new TYPE_CLASS(null,className, param_List, method_List);
+		TYPE_CLASS cT = new TYPE_CLASS((TYPE_CLASS)extendsType,className, param_List, method_List);
 
 
 

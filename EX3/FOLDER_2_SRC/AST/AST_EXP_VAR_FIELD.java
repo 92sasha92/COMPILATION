@@ -73,15 +73,17 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 		}
 		
 		/************************************/
-		/* [3] Look for fiedlName inside tc */
+		/* [3] Look for fiedlName inside the class hierarchy */
 		/************************************/
-		for (TYPE_LIST it = tc.data_members; it != null; it = it.tail)
+            for (TYPE_CLASS classType = tc; classType != null ; classType = classType.father) {
+		for (TYPE_LIST it = classType.data_members; it != null; it = it.tail)
 		{
 			if (((TYPE_VAR_DEC)(it).head).name.equals(fieldName))
 			{
 				return ((TYPE_VAR_DEC)it.head).t;
 			}
 		}
+            }
 		
 		/*********************************************/
 		/* [4] fieldName does not exist in class var */
