@@ -12,6 +12,7 @@ public class AST_DEC_VAR extends AST_DEC
 	public String name;
 	public AST_EXP initialValue;
 	public boolean isField = false;
+	public TYPE_CLASS fatherClass = null;
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
@@ -60,10 +61,14 @@ public class AST_DEC_VAR extends AST_DEC
 		if (initialValue != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,initialValue.SerialNumber);		
 			
 	}
+	
+	public void setFatherClass(TYPE_CLASS extendsType){
+		this.fatherClass = extendsType;
+	}
 
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
-            return this.SemantMe(false);
+        return this.SemantMe(false);
     }
 	public TYPE SemantMe(boolean nonRecursive) throws AST_EXCEPTION
 	{
@@ -101,11 +106,21 @@ public class AST_DEC_VAR extends AST_DEC
 		
         if (!nonRecursive) {
 			if (initialValue != null) expType = initialValue.SemantMe();
-			else return new TYPE_VAR_DEC(varType, this.name);
-			if(isField && !(initialValue instanceof AST_EXP_NIL) && !(initialValue instanceof AST_EXP_INT) && !(initialValue instanceof AST_EXP_STRING)){
-				throw new AST_EXCEPTION("A data member can't be assigned to a non constant value", this.lineNum);
+			if(isField){
+				if(this.fatherClass != null){
+					if(!(fatherClass.isLegalFieldDec(new TYPE_VAR_DEC(varType, this.name)))){
+						throw new AST_EXCEPTION("Shadowing fields is illegal", this.lineNum);
+					}
+				}
+				if(initialValue != null && !(initialValue instanceof AST_EXP_NIL) && !(initialValue instanceof AST_EXP_INT) && !(initialValue instanceof AST_EXP_STRING)){
+					throw new AST_EXCEPTION("A data member can't be assigned to a non constant value", this.lineNum);
+				}
 			}
 			
+			if(initialValue == null){
+				return new TYPE_VAR_DEC(varType, this.name);
+			}
+	
 			if(expType == TYPE_NIL.getInstance()){
 				if(varType instanceof TYPE_INT || varType instanceof TYPE_STRING){
 					throw new AST_EXCEPTION("Primitive type cannot be defined to be nil", this.lineNum);

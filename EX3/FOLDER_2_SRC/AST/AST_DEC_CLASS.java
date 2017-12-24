@@ -128,14 +128,15 @@ public class AST_DEC_CLASS extends AST_DEC
 		/*********************************************************/
 		return null;		
 	}
-        public TYPE_CLASS SemantClassMembers(boolean nonRecursive, TYPE_CLASS extendsType) throws AST_EXCEPTION{
-		TYPE_LIST param_List=null;
-                TYPE_LIST method_List=null;
-                TYPE_LIST p=  null;
-                TYPE t = null;
+    public TYPE_CLASS SemantClassMembers(boolean nonRecursive, TYPE_CLASS extendsType) throws AST_EXCEPTION{
+			TYPE_LIST param_List=null;
+            TYPE_LIST method_List=null;
+            TYPE_LIST p=  null;
+            TYPE t = null;
             for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
                 if(l.head.varDec != null){
 					l.head.varDec.setIsFieldToTrue();
+					l.head.varDec.setFatherClass(extendsType);
                     t = l.head.varDec.SemantMe(nonRecursive);
                     if (param_List == null){
                         param_List = new TYPE_LIST(t, null);
@@ -151,6 +152,8 @@ public class AST_DEC_CLASS extends AST_DEC
 
             for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
                 if(l.head.funcDec != null){
+					l.head.funcDec.setIsMethodToTrue();
+					l.head.funcDec.setFatherClass(extendsType);
                     t = l.head.funcDec.SemantMe(nonRecursive);
                     if (method_List == null){
                         method_List = new TYPE_LIST(t, null);
@@ -166,6 +169,6 @@ public class AST_DEC_CLASS extends AST_DEC
 
 
             return new TYPE_CLASS(extendsType,className, param_List, method_List);
-        }
+    }
 
 }

@@ -12,6 +12,8 @@ public class AST_DEC_FUNC extends AST_DEC
 	public String name;
 	public AST_TYPE_NAME_LIST params = null;
 	public AST_STMT_LIST body;
+	public boolean isMethod = false;
+	public TYPE_CLASS fatherClass = null;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -59,9 +61,15 @@ public class AST_DEC_FUNC extends AST_DEC
 		if (body   != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,body.SerialNumber);		
 	}
 
+	public void setIsMethodToTrue(){
+		this.isMethod = true;
+	}
+	public void setFatherClass(TYPE_CLASS cl){
+		this.fatherClass = cl;
+	}
 	public TYPE SemantMe() throws AST_EXCEPTION {
-            return this.SemantMe(false);
-        }
+        return this.SemantMe(false);
+    }
 
 	public TYPE SemantMe(boolean nonRecursive) throws AST_EXCEPTION
 	{
@@ -71,6 +79,7 @@ public class AST_DEC_FUNC extends AST_DEC
 		TYPE_LIST p = null;
 		int paramIndex = 0;
 		int scopeIndex = 0;
+		
 		/*******************/
 		/* [0] return type */
 		/*******************/
@@ -124,13 +133,21 @@ public class AST_DEC_FUNC extends AST_DEC
 				SYMBOL_TABLE.getInstance().enter(it.head.name,t);
 			}
 		}
+		
+		
+		if(this.isMethod && fatherClass != null){
+			if(!(fatherClass.isLegalMethodDec(name,new TYPE_FUNCTION(returnType,name,type_list)))){
+				throw new AST_EXCEPTION(String.format("%s function overiding is illigal\n", this.name), this.lineNum);
+			}
+		}
+		
 		SYMBOL_TABLE.getInstance().enter(name,new TYPE_FUNCTION(returnType,name,type_list));
 		/*******************/
 		/* [4] Semant Body */
 		/*******************/
-                if (!nonRecursive) {
-		body.SemantMe();
-                }
+        if (!nonRecursive) {
+			body.SemantMe();
+        }
 
 		/*****************/
 		/* [5] End Scope */
@@ -140,7 +157,7 @@ public class AST_DEC_FUNC extends AST_DEC
 		/***************************************************/
 		/* [6] Enter the Function Type to the Symbol Table */
 		/***************************************************/
-                TYPE_FUNCTION typeFunc = new TYPE_FUNCTION(returnType,name,type_list);
+        TYPE_FUNCTION typeFunc = new TYPE_FUNCTION(returnType,name,type_list);
 		SYMBOL_TABLE.getInstance().enter(name,typeFunc);
 
 		/*********************************************************/
