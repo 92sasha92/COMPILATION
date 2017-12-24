@@ -11,7 +11,7 @@ public class AST_DEC_VAR extends AST_DEC
 	public String type;
 	public String name;
 	public AST_EXP initialValue;
-	
+	public boolean isField = false;
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
@@ -25,6 +25,10 @@ public class AST_DEC_VAR extends AST_DEC
 		this.type = type;
 		this.name = name;
 		this.initialValue = initialValue;
+	}
+	
+	public void setIsFieldToTrue(){
+		this.isField = true;
 	}
 
 	/********************************************************/
@@ -60,11 +64,12 @@ public class AST_DEC_VAR extends AST_DEC
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
             return this.SemantMe(false);
-        }
+    }
 	public TYPE SemantMe(boolean nonRecursive) throws AST_EXCEPTION
 	{
 		TYPE varType, expType = null, paramT;
 		int scopeIndex, paramIndex;
+		TYPE_CLASS classVarType = null, classExpType = null;
 		/****************************/
 		/* [1] Check If Type exists */
 		/****************************/
@@ -94,24 +99,28 @@ public class AST_DEC_VAR extends AST_DEC
 		/***************************************************/
 		SYMBOL_TABLE.getInstance().enter(name,varType);
 		
-                if (!nonRecursive) {
-		
-		if (initialValue != null) expType = initialValue.SemantMe();
-		
-		if(expType == TYPE_NIL.getInstance()){
-			if(varType instanceof TYPE_INT || varType instanceof TYPE_STRING){
-				throw new AST_EXCEPTION("Primitive type cannot be defined to be nil", this.lineNum);
+        if (!nonRecursive) {
+			if (initialValue != null) expType = initialValue.SemantMe();
+			else return new TYPE_VAR_DEC(varType, this.name);
+			if(isField && !(initialValue instanceof AST_EXP_NIL) && !(initialValue instanceof AST_EXP_INT) && !(initialValue instanceof AST_EXP_STRING)){
+				throw new AST_EXCEPTION("A data member can't be assigned to a non constant value", this.lineNum);
 			}
-			return null;	
-		} else if(varType != expType) {
-			if((expType == null) || varType.getClass().isAssignableFrom(expType.getClass())){
-				return new TYPE_VAR_DEC(varType, this.name);
-			} else {
+			
+			if(expType == TYPE_NIL.getInstance()){
+				if(varType instanceof TYPE_INT || varType instanceof TYPE_STRING){
+					throw new AST_EXCEPTION("Primitive type cannot be defined to be nil", this.lineNum);
+				}
+				return new TYPE_VAR_DEC(varType, this.name);	
+			} else if(varType instanceof TYPE_CLASS && expType instanceof TYPE_CLASS) {
+				classVarType = (TYPE_CLASS) varType;
+				classExpType = (TYPE_CLASS) expType;
+				if(!(classExpType.isSonOf(classVarType.name))) {
+					throw new AST_EXCEPTION(String.format("%s is not a child class of %s", classExpType.name, classVarType.name), this.lineNum);
+				}
+			} else if(varType != expType) {
 				throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
 			}
-		}
-
-                }
+        }
 
 		/*********************************************************/
 		/* [4] Return value is irrelevant for class declarations */

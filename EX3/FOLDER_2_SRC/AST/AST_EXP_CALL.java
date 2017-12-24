@@ -10,8 +10,8 @@ public class AST_EXP_CALL extends AST_EXP
 	public String funcName;
 	public AST_EXP_LIST params;
 
-        // AST_EXP_CALL is sometimes used from AST_STMT_METHOD, in that case we already have the TYPE_FUNCTION and we should use it
-        public TYPE_FUNCTION stmtMethod;
+    // AST_EXP_CALL is sometimes used from AST_STMT_METHOD, in that case we already have the TYPE_FUNCTION and we should use it
+    public TYPE_FUNCTION stmtMethod;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -27,9 +27,9 @@ public class AST_EXP_CALL extends AST_EXP
 		this.params = params;
 	}
 
-        public void setStmtMethod(TYPE_FUNCTION stmtMethod) {
-            this.stmtMethod = stmtMethod;
-        }
+    public void setStmtMethod(TYPE_FUNCTION stmtMethod) {
+        this.stmtMethod = stmtMethod;
+    }
 
 	/************************************************************/
 	/* The printing message for a function declaration AST node */

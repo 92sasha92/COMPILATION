@@ -56,7 +56,7 @@ public class AST_EXP_METHOD extends AST_EXP
             TYPE varType = null;
             TYPE_CLASS classType = null;
             TYPE_FUNCTION currentMethod = null;
-
+			
             /****************************/
             /* [1] Semant var */
             /****************************/

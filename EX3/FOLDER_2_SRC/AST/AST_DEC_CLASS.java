@@ -135,6 +135,7 @@ public class AST_DEC_CLASS extends AST_DEC
                 TYPE t = null;
             for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
                 if(l.head.varDec != null){
+					l.head.varDec.setIsFieldToTrue();
                     t = l.head.varDec.SemantMe(nonRecursive);
                     if (param_List == null){
                         param_List = new TYPE_LIST(t, null);

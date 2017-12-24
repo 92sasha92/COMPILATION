@@ -60,7 +60,9 @@ public class AST_CFIELD extends AST_Node
 
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
-		if (varDec != null) return varDec.SemantMe();
+		if (varDec != null){
+			return varDec.SemantMe();
+		} 
 		if (funcDec != null) return funcDec.SemantMe();
 		return null;
 	}
