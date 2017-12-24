@@ -75,6 +75,7 @@ public class AST_DEC_VAR extends AST_DEC
 		TYPE varType, expType = null, paramT;
 		int scopeIndex, paramIndex;
 		TYPE_CLASS classVarType = null, classExpType = null;
+		TYPE varArrayType, expArrayType;
 		/****************************/
 		/* [1] Check If Type exists */
 		/****************************/
@@ -131,6 +132,18 @@ public class AST_DEC_VAR extends AST_DEC
 				classExpType = (TYPE_CLASS) expType;
 				if(!(classExpType.isSonOf(classVarType.name))) {
 					throw new AST_EXCEPTION(String.format("%s is not a child class of %s", classExpType.name, classVarType.name), this.lineNum);
+				}
+			} else if(varType instanceof TYPE_ARRAY && expType instanceof TYPE_ARRAY) {
+				varArrayType = ((TYPE_ARRAY)varType).type;
+				expArrayType = ((TYPE_ARRAY)expType).type;
+				if(varArrayType instanceof TYPE_CLASS && ((TYPE_ARRAY)expType).type instanceof TYPE_CLASS){
+					classVarType = (TYPE_CLASS) varArrayType;
+					classExpType = (TYPE_CLASS) expArrayType;
+					if(!(classExpType.isSonOf(classVarType.name))) {
+						throw new AST_EXCEPTION(String.format("%s is not a child class of %s", classExpType.name, classVarType.name), this.lineNum);
+					}
+				} else if(varArrayType != expArrayType){
+					throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
 				}
 			} else if(varType != expType) {
 				throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);

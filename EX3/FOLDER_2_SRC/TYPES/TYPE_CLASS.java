@@ -40,6 +40,7 @@ public class TYPE_CLASS extends TYPE
 
 	public boolean isLegalMethodDec(String funcName, TYPE_FUNCTION func){
 		TYPE_FUNCTION currentMethod = null;
+		TYPE_VAR_DEC currentVar = null;
 		for (TYPE_CLASS classType = this; classType != null ; classType = classType.father) {
 			for (TYPE_LIST methodList = classType.method_List; methodList  != null; methodList = methodList.tail){
                     currentMethod = (TYPE_FUNCTION)methodList.head;
@@ -51,16 +52,29 @@ public class TYPE_CLASS extends TYPE
 						}
                     }
             }
+			for (TYPE_LIST varList = classType.data_members; varList  != null; varList = varList.tail){
+                currentVar = (TYPE_VAR_DEC)varList.head;
+                if (currentVar.name.equals(funcName)) {
+					return false;
+                }
+            }
 		}
 		return true;
 	}
 	
 	public boolean isLegalFieldDec(TYPE_VAR_DEC var){
+		TYPE_FUNCTION currentMethod = null;
 		TYPE_VAR_DEC currentVar = null;
 		for (TYPE_CLASS classType = this; classType != null ; classType = classType.father) {
 			for (TYPE_LIST varList = classType.data_members; varList  != null; varList = varList.tail){
                     currentVar = (TYPE_VAR_DEC)varList.head;
                     if (currentVar.name.equals(var.name)) {
+						return false;
+                    }
+            }
+			for (TYPE_LIST methodList = classType.method_List; methodList  != null; methodList = methodList.tail){
+                    currentMethod = (TYPE_FUNCTION)methodList.head;
+                    if (currentMethod.name.equals(var.name)) {
 						return false;
                     }
             }

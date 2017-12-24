@@ -89,7 +89,7 @@ public class AST_EXP_NEW extends AST_EXP
                 /* [3] otherwise we have brackets so we return TYPE_ARRAY for valid types */
                 /**************************************/
             } else if ((varType instanceof TYPE_INT) || (varType instanceof TYPE_ARRAY) || (varType instanceof TYPE_CLASS) || (varType instanceof TYPE_STRING)) {
-                return new TYPE_ARRAY();
+                return new TYPE_ARRAY(varType.name ,varType);
                 /**************************************/
                 /* [3] otherwise we have brackets but invalid type */
                 /**************************************/
