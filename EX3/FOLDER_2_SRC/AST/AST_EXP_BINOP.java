@@ -76,37 +76,56 @@ public class AST_EXP_BINOP extends AST_EXP
 	}
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
-		TYPE t1 = null;
-		TYPE t2 = null;
-		
-		if (left  != null) t1 = left.SemantMe();
-		if (right != null) t2 = right.SemantMe();
+		TYPE leftType = null;
+		TYPE rightType = null;
+		TYPE_CLASS classLeftType = null, classRightType = null;
+		TYPE leftArrayType, rightArrayType;
+		if (left  != null) leftType = left.SemantMe();
+		if (right != null) rightType = right.SemantMe();
 		//op = 6 is "="
 		if(OP == 6){
-			if(t1 == TYPE_NIL.getInstance() || t2 == TYPE_NIL.getInstance()){
-				if(t1 instanceof TYPE_INT || t2 instanceof TYPE_INT 
-				|| t1 instanceof TYPE_STRING || t2 instanceof TYPE_STRING){
+			if(leftType == TYPE_NIL.getInstance() || rightType == TYPE_NIL.getInstance()){
+				if(leftType instanceof TYPE_INT || rightType instanceof TYPE_INT 
+				|| leftType instanceof TYPE_STRING || rightType instanceof TYPE_STRING){
 					throw new AST_EXCEPTION("Primitive type cannot be compared to null", this.lineNum);
 				} else {
 					return TYPE_INT.getInstance();
 				}
-			} else if(t1 != t2){
-				if(t2.getClass().isAssignableFrom(t1.getClass()) || t1.getClass().isAssignableFrom(t2.getClass())  ){
-					return TYPE_INT.getInstance();
-				} else {
-					throw new AST_EXCEPTION("Non matching types", this.lineNum);
+			} else if(leftType instanceof TYPE_CLASS && rightType instanceof TYPE_CLASS) {
+				classLeftType = (TYPE_CLASS) leftType;
+				classRightType = (TYPE_CLASS) rightType;
+				if(!(classLeftType.isSonOf(classRightType.name)) && !(classRightType.isSonOf(classLeftType.name))) {
+					throw new AST_EXCEPTION(String.format("%s is not a child class of %s and vice versa", classLeftType.name, classRightType.name), this.lineNum);
 				}
+			}else if(leftType instanceof TYPE_ARRAY && rightType instanceof TYPE_ARRAY) {
+				leftArrayType = ((TYPE_ARRAY)leftType).type;
+				rightArrayType = ((TYPE_ARRAY)rightType).type;
+				if(leftArrayType instanceof TYPE_CLASS && rightArrayType instanceof TYPE_CLASS){
+					classLeftType = (TYPE_CLASS) leftArrayType;
+					classRightType = (TYPE_CLASS) rightArrayType;
+					if(!(classLeftType.isSonOf(classRightType.name)) && !(classRightType.isSonOf(classLeftType.name))) {
+						throw new AST_EXCEPTION(String.format("%s is not a child class of %s and vice versa", classLeftType.name, classRightType.name), this.lineNum);
+					}
+					if(!(((TYPE_ARRAY)leftType).name.equals(((TYPE_ARRAY)rightType).name))){
+						throw new AST_EXCEPTION("Type mismatch for equal\n", this.lineNum);
+					}
+				} else if(leftArrayType != classRightType || !(((TYPE_ARRAY)leftType).name.equals(((TYPE_ARRAY)rightType).name))){
+					throw new AST_EXCEPTION("Type mismatch for equal\n", this.lineNum);
+				}
+			}else if(leftType != rightType){
+				throw new AST_EXCEPTION("Non matching types", this.lineNum);
 			} else {
 				return TYPE_INT.getInstance();
 			}
 
-		} else if ((t1 == TYPE_INT.getInstance()) && (t2 == TYPE_INT.getInstance())) {
+		} else if ((leftType == TYPE_INT.getInstance()) && (rightType == TYPE_INT.getInstance())) {
 			return TYPE_INT.getInstance();
-		} else if((t1 == TYPE_STRING.getInstance()) && (t2 == TYPE_STRING.getInstance()) && OP == 0) {
+		} else if((leftType == TYPE_STRING.getInstance()) && (rightType == TYPE_STRING.getInstance()) && OP == 0) {
 			return TYPE_STRING.getInstance();
 		} else {
 			throw new AST_EXCEPTION("Non matching types", this.lineNum);
 		}
+		return null;
 	}
 
 }

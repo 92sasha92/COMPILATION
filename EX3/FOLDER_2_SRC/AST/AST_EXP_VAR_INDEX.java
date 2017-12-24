@@ -54,7 +54,7 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 		if (this.var != null) t = var.SemantMe();
 		if (!(t instanceof TYPE_ARRAY))
 		{
-			throw new AST_EXCEPTION(String.format("%s is non-array variable\n", t.name), this.lineNum);
+			throw new AST_EXCEPTION(String.format("is non-array variable\n"), this.lineNum);
 		} else {
 			arrayType = (TYPE_ARRAY) t;
 		}
