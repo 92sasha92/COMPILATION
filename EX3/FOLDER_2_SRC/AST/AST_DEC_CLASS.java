@@ -61,12 +61,12 @@ public class AST_DEC_CLASS extends AST_DEC
 	
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{	
-	
-		TYPE classType, extendsType = null, scope, t;
+		TYPE classType, extendsType = null, scope;
 		int scopeIndex, paramIndex;
 		TYPE_LIST param_List = null;
 		TYPE_LIST method_List = null;
 		TYPE_LIST p = null; 
+
 		/****************************/
 		/* [1] Check If name of the class exists */
 		/****************************/
@@ -98,43 +98,20 @@ public class AST_DEC_CLASS extends AST_DEC
 		/* [4] Semant Data Members */
 		/***************************/
 
-                // COMMENTED OUR BY GUY!
-		// SYMBOL_TABLE.getInstance().enter(className,new TYPE_CLASS(null, className, null, null));
-		for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
-			if(l.head.varDec != null){
-				t = l.head.varDec.SemantMe();
-				if (param_List == null){
-					param_List = new TYPE_LIST(t, null);
-					p = param_List;
-				} else {
-					p.tail = new TYPE_LIST(t, null); 
-					p = p.tail;
-				}
-			}
+                /* GUY - first we add TYPE_CLASS to the scope with no members and methods */
+		SYMBOL_TABLE.getInstance().enter(className,new TYPE_CLASS((TYPE_CLASS)extendsType, className, null, null));
 
+                /* GUY - Now we can semant the members and they will recognize the type of the class because it's in the scope
+                 * BUT - we pass true to tell the SemantMe's of FUNC_DEC and VAR_DEC to NOT semant the body,parameters,expressions etc - because it will cause problems if they
+                 * try to find a member of this class, because we inserted a class without members to the scope*/
+                TYPE_CLASS cT = this.SemantClassMembers(true, (TYPE_CLASS)extendsType);
 
-		}
-
-		for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
-			if(l.head.funcDec != null){
-				t = l.head.funcDec.SemantMe();
-				if (method_List == null){
-					method_List = new TYPE_LIST(t, null);
-					p = method_List;
-				} else {
-					p.tail = new TYPE_LIST(t, null); 
-					p = p.tail;
-				}
-			}
-
-
-		}
-
-		TYPE_CLASS cT = new TYPE_CLASS((TYPE_CLASS)extendsType,className, param_List, method_List);
-
-
-
-
+                /* GUY - now cT contains the TYPE_CLASS *WITH* all the members and methods, but we should semant them as well because we didn't do it the first time */
+		SYMBOL_TABLE.getInstance().endScope();
+		SYMBOL_TABLE.getInstance().beginScope();
+		SYMBOL_TABLE.getInstance().enter(className,cT);
+                /* passing false tells the SemantMe's to Semant everything recursively */
+                cT = this.SemantClassMembers(false, (TYPE_CLASS)extendsType);
 
 		/*****************/
 		/* [5] End Scope */
@@ -151,4 +128,43 @@ public class AST_DEC_CLASS extends AST_DEC
 		/*********************************************************/
 		return null;		
 	}
+        public TYPE_CLASS SemantClassMembers(boolean nonRecursive, TYPE_CLASS extendsType) throws AST_EXCEPTION{
+		TYPE_LIST param_List=null;
+                TYPE_LIST method_List=null;
+                TYPE_LIST p=  null;
+                TYPE t = null;
+            for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
+                if(l.head.varDec != null){
+                    t = l.head.varDec.SemantMe(nonRecursive);
+                    if (param_List == null){
+                        param_List = new TYPE_LIST(t, null);
+                        p = param_List;
+                    } else {
+                        p.tail = new TYPE_LIST(t, null); 
+                        p = p.tail;
+                    }
+                }
+
+
+            }
+
+            for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
+                if(l.head.funcDec != null){
+                    t = l.head.funcDec.SemantMe(nonRecursive);
+                    if (method_List == null){
+                        method_List = new TYPE_LIST(t, null);
+                        p = method_List;
+                    } else {
+                        p.tail = new TYPE_LIST(t, null); 
+                        p = p.tail;
+                    }
+                }
+
+
+            }
+
+
+            return new TYPE_CLASS(extendsType,className, param_List, method_List);
+        }
+
 }

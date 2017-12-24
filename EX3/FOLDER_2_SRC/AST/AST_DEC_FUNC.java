@@ -59,7 +59,11 @@ public class AST_DEC_FUNC extends AST_DEC
 		if (body   != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,body.SerialNumber);		
 	}
 
-	public TYPE SemantMe() throws AST_EXCEPTION
+	public TYPE SemantMe() throws AST_EXCEPTION {
+            return this.SemantMe(false);
+        }
+
+	public TYPE SemantMe(boolean nonRecursive) throws AST_EXCEPTION
 	{
 		TYPE t, paramT;
 		TYPE returnType = null;
@@ -124,7 +128,9 @@ public class AST_DEC_FUNC extends AST_DEC
 		/*******************/
 		/* [4] Semant Body */
 		/*******************/
+                if (!nonRecursive) {
 		body.SemantMe();
+                }
 
 		/*****************/
 		/* [5] End Scope */

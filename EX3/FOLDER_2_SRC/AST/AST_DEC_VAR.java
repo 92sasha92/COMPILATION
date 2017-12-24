@@ -59,6 +59,10 @@ public class AST_DEC_VAR extends AST_DEC
 
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
+            return this.SemantMe(false);
+        }
+	public TYPE SemantMe(boolean nonRecursive) throws AST_EXCEPTION
+	{
 		TYPE varType, expType = null, paramT;
 		int scopeIndex, paramIndex;
 		/****************************/
@@ -90,6 +94,7 @@ public class AST_DEC_VAR extends AST_DEC
 		/***************************************************/
 		SYMBOL_TABLE.getInstance().enter(name,varType);
 		
+                if (!nonRecursive) {
 		
 		if (initialValue != null) expType = initialValue.SemantMe();
 		
@@ -106,6 +111,7 @@ public class AST_DEC_VAR extends AST_DEC
 			}
 		}
 
+                }
 
 		/*********************************************************/
 		/* [4] Return value is irrelevant for class declarations */
