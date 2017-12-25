@@ -30,26 +30,24 @@ public class AST_EXP_METHOD extends AST_EXP
 		/********************************/
 		/* AST NODE TYPE = AST EXP METHOD */
 		/********************************/
-		// System.out.format("EXP\nMETHOD\n(___.%s())\n",methodName);
+		System.out.format("EXP\nMETHOD\n");
 
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
 		if (var != null) var.PrintMe();
-		// if (expList != null) expList.PrintMe();
 
 		/**********************************/
 		/* PRINT to AST GRAPHVIZ DOT file */
 		/**********************************/
-		// AST_GRAPHVIZ.getInstance().logNode(
-		// 	SerialNumber,
-			// String.format("EXP\nMETHOD(___.%s())\n", methodName));
+		AST_GRAPHVIZ.getInstance().logNode(
+			SerialNumber,
+			String.format("EXP\nMETHOD\n"));
 		
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
 		if (var != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
-		// if (expList != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,expList.SerialNumber);
 	}
 
         public TYPE SemantMe() throws AST_EXCEPTION {
