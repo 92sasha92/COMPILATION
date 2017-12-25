@@ -18,7 +18,7 @@ import TYPES.*;
 /****************/
 public class SYMBOL_TABLE
 {
-	private int hashArraySize = 13;
+	private int hashArraySize = 50;
 	
 	/**********************************************/
 	/* The actual symbol table data structure ... */
@@ -30,7 +30,7 @@ public class SYMBOL_TABLE
 	/**************************************************************/
 	/* A very primitive hash function for exposition purposes ... */
 	/**************************************************************/
-	private int hash(String s)
+	/*private int hash(String s)
 	{
 		if (s.charAt(0) == 'l') {return 1;}
 		if (s.charAt(0) == 'm') {return 1;}
@@ -41,6 +41,13 @@ public class SYMBOL_TABLE
 		if (s.charAt(0) == 'f') {return 6;}
 		if (s.charAt(0) == 'S') {return 6;}
 		return 12;
+	}*/
+	
+	public int hash(String s) {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((s == null) ? 0 : s.hashCode());
+		return Math.abs(result % hashArraySize);
 	}
 
 	/****************************************************************************/
