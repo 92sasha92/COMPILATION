@@ -75,8 +75,8 @@ WhiteSpace			= {LineTerminator} | [ \t\f]
 INTEGER				= 0 | [1-9][0-9]*
 ID					= [a-zA-Z][a-zA-Z0-9]*
 STRING				= \"[a-zA-Z0-9]*\"
-COMMENT             = \/\/.* | \/\*([0-9a-zA-Z] | {WhiteSpace}  | \* | \? | \.)*\*\/
-COMMENT_UNCLOSED    = \/\*([0-9a-zA-Z] | {WhiteSpace}  | \* | \? | \.)*
+COMMENT             = (\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)|(\/\/.*)
+COMMENT_UNCLOSED    = \/\*([a-zA-Z0-9] | {WhiteSpace})*
 error				= {COMMENT_UNCLOSED} | .
 
 /******************************/
