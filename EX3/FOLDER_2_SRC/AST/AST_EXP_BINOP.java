@@ -117,7 +117,7 @@ public class AST_EXP_BINOP extends AST_EXP
 			} else {
 				return TYPE_INT.getInstance();
 			}
-
+			return TYPE_INT.getInstance();
 		} else if ((leftType == TYPE_INT.getInstance()) && (rightType == TYPE_INT.getInstance())) {
 			return TYPE_INT.getInstance();
 		} else if((leftType == TYPE_STRING.getInstance()) && (rightType == TYPE_STRING.getInstance()) && OP == 0) {
@@ -125,7 +125,6 @@ public class AST_EXP_BINOP extends AST_EXP
 		} else {
 			throw new AST_EXCEPTION("Non matching types", this.lineNum);
 		}
-		return null;
 	}
 
 }

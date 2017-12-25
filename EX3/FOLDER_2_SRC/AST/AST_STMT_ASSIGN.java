@@ -67,57 +67,14 @@ public class AST_STMT_ASSIGN extends AST_STMT
 		TYPE expType = null;
 		TYPE_CLASS classVarType = null, classExpType = null;
 		TYPE varArrayType, expArrayType;
+		TYPE_ARRAY varArray= null, expArray = null;
 		if (var != null) varType = var.SemantMe();
 		if (exp != null){
 			expType = exp.SemantMe();
 		} else{
 			return null;
 		}
-		
-		if(expType == TYPE_NIL.getInstance()){
-			if(varType instanceof TYPE_INT || varType instanceof TYPE_STRING){
-				throw new AST_EXCEPTION("Primitive type cannot be defined to be nil", this.lineNum);
-			}	
-		} else if(varType instanceof TYPE_CLASS && expType instanceof TYPE_CLASS) {
-			classVarType = (TYPE_CLASS) varType;
-			classExpType = (TYPE_CLASS) expType;
-			if(!(classExpType.isSonOf(classVarType.name))) {
-				throw new AST_EXCEPTION(String.format("%s is not a child class of %s", classExpType.name, classVarType.name), this.lineNum);
-			}
-		} else if(varType instanceof TYPE_ARRAY && expType instanceof TYPE_ARRAY) {
-			varArrayType = ((TYPE_ARRAY)varType).type;
-			expArrayType = ((TYPE_ARRAY)expType).type;
-			if(varArrayType instanceof TYPE_CLASS && expArrayType instanceof TYPE_CLASS){
-				classVarType = (TYPE_CLASS) varArrayType;
-				classExpType = (TYPE_CLASS) expArrayType;
-				if(!(classExpType.isSonOf(classVarType.name))) {
-					throw new AST_EXCEPTION(String.format("%s is not a child class of %s", classExpType.name, classVarType.name), this.lineNum);
-				}
-				System.out.println("left: "+((TYPE_ARRAY)varType).name + " right: " + ((TYPE_ARRAY)expType).name);
-				System.out.println("left: "+((TYPE_ARRAY)varType).type.name + " right: " + ((TYPE_ARRAY)expType).type.name);
-				if(!(varArrayType.name.equals(expArrayType.name))){
-					throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-				}
-				if(!(((TYPE_ARRAY)expType).name.equals(expArrayType.name))){
-					if(!(((TYPE_ARRAY)varType).name.equals(((TYPE_ARRAY)expType).name))){
-						throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-					}
-				}
-
-			} else if(varArrayType != expArrayType){
-				throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-			} else{
-					if(exp instanceof AST_EXP_NEW){
-						if(!(((TYPE_ARRAY)varType).type.name.equals(((TYPE_ARRAY)expType).name))){
-							throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-						}
-					} else if(!(((TYPE_ARRAY)varType).name.equals(((TYPE_ARRAY)expType).name))){
-						throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-					}
-			}
-		} else if(varType != expType) {
-			throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-		}
+		typesCheck(varType, expType);
 		return null;
 	}
 }

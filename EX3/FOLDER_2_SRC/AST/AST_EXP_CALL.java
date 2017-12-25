@@ -64,8 +64,6 @@ public class AST_EXP_CALL extends AST_EXP
 		TYPE funcType = null;
 		TYPE_LIST typeList = null;
 		TYPE paramType = null;
-		TYPE_CLASS classTypeArg = null, classType = null;
-		TYPE varArrayType, expArrayType;
 		/****************************/
 		/* [1] Check If Type exists */
 		/****************************/
@@ -86,52 +84,8 @@ public class AST_EXP_CALL extends AST_EXP
 			paramType = it.head.SemantMe();
 			if(typeList == null){
 				throw new AST_EXCEPTION(String.format("Too many arguments for function %s", funcName), this.lineNum);
-			} else if(paramType == TYPE_NIL.getInstance()){
-			    if(typeList.head instanceof TYPE_INT || typeList.head instanceof TYPE_STRING){
-				   throw new AST_EXCEPTION("Primitive type of an argument cannot be defined to be nil", this.lineNum);
-			    }	
-			} else if(typeList.head instanceof TYPE_CLASS && paramType instanceof TYPE_CLASS){
-				classTypeArg = (TYPE_CLASS) paramType;
-				classType = (TYPE_CLASS) typeList.head;
-				if(!(classTypeArg.isSonOf(classType.name))) {
-					throw new AST_EXCEPTION(String.format("%s is not a child class of %s", classTypeArg.name, classType.name), this.lineNum);
-				}
-			} else if(typeList.head instanceof TYPE_ARRAY && paramType instanceof TYPE_ARRAY) {
-				varArrayType = ((TYPE_ARRAY)typeList.head).type;
-				expArrayType = ((TYPE_ARRAY)paramType).type;
-				if(varArrayType instanceof TYPE_CLASS && expArrayType instanceof TYPE_CLASS){
-					classTypeArg = (TYPE_CLASS) varArrayType;
-					classType = (TYPE_CLASS) expArrayType;
-					if(!(classTypeArg.isSonOf(classType.name))) {
-						throw new AST_EXCEPTION(String.format("%s is not a child class of %s", classTypeArg.name, classType.name), this.lineNum);
-					}
-					System.out.println("left: "+((TYPE_ARRAY)typeList.head).name + " right: " + ((TYPE_ARRAY)paramType).name);
-					System.out.println("left: "+((TYPE_ARRAY)typeList.head).type.name + " right: " + ((TYPE_ARRAY)paramType).type.name);
-					if(!(varArrayType.name.equals(expArrayType.name))){
-						throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-					}
-					if(!(((TYPE_ARRAY)paramType).name.equals(expArrayType.name))){
-						if(!(((TYPE_ARRAY)typeList.head).name.equals(((TYPE_ARRAY)paramType).name))){
-							throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-						}
-					}
-				} else if(varArrayType != expArrayType){	
-					throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-				} else {
-					if(it.head instanceof AST_EXP_NEW){
-						if(!(((TYPE_ARRAY)typeList.head).type.name.equals(((TYPE_ARRAY)paramType).name))){
-							throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-						}
-					} else if(!(((TYPE_ARRAY)typeList.head).name.equals(((TYPE_ARRAY)paramType).name))){
-						throw new AST_EXCEPTION("Type mismatch for type var := exp;\n", this.lineNum);
-					}
-				}
-			} else if(paramType != typeList.head) {
-				if(paramType instanceof TYPE_ARRAY){
-					throw new AST_EXCEPTION("Type mismatch for call func with wrong parameters;\n", this.lineNum);
-				}
-			}
-
+			} 
+			typesCheck(typeList.head, paramType);
 			typeList = typeList.tail;
 		}
 		if(typeList != null){

@@ -59,19 +59,9 @@ public class AST_STMT_RETURN extends AST_STMT
 		} else {
 			returnType = exp.SemantMe();
 		}
-		if(returnType == TYPE_NIL.getInstance()){
-			if(funcReturnType instanceof TYPE_INT || funcReturnType instanceof TYPE_STRING){
-				throw new AST_EXCEPTION("Primitive function type cannot return nil", this.lineNum);
-			}
-			return new TYPE_RETURN(returnType);	
-		} else if(funcReturnType != returnType) {
-			if(funcReturnType.getClass().isAssignableFrom(returnType.getClass())){
-				return null;
-			} else {
-				throw new AST_EXCEPTION("return type not equel to function type", this.lineNum);
-			}
-		}
+		typesCheck(funcReturnType, returnType);
 		
 		return new TYPE_RETURN(returnType);
 	}
+	
 }
