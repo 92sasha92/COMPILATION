@@ -151,6 +151,49 @@ public class SYMBOL_TABLE
 		PrintMe();
 	}
 	
+	public void beginClassScope(TYPE_CLASS classT)
+	{
+
+		enter(
+			"SCOPE-BOUNDARY",
+			new TYPE_FOR_SCOPE_BOUNDARIES("Class", classT));
+
+		/*********************************************/
+		/* Print the symbol table after every change */
+		/*********************************************/
+		PrintMe();
+	}
+	
+	public TYPE findClassBoundry()
+	{
+		SYMBOL_TABLE_ENTRY e;
+		String name = "SCOPE-BOUNDARY";
+		for (e = table[hash(name)]; e != null; e = e.next)
+		{
+			if (name.equals(e.name) && e.type.name == "Class")
+			{
+				return e.type;
+			}
+		}
+		
+		return null;
+	}
+	
+	public int findClassBoundryIndex()
+	{
+		SYMBOL_TABLE_ENTRY e;
+		String name = "SCOPE-BOUNDARY";		
+		for (e = table[hash(name)]; e != null; e = e.next)
+		{
+			if (name.equals(e.name) && e.type.name == "Class")
+			{
+				return e.prevtop_index;
+			}
+		}
+		
+		return 0;
+	}
+	
 	public TYPE findFuncBoundry()
 	{
 		SYMBOL_TABLE_ENTRY e;

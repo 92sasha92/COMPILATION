@@ -92,26 +92,26 @@ public class AST_DEC_CLASS extends AST_DEC
 		/*************************/
 		/* [3] Begin Class Scope */
 		/*************************/
-		SYMBOL_TABLE.getInstance().beginScope();
+		SYMBOL_TABLE.getInstance().beginClassScope(null);
 
 		/***************************/
 		/* [4] Semant Data Members */
 		/***************************/
 
-                /* GUY - first we add TYPE_CLASS to the scope with no members and methods */
+        /* GUY - first we add TYPE_CLASS to the scope with no members and methods */
 		SYMBOL_TABLE.getInstance().enter(className,new TYPE_CLASS((TYPE_CLASS)extendsType, className, null, null));
 
-                /* GUY - Now we can semant the members and they will recognize the type of the class because it's in the scope
-                 * BUT - we pass true to tell the SemantMe's of FUNC_DEC and VAR_DEC to NOT semant the body,parameters,expressions etc - because it will cause problems if they
-                 * try to find a member of this class, because we inserted a class without members to the scope*/
-                TYPE_CLASS cT = this.SemantClassMembers(true, (TYPE_CLASS)extendsType);
+        /* GUY - Now we can semant the members and they will recognize the type of the class because it's in the scope
+        * BUT - we pass true to tell the SemantMe's of FUNC_DEC and VAR_DEC to NOT semant the body,parameters,expressions etc - because it will cause problems if they
+        * try to find a member of this class, because we inserted a class without members to the scope*/
+        TYPE_CLASS cT = this.SemantClassMembers(true, (TYPE_CLASS)extendsType);
 
-                /* GUY - now cT contains the TYPE_CLASS *WITH* all the members and methods, but we should semant them as well because we didn't do it the first time */
+        /* GUY - now cT contains the TYPE_CLASS *WITH* all the members and methods, but we should semant them as well because we didn't do it the first time */
 		SYMBOL_TABLE.getInstance().endScope();
-		SYMBOL_TABLE.getInstance().beginScope();
+		SYMBOL_TABLE.getInstance().beginClassScope(cT);
 		SYMBOL_TABLE.getInstance().enter(className,cT);
-                /* passing false tells the SemantMe's to Semant everything recursively */
-                cT = this.SemantClassMembers(false, (TYPE_CLASS)extendsType);
+        /* passing false tells the SemantMe's to Semant everything recursively */
+        cT = this.SemantClassMembers(false, (TYPE_CLASS)extendsType);
 
 		/*****************/
 		/* [5] End Scope */

@@ -81,4 +81,17 @@ public class TYPE_CLASS extends TYPE
 		}
 		return true;
 	}
+	
+	public TYPE getField(String name){
+		TYPE_VAR_DEC currentVar = null;
+		for (TYPE_CLASS classType = this; classType != null ; classType = classType.father) {
+			for (TYPE_LIST varList = classType.data_members; varList  != null; varList = varList.tail){
+                    currentVar = (TYPE_VAR_DEC)varList.head;
+                    if (currentVar.name.equals(name)) {
+						return varList.head;
+                    }
+            }
+		}
+		return null;
+	}
 }
