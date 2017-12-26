@@ -68,11 +68,8 @@ public class AST_STMT_LIST extends AST_Node
 		TYPE headType = null,tailType;
 		if (head != null) headType = head.SemantMe();
 		if (tail != null) tailType = tail.SemantMe();
-		if((headType instanceof TYPE_RETURN) && tail != null) {
-			throw new AST_EXCEPTION("Unreachable code\n", this.lineNum);
-		} else {
-			return headType;
-		}
+
+		return headType;
 
 	}
 }
