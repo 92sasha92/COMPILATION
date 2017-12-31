@@ -1,0 +1,61 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+.text
+main:
+	addi $fp,$sp,40
+	addi $t0,$fp,-4
+	addi $t1,$fp,-8
+	addi $t2,$fp,-12
+	addi $t3,$fp,-12
+	addi $t4,$fp,-8
+	addi $t5,$fp,-12
+	li $t6,6
+	sw $t6,0($t0)
+	li $t6,8
+	sw $t6,0($t1)
+	li $t6,9
+	sw $t6,0($t2)
+	lw $t6,0($t3)
+	lw $t0,0($t4)
+	li $t1,32767
+	sub $t2,$t6,$t0
+	blt $t1,$t2,Label_1_overflow
+	bge $t1,$t2,Label_2_no_overflow
+Label_1_overflow:
+	li $t3,32767
+	j Label_0_end
+Label_2_no_overflow:
+	sub $t3,$t6,$t0
+	j Label_0_end
+Label_0_end:
+	lw $t4,0($t5)
+	li $t5,32767
+	add $t0,$t3,$t4
+	blt $t5,$t0,Label_4_overflow
+	bge $t5,$t0,Label_5_no_overflow
+Label_4_overflow:
+	li $t7,32767
+	j Label_3_end
+Label_5_no_overflow:
+	add $t7,$t3,$t4
+	j Label_3_end
+Label_3_end:
+	li $t0,55
+	li $t1,32767
+	add $t2,$t7,$t0
+	blt $t1,$t2,Label_7_overflow
+	bge $t1,$t2,Label_8_no_overflow
+Label_7_overflow:
+	li $t3,32767
+	j Label_6_end
+Label_8_no_overflow:
+	add $t3,$t7,$t0
+	j Label_6_end
+Label_6_end:
+	move $a0,$t3
+	li $v0,1
+	syscall
+	li $v0,10
+	syscall

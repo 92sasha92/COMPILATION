@@ -1,0 +1,244 @@
+/*************/
+/* IMPORT(S) */
+/*************/
+import java_cup.runtime.*;
+import AST.*;
+
+parser code 
+{:
+	public Lexer lexer;
+
+	public Parser(Lexer lexer)
+	{
+		super(lexer);
+		this.lexer = lexer;
+	}
+:}
+
+/************************/
+/* CUSTOMIZE CUP PARSER */
+/************************/
+scan with
+{:
+	Symbol s;
+	s = lexer.next_token();
+	//System.out.print(s.sym);
+	System.out.print(TokenNames.terminalNames[s.sym]);
+	if (s.value != null)
+	{
+		System.out.print("( ");
+		System.out.print(s.value);
+		System.out.print(" )");
+	}
+	System.out.print("\n");
+	return s; 
+:};
+
+/*************/
+/* TERMINALS */
+/*************/
+terminal IF;
+terminal EQ;
+terminal DOT;
+terminal PLUS;
+terminal MINUS;
+terminal TIMES;
+terminal WHILE;
+terminal DIVIDE;
+terminal LPAREN;
+terminal RPAREN;
+terminal LBRACK;
+terminal RBRACK;
+terminal LBRACE;
+terminal RBRACE;
+terminal SEMICOLON;
+terminal ASSIGN;
+terminal CLASS;
+terminal EXTENDS;
+terminal COMMA;
+terminal ARRAY;
+terminal LT;
+terminal GT;
+terminal NIL;
+terminal NEW;
+terminal RETURN;
+
+/*************/
+/* TERMINALS */
+/*************/
+terminal Integer INT;
+terminal String ID;
+terminal String STRING;
+terminal UMINUS;
+
+
+
+/*****************/
+/* NON TERMINALS */
+/*****************/
+non terminal AST_DEC		dec;
+non terminal AST_DEC_VAR	varDec;
+non terminal AST_DEC_FUNC	funcDec;
+non terminal AST_DEC_CLASS	classDec;
+non terminal AST_ID Id;
+non terminal AST_DEC_ARRAY arrayDec;
+non terminal AST_DEC_LIST	decList;
+
+
+/*****************/
+/* NON TERMINALS */
+/*****************/
+non terminal AST_STMT stmt;
+non terminal AST_STMT_METHOD methodStmt;
+non terminal AST_STMT_LIST stmtList;
+non terminal AST_STMT_CALL callStmt;
+
+/*****************/
+/* NON TERMINALS */
+/*****************/
+non terminal AST_TYPE_NAME		typeName;
+non terminal AST_TYPE_NAME_LIST	typeNameListComma;
+
+
+/*****************/
+/* NON TERMINALS */
+/*****************/
+non terminal AST_EXP exp;
+non terminal AST_EXP_VAR    varExp;
+non terminal AST_EXP_CALL	callExp;
+non terminal AST_EXP_BINOP	binopExp;
+non terminal AST_EXP_NEW    newExp;
+non terminal AST_EXP_LIST   expList;
+non terminal AST_EXP_METHOD methodExp;
+
+/*****************/
+/* NON TERMINALS */
+/*****************/
+non terminal AST_CFIELD_LIST cFieldList;
+non terminal AST_CFIELD cField;
+
+/***********************/
+/* OPERATOR PRECEDENCE */
+/***********************/
+precedence nonassoc ASSIGN;
+precedence nonassoc EQ;
+precedence left GT;
+precedence left LT;
+precedence left PLUS;
+precedence left MINUS;
+precedence left TIMES;
+precedence left DIVIDE;
+precedence left UMINUS;
+
+
+/************************/
+/* START WITH: decList */
+/************************/
+start with decList;
+
+/********************/
+/* DERIVATION RULES */
+/********************/
+
+decList		::=		dec:d decList:l		{: RESULT = new AST_DEC_LIST(d,l); RESULT.lineNum = d.lineNum;:}
+					| dec:d				{: RESULT = new AST_DEC_LIST(d,null); RESULT.lineNum = d.lineNum;:}
+					;
+					
+dec			::=		funcDec:d    {: RESULT = d;  :}
+					| varDec:d   {: RESULT = d;  :}
+					| classDec:d {: RESULT = d;  :} 
+					| arrayDec:d {: RESULT = d;  :}
+					;
+					
+cField		::=		varDec:v	  {: RESULT = new AST_CFIELD(v, null); RESULT.lineNum = v.lineNum;:}
+					|funcDec:f    {: RESULT = new AST_CFIELD(null, f); RESULT.lineNum = f.lineNum;:}
+					;
+
+varDec		::=		typeName:t ASSIGN exp:e SEMICOLON {: RESULT = new AST_DEC_VAR(t.type, t.name, e); RESULT.lineNum = e.lineNum; :}
+					| typeName:t SEMICOLON            {: RESULT = new AST_DEC_VAR(t.type, t.name, null); RESULT.lineNum = t.lineNum; :}
+					;
+					
+typeName				::=		ID:type ID:name									{: RESULT = new AST_TYPE_NAME(type,name);  RESULT.lineNum = lexer.getLine();  :};
+typeNameListComma		::=		typeName:tn COMMA typeNameListComma:tnl			{: RESULT = new AST_TYPE_NAME_LIST(tn,tnl); RESULT.lineNum = lexer.getLine(); :}
+								| typeName:tn									{: RESULT = new AST_TYPE_NAME_LIST(tn,null); RESULT.lineNum = lexer.getLine();:};
+
+cFieldList	::=		cField:f cFieldList:l		{: RESULT = new AST_CFIELD_LIST(f, l);  RESULT.lineNum = f.lineNum;   :}
+				    | cField:f				    {: RESULT = new AST_CFIELD_LIST(f, null);   RESULT.lineNum = f.lineNum;   :}
+					;					
+					
+funcDec		::=		typeName:t LPAREN typeNameListComma:l RPAREN LBRACE stmtList:s RBRACE	    {: RESULT = new AST_DEC_FUNC(t.type, t.name, l, s); RESULT.lineNum = t.lineNum;:}
+                    | typeName:t LPAREN RPAREN LBRACE stmtList:s RBRACE	                        {: RESULT = new AST_DEC_FUNC(t.type, t.name, null, s); RESULT.lineNum = t.lineNum;:}
+					;	
+
+classDec	::=		CLASS Id:id EXTENDS ID:n2 LBRACE cFieldList:l RBRACE 	{: RESULT = new AST_DEC_CLASS(id.name, n2, l); RESULT.lineNum = id.lineNum;:}
+					|CLASS Id:id LBRACE cFieldList:l RBRACE 	            {: RESULT = new AST_DEC_CLASS(id.name, null, l); RESULT.lineNum = id.lineNum;:}
+					;
+
+Id          ::=     ID:name    {: RESULT = new AST_ID(name); RESULT.lineNum = lexer.getLine();    :};
+					
+arrayDec	::=		ARRAY Id:id EQ ID:type LBRACK RBRACK {: RESULT = new AST_DEC_ARRAY(id.name, type); RESULT.lineNum = id.lineNum;:}
+					;
+					
+stmtList	::=		stmt:s stmtList:l		{: RESULT = new AST_STMT_LIST(s,l);   RESULT.lineNum = s.lineNum; :}
+					| stmt:s				{: RESULT = new AST_STMT_LIST(s,null); RESULT.lineNum = s.lineNum;:}
+					;
+
+expList 	::=		 exp:e COMMA expList:el		    {: RESULT = new AST_EXP_LIST(e,el); RESULT.lineNum = e.lineNum;:}
+					| exp:e				            {: RESULT = new AST_EXP_LIST(e,null); RESULT.lineNum = e.lineNum;:}
+					;
+					
+exp			::=		varExp:v											{: RESULT = v;          :}
+                    | LPAREN exp:e RPAREN								{: RESULT = new AST_EXP_PARENS(e); RESULT.lineNum = e.lineNum; :}
+					| binopExp:e	                                    {: RESULT = e; :}
+					| methodExp:m										{: RESULT = m; :}
+					| callExp:e				                            {: RESULT = e;          			     :}
+					| INT:i												{: RESULT = new AST_EXP_INT(i);   RESULT.lineNum = lexer.getLine();       :}
+					| MINUS INT:i		                                {: RESULT = new AST_EXP_INT(-i);  RESULT.lineNum = lexer.getLine();       :}
+					| NIL	                                            {: RESULT = new AST_EXP_NIL();   RESULT.lineNum = lexer.getLine();               		 :}
+					| STRING:s		                                    {: RESULT = new AST_EXP_STRING(s);  RESULT.lineNum = lexer.getLine();     :}
+					| newExp:e                                          {: RESULT = e; :}
+					;
+
+methodExp   ::=      varExp:v DOT ID:m LPAREN expList:el RPAREN	    {: RESULT = new AST_EXP_METHOD(v, m, el);    RESULT.lineNum = v.lineNum;  :}
+					| varExp:v DOT ID:m LPAREN RPAREN				{: RESULT = new AST_EXP_METHOD(v, m, null); RESULT.lineNum = v.lineNum;   :}
+                    ; 	
+					
+varExp			::=	ID:name								{: RESULT = new AST_EXP_VAR_SIMPLE(name);   RESULT.lineNum = lexer.getLine();    :}
+					| varExp:v DOT ID:fieldName			{: RESULT = new AST_EXP_VAR_FIELD(v,fieldName); RESULT.lineNum = v.lineNum; :} 
+					| varExp:v LBRACK exp:e RBRACK		{: RESULT = new AST_EXP_VAR_INDEX(v,e);   RESULT.lineNum = v.lineNum;  :} 
+					;
+
+newExp			::=  NEW Id:id		                                {: RESULT = new AST_EXP_NEW(id.name, null); RESULT.lineNum = id.lineNum; :}
+					 | NEW Id:id LBRACK exp:e RBRACK	 		        {: RESULT = new AST_EXP_NEW(id.name, e);  RESULT.lineNum = id.lineNum;  :}
+					;
+binopExp	::=		  exp:e1 PLUS  exp:e2			{: RESULT = new AST_EXP_BINOP(e1, e2, 0); RESULT.lineNum = lexer.getLine();:}
+					| exp:e1 MINUS exp:e2			{: RESULT = new AST_EXP_BINOP(e1, e2, 1); RESULT.lineNum = lexer.getLine();:}
+					| exp:e1 TIMES exp:e2			{: RESULT = new AST_EXP_BINOP(e1, e2, 2); RESULT.lineNum = lexer.getLine();:}
+					| exp:e1 DIVIDE exp:e2			{: RESULT = new AST_EXP_BINOP(e1, e2, 3); RESULT.lineNum = lexer.getLine();:}
+					| exp:e1 LT exp:e2				{: RESULT = new AST_EXP_BINOP(e1, e2, 4); RESULT.lineNum = lexer.getLine();:}
+					| exp:e1 GT exp:e2				{: RESULT = new AST_EXP_BINOP(e1, e2, 5); RESULT.lineNum = lexer.getLine();:}
+					| exp:e1 EQ exp:e2				{: RESULT = new AST_EXP_BINOP(e1, e2, 6); RESULT.lineNum = lexer.getLine();:}
+					;
+					
+callExp		::=		Id:funcName LPAREN expList:el RPAREN	{: RESULT = new AST_EXP_CALL(funcName.name, el);    RESULT.lineNum = funcName.lineNum; :}
+                    | Id:funcName LPAREN RPAREN				{: RESULT = new AST_EXP_CALL(funcName.name, null); RESULT.lineNum = funcName.lineNum;  :}
+					;
+					
+stmt		::=		varExp:v ASSIGN exp:e SEMICOLON								{: RESULT = new AST_STMT_ASSIGN(v,e);   RESULT.lineNum = v.lineNum;   :}
+					| IF    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_IF(   cond,body); RESULT.lineNum = cond.lineNum;:}
+					| WHILE LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_WHILE(cond,body); RESULT.lineNum = cond.lineNum;:}
+					| varDec:v	                                                {: RESULT = new AST_STMT_DEC_VAR(v);   RESULT.lineNum = v.lineNum;    :}
+					| RETURN exp:e SEMICOLON	                                {: RESULT = new AST_STMT_RETURN(e);   RESULT.lineNum = e.lineNum;     :}
+					| RETURN SEMICOLON	                                        {: RESULT = new AST_STMT_RETURN(null); RESULT.lineNum = lexer.getLine();    :}
+					| methodStmt:m                                              {: RESULT = m;          			       :}
+					| callStmt:c                                                {: RESULT = c;          			       :}
+					;
+
+methodStmt     ::=   varExp:v DOT ID:m LPAREN expList:el RPAREN	SEMICOLON		{: RESULT = new AST_STMT_METHOD(v, m, el);    RESULT.lineNum = v.lineNum;    :}
+					| varExp:v DOT ID:m LPAREN RPAREN SEMICOLON				    {: RESULT = new AST_STMT_METHOD(v, m, null);   RESULT.lineNum = v.lineNum;   :}
+                    ;   
+
+callStmt      ::=	callExp:ce SEMICOLON		    {: RESULT = new AST_STMT_CALL(ce);    RESULT.lineNum = ce.lineNum; :};
+
+					
+							

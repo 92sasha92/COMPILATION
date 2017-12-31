@@ -1,0 +1,33 @@
+int h := 90;
+int l := 90;
+array IntArray = int[]
+class Father {
+    int foo(int a) {
+    return 9;
+    }
+}
+
+void main() {
+Father f := new Father;
+f.foo(34);
+}
+
+string g(int h, string k, string p){
+	string l := "90";
+	if(4) {
+		int o := 65;
+	}
+}
+
+int IsPrime(int p)
+{
+    int i := 2;
+    string j := g(4, "sdsd", "fdsfd", 5656);
+    
+    while (5 = 5)
+    {
+		int j := 2;
+		int u := 8;
+    }
+	return 4;
+}

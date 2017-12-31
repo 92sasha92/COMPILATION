@@ -1,0 +1,5 @@
+class UseBeforedef
+{
+	void foo(){ PrintInt(i); }
+	int i;
+}

@@ -1,0 +1,90 @@
+digraph
+{
+graph [ordering = "out"]
+v2 [label = "INT(6)"];
+v3 [label = "VAR
+DEC(i)
+:int"];
+v3 -> v2;
+v4 [label = "STMT
+DEC
+VAR"];
+v4 -> v3;
+v6 [label = "INT(8)"];
+v7 [label = "VAR
+DEC(j)
+:int"];
+v7 -> v6;
+v8 [label = "STMT
+DEC
+VAR"];
+v8 -> v7;
+v10 [label = "INT(9)"];
+v11 [label = "VAR
+DEC(k)
+:int"];
+v11 -> v10;
+v12 [label = "STMT
+DEC
+VAR"];
+v12 -> v11;
+v13 [label = "SIMPLE
+VAR
+(k)"];
+v14 [label = "SIMPLE
+VAR
+(j)"];
+v15 [label = "BINOP(-)"];
+v15 -> v13;
+v15 -> v14;
+v16 [label = "(exp)
+"];
+v16 -> v15;
+v17 [label = "SIMPLE
+VAR
+(k)"];
+v18 [label = "BINOP(+)"];
+v18 -> v16;
+v18 -> v17;
+v19 [label = "INT(55)"];
+v20 [label = "BINOP(+)"];
+v20 -> v18;
+v20 -> v19;
+v21 [label = "EXP
+LIST
+"];
+v21 -> v20;
+v22 [label = "CALL(PrintInt)
+WITH"];
+v22 -> v21;
+v23 [label = "STMT
+CALL"];
+v23 -> v22;
+v24 [label = "STMT
+LIST
+"];
+v24 -> v23;
+v25 [label = "STMT
+LIST
+"];
+v25 -> v12;
+v25 -> v24;
+v26 [label = "STMT
+LIST
+"];
+v26 -> v8;
+v26 -> v25;
+v27 [label = "STMT
+LIST
+"];
+v27 -> v4;
+v27 -> v26;
+v28 [label = "FUNC(main)
+:int
+"];
+v28 -> v27;
+v29 [label = "DEC
+LIST
+"];
+v29 -> v28;
+}
