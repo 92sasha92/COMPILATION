@@ -87,9 +87,12 @@ public class AST_STMT_IF extends AST_STMT
 	
 	public TEMP IRme(){
 		TEMP t = cond.IRme();
-		
-		IR.getInstance().Add_IRcommand(new IRcommand_If(t));
-		
+		String label = "endIf";
+		IRcommand_If temp = new IRcommand_If(t, label);
+		label = temp.getLabel();
+		IR.getInstance().Add_IRcommand(temp);
+		body.IRme();
+		IR.getInstance().Add_IRcommand(new IRcommand_addLabel(label));
 		return null;
 	}
 }

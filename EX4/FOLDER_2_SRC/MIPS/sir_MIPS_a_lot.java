@@ -114,6 +114,12 @@ public class sir_MIPS_a_lot
 		
 		fileWriter.format("\tbeq Temp_%d,Temp_%d,%s\n",i1,i2,label);				
 	}
+	public void beq(TEMP oprnd1,String label)
+	{
+		int i1 =oprnd1.getSerialNumber();
+		
+		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,label);				
+	}
 	public void bne(TEMP oprnd1,TEMP oprnd2,String label)
 	{
 		int i1 =oprnd1.getSerialNumber();
