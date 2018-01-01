@@ -13,13 +13,13 @@ package IR;
 import TEMP.*;
 import MIPS.*;
 
-public class IRcommand_Binop_LT_Integers extends IRcommand
+public class IRcommand_Binop_EQ_Integers extends IRcommand
 {
 	public TEMP t1;
 	public TEMP t2;
 	public TEMP dst;
 
-	public IRcommand_Binop_LT_Integers(TEMP dst,TEMP t1,TEMP t2)
+	public IRcommand_Binop_EQ_Integers(TEMP dst,TEMP t1,TEMP t2)
 	{
 		this.dst = dst;
 		this.t1 = t1;
@@ -39,11 +39,11 @@ public class IRcommand_Binop_LT_Integers extends IRcommand
 		String label_AssignZero = getFreshLabel("AssignZero");
 		
 		/******************************************/
-		/* [2] if (t1< t2) goto label_AssignOne;  */
-		/*     if (t1>=t2) goto label_AssignZero; */
+		/* [2] if (t1 = t2) goto label_AssignOne;  */
+		/*     if (t1 != t2) goto label_AssignZero; */
 		/******************************************/
-		sir_MIPS_a_lot.getInstance().blt(t1,t2,label_AssignOne);
-		sir_MIPS_a_lot.getInstance().bge(t1,t2,label_AssignZero);
+		sir_MIPS_a_lot.getInstance().beq(t1,t2,label_AssignOne);
+		sir_MIPS_a_lot.getInstance().bne(t1,t2,label_AssignZero);
 
 		/************************/
 		/* [3] label_AssignOne: */
@@ -59,7 +59,7 @@ public class IRcommand_Binop_LT_Integers extends IRcommand
 		/*************************/
 		/* [4] label_AssignZero: */
 		/*                       */
-		/*         t3 := 1       */
+		/*         t3 := 0       */
 		/*         goto end;     */
 		/*                       */
 		/*************************/

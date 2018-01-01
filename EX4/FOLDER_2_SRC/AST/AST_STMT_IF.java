@@ -2,6 +2,8 @@ package AST;
 
 import TYPES.*;
 import SYMBOL_TABLE.*;
+import TEMP.*;
+import IR.*;
 
 public class AST_STMT_IF extends AST_STMT
 {
@@ -82,4 +84,12 @@ public class AST_STMT_IF extends AST_STMT
 		/*********************************************************/
 		return null;		
 	}	
+	
+	public TEMP IRme(){
+		TEMP t = cond.IRme();
+		
+		IR.getInstance().Add_IRcommand(new IRcommand_If(t));
+		
+		return null;
+	}
 }
