@@ -38,6 +38,22 @@ public class sir_MIPS_a_lot
 		fileWriter.format("\tli $v0,1\n");
 		fileWriter.format("\tsyscall\n");
 	}
+	public void print_string(TEMP t)
+	{
+		int idx=t.getSerialNumber();
+		// fileWriter.format("\taddi $a0,Temp_%d,0\n",idx);
+		fileWriter.format("\tmove $a0,Temp_%d\n",idx);
+		fileWriter.format("\tli $v0,4\n");
+		fileWriter.format("\tsyscall\n");
+	}
+        // returned address is in $v0 when done
+        public void malloc(int size) {
+	    fileWriter.format("\tli $a0,%d\n",size);
+	    fileWriter.format("\tli $v0,9\n");
+	    fileWriter.format("\tsyscall\n");
+            
+        }
+
 	public TEMP addressLocalVar(int serialLocalVarNum)
 	{
 		TEMP t  = TEMP_FACTORY.getInstance().getFreshTEMP();
@@ -64,6 +80,13 @@ public class sir_MIPS_a_lot
 		int idx=t.getSerialNumber();
 		fileWriter.format("\tli Temp_%d,%d\n",idx,value);
 	}
+        public void load_string(TEMP t, String value) {
+		int idx=t.getSerialNumber();
+		fileWriter.format("\t.data\n");
+		fileWriter.format("\tstr1: .asciiz %s\n",value);
+		fileWriter.format("\t.text\n");
+		fileWriter.format("\tla Temp_%d,str1\n",idx);
+        }
 	public void add(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
 		int i1 =oprnd1.getSerialNumber();
