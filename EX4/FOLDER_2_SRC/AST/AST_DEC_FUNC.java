@@ -74,7 +74,7 @@ public class AST_DEC_FUNC extends AST_DEC
 
 	public TEMP IRme()
 	{
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		
 		if (body != null) body.IRme();
 
 		return null;
