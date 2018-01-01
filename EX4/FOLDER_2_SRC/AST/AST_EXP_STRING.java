@@ -1,6 +1,8 @@
 package AST;
 
 import TYPES.*;
+import TEMP.*;
+import IR.*;
 
 public class AST_EXP_STRING extends AST_EXP
 {
@@ -17,7 +19,7 @@ public class AST_EXP_STRING extends AST_EXP
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
 		System.out.format("====================== exp -> STRING( %s )\n", value);
-		this.value = value;
+		this.value = value.replace("\"","");
 	}
 
 	/******************************************************/
@@ -40,5 +42,12 @@ public class AST_EXP_STRING extends AST_EXP
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
 		return TYPE_STRING.getInstance();
-	}
+        }
+        public TEMP IRme()
+        {
+            System.out.println("@@@@@@@@@@@@@@@@@: "+ this.value);
+            TEMP t = TEMP_FACTORY.getInstance().getFreshTEMP();
+            IR.getInstance().Add_IRcommand(new IRcommandConstString(t,value));
+            return t;
+        }
 }

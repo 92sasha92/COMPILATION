@@ -16,6 +16,7 @@ import TEMP.*;
 public class sir_MIPS_a_lot
 {
 	private int WORD_SIZE=4;
+        private int asciizIndex=0;
 	/***********************/
 	/* The file writer ... */
 	/***********************/
@@ -46,11 +47,17 @@ public class sir_MIPS_a_lot
 		fileWriter.format("\tli $v0,4\n");
 		fileWriter.format("\tsyscall\n");
 	}
-        // returned address is in $v0 when done
-        public void malloc(int size) {
-	    fileWriter.format("\tli $a0,%d\n",size);
-	    fileWriter.format("\tli $v0,9\n");
+
+        public TEMP malloc(int size) {
+            TEMP t  = TEMP_FACTORY.getInstance().getFreshTEMP();
+            int idx = t.getSerialNumber();
+
+            fileWriter.format("\tli $a0,%d\n",size);
+            fileWriter.format("\tli $v0,9\n");
 	    fileWriter.format("\tsyscall\n");
+            // address is now in $v0, moving to the Temp
+	    fileWriter.format("\tmove Temp_%d,$v0\n",idx);
+            return t;
             
         }
 
@@ -63,29 +70,65 @@ public class sir_MIPS_a_lot
 		
 		return t;
 	}
-	public void load(TEMP dst,TEMP src)
+        public void move(TEMP dst,TEMP src) {
+		int idxdst=dst.getSerialNumber();
+		int idxsrc=src.getSerialNumber();
+		fileWriter.format("\tmove Temp_%d,Temp_%d\n",idxdst,idxsrc);		
+        }
+        public void load(TEMP dst,TEMP src)
+	{
+            load(dst,src,0);
+	}
+        public void load(TEMP dst,TEMP src, int offset)
 	{
 		int idxdst=dst.getSerialNumber();
 		int idxsrc=src.getSerialNumber();
-		fileWriter.format("\tlw Temp_%d,0(Temp_%d)\n",idxdst,idxsrc);		
+		fileWriter.format("\tlw Temp_%d,%d(Temp_%d)\n",idxsrc,offset, idxdst);		
 	}
+	public void load_byte(TEMP dst,TEMP src)
+	{
+            load_byte(dst,src,0);
+        }
+	public void load_byte(TEMP dst,TEMP src, int offset)
+        {
+		int idxdst=dst.getSerialNumber();
+		int idxsrc=src.getSerialNumber();
+		fileWriter.format("\tlb Temp_%d,%d(Temp_%d)\n",idxsrc,offset,idxdst);		
+        }
+
 	public void store(TEMP dst,TEMP src)
 	{
+            store(dst,src,0);
+	}
+        public void store(TEMP dst,TEMP src, int offset)
+	{
 		int idxdst=dst.getSerialNumber();
 		int idxsrc=src.getSerialNumber();
-		fileWriter.format("\tsw Temp_%d,0(Temp_%d)\n",idxsrc,idxdst);		
+		fileWriter.format("\tsw Temp_%d,%d(Temp_%d)\n",idxsrc,offset, idxdst);		
 	}
+	public void store_byte(TEMP dst,TEMP src)
+	{
+            store_byte(dst,src,0);
+        }
+	public void store_byte(TEMP dst,TEMP src, int offset)
+        {
+		int idxdst=dst.getSerialNumber();
+		int idxsrc=src.getSerialNumber();
+		fileWriter.format("\tsb Temp_%d,%d(Temp_%d)\n",idxsrc,offset,idxdst);		
+        }
 	public void li(TEMP t,int value)
 	{
 		int idx=t.getSerialNumber();
 		fileWriter.format("\tli Temp_%d,%d\n",idx,value);
 	}
-        public void load_string(TEMP t, String value) {
+        public void load_string(TEMP t, String value) 
+        {
 		int idx=t.getSerialNumber();
 		fileWriter.format("\t.data\n");
-		fileWriter.format("\tstr1: .asciiz %s\n",value);
+		fileWriter.format("\tstr%d: .asciiz \"%s\"\n",asciizIndex, value);
 		fileWriter.format("\t.text\n");
-		fileWriter.format("\tla Temp_%d,str1\n",idx);
+		fileWriter.format("\tla Temp_%d,str%d\n",idx,asciizIndex);
+                asciizIndex++;
         }
 	public void add(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
@@ -95,6 +138,20 @@ public class sir_MIPS_a_lot
 
 		fileWriter.format("\tadd Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
 	}
+        public void addi(TEMP dst,TEMP oprnd1,int imm)
+	{
+		int i1 =oprnd1.getSerialNumber();
+		int dstidx=dst.getSerialNumber();
+
+		fileWriter.format("\taddi Temp_%d,Temp_%d,%d\n",dstidx,i1,imm);
+	}
+        public TEMP initializeRegToZero() {
+            TEMP t  = TEMP_FACTORY.getInstance().getFreshTEMP();
+            int idx = t.getSerialNumber();
+	    fileWriter.format("\tadd Temp_%d,$zero,$zero\n",idx);
+            return t;
+
+        }
 	public void sub(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
 		int i1 =oprnd1.getSerialNumber();
@@ -136,6 +193,12 @@ public class sir_MIPS_a_lot
 		int i2 =oprnd2.getSerialNumber();
 		
 		fileWriter.format("\tbeq Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+	}
+	public void beq(TEMP oprnd1,String label)
+	{
+		int i1 =oprnd1.getSerialNumber();
+		
+		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,label);				
 	}
 	public void bne(TEMP oprnd1,TEMP oprnd2,String label)
 	{

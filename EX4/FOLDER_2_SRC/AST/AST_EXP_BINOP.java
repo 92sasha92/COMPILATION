@@ -141,8 +141,14 @@ public class AST_EXP_BINOP extends AST_EXP
 		if (right != null) t2 = right.IRme();
 		switch(OP){
 			case 0:
+                            if (left instanceof AST_EXP_INT && right instanceof AST_EXP_INT) {
 				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(dst,t1,t2));
 				break;
+                            }
+                            if (left instanceof AST_EXP_STRING && right instanceof AST_EXP_STRING) {
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst,t1,t2, ((AST_EXP_STRING)left).value.length(),((AST_EXP_STRING)right).value.length()));
+                                break;
+                            }
 			case 1:
 				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Sub_Integers(dst,t1,t2));
 				break;
