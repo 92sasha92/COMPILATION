@@ -1,7 +1,7 @@
 package AST;
 
 import TYPES.*;
-import TEMP.*;
+import Temp.*;
 import IR.*;
 
 public class AST_EXP_STRING extends AST_EXP
@@ -43,10 +43,10 @@ public class AST_EXP_STRING extends AST_EXP
 	{
 		return TYPE_STRING.getInstance();
         }
-        public TEMP IRme()
+        public Temp IRme()
         {
             System.out.println("@@@@@@@@@@@@@@@@@: "+ this.value);
-            TEMP t = TEMP_FACTORY.getInstance().getFreshTEMP();
+            Temp t = Temp_FACTORY.getInstance().getFreshTemp();
             IR.getInstance().Add_IRcommand(new IRcommandConstString(t,value));
             return t;
         }

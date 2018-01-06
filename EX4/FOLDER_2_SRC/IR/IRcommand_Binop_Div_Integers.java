@@ -10,16 +10,16 @@ package IR;
 /*******************/
 /* PROJECT IMPORTS */
 /*******************/
-import TEMP.*;
+import Temp.*;
 import MIPS.*;
 
 public class IRcommand_Binop_Div_Integers extends IRcommand
 {
-	public TEMP t1;
-	public TEMP t2;
-	public TEMP dst;
+	public Temp t1;
+	public Temp t2;
+	public Temp dst;
 	
-	public IRcommand_Binop_Div_Integers(TEMP dst,TEMP t1,TEMP t2)
+	public IRcommand_Binop_Div_Integers(Temp dst,Temp t1,Temp t2)
 	{
 		this.dst = dst;
 		this.t1 = t1;
@@ -33,13 +33,13 @@ public class IRcommand_Binop_Div_Integers extends IRcommand
 		/******************************************************/
 		/* [0] Allocate a fresh temporary t4 for the division */
 		/******************************************************/
-		TEMP t1_div_t2 = TEMP_FACTORY.getInstance().getFreshTEMP();
+		Temp t1_div_t2 = Temp_FACTORY.getInstance().getFreshTemp();
 
 		/******************************************/
 		/* [1] Allocate a fresh temporary INT_MAX */
 		/******************************************/
-		TEMP intMax = TEMP_FACTORY.getInstance().getFreshTEMP();
-		TEMP intMin = TEMP_FACTORY.getInstance().getFreshTEMP();
+		Temp intMax = Temp_FACTORY.getInstance().getFreshTemp();
+		Temp intMin = Temp_FACTORY.getInstance().getFreshTemp();
 		/************************************/
 		/* [2] intMax := 32767 (= 2^15 - 1) */
 		/*	   intMin := -32768 (= -2^15)	*/

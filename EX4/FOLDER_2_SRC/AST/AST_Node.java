@@ -1,6 +1,6 @@
 package AST;
 
-import TEMP.*;
+import Temp.*;
 import TYPES.*;
 import SYMBOL_TABLE.*;
 
@@ -25,7 +25,7 @@ public abstract class AST_Node
 	/*****************************************/
 	/* The default IR action for an AST node */
 	/*****************************************/
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		return null;
 	}

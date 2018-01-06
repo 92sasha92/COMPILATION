@@ -1,6 +1,6 @@
 package AST;
 
-import TEMP.*;
+import Temp.*;
 
 public class AST_EXP_LIST extends AST_Node
 {
@@ -23,7 +23,7 @@ public class AST_EXP_LIST extends AST_Node
 		this.head = head;
 		this.tail = tail;
 	}
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		return head.IRme();
 	}

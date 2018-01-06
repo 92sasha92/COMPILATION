@@ -1,7 +1,7 @@
 /***********/
 /* PACKAGE */
 /***********/
-package TEMP;
+package Temp;
 
 /*******************/
 /* GENERAL IMPORTS */
@@ -11,36 +11,48 @@ package TEMP;
 /* PROJECT IMPORTS */
 /*******************/
 
-public class TEMP_FACTORY
+public class Temp_FACTORY
 {
-	private int counter=0;
+        private enum reservedTemps 
+        {
+            zero(0), fp(1), sp(2), ra(3);
+            private final int value;
+            private reservedTemps(int value) {
+            this.value = value;
+        }
+        }
+
+	private int counter = 4; // should be the last value in the enum + 1
 	
-	public TEMP getFreshTEMP()
+	public Temp getFreshTemp()
 	{
-		return new TEMP(counter++);
+		return new Temp(counter++);
 	}
 	
+        public int getReservedTempNumber(String registerName) {
+            return reservedTemps.valueOf(registerName).value;
+        }
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
-	private static TEMP_FACTORY instance = null;
+	private static Temp_FACTORY instance = null;
 
 	/*****************************/
 	/* PREVENT INSTANTIATION ... */
 	/*****************************/
-	protected TEMP_FACTORY() {}
+	protected Temp_FACTORY() {}
 
 	/******************************/
 	/* GET SINGLETON INSTANCE ... */
 	/******************************/
-	public static TEMP_FACTORY getInstance()
+	public static Temp_FACTORY getInstance()
 	{
 		if (instance == null)
 		{
 			/*******************************/
 			/* [0] The instance itself ... */
 			/*******************************/
-			instance = new TEMP_FACTORY();
+			instance = new Temp_FACTORY();
 		}
 		return instance;
 	}

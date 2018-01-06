@@ -1,7 +1,7 @@
 package AST;
 
 import TYPES.*;
-import TEMP.*;
+import Temp.*;
 
 public class AST_STMT_LIST extends AST_Node
 {
@@ -74,7 +74,7 @@ public class AST_STMT_LIST extends AST_Node
 
 	}
 	
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		if (head != null) head.IRme();
 		if (tail != null) tail.IRme();

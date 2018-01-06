@@ -1,6 +1,6 @@
 package AST;
 
-import TEMP.*;
+import Temp.*;
 import TYPES.*;
 
 public class AST_STMT_DEC_VAR extends AST_STMT
@@ -45,7 +45,7 @@ public class AST_STMT_DEC_VAR extends AST_STMT
 		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);		
 	}
 	
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		return var.IRme();
 	}

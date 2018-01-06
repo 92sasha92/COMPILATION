@@ -2,7 +2,7 @@ package AST;
 
 import TYPES.*;
 import SYMBOL_TABLE.*;
-import TEMP.*;
+import Temp.*;
 
 public class AST_STMT_CALL extends AST_STMT
 {
@@ -56,7 +56,7 @@ public class AST_STMT_CALL extends AST_STMT
 		return expCall.SemantMe();
 	}
 	
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		if (expCall != null) expCall.IRme();
 		

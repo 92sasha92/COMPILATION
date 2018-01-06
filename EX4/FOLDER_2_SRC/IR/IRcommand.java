@@ -2,6 +2,7 @@
 /* PACKAGE */
 /***********/
 package IR;
+import Temp.*;
 
 /*******************/
 /* GENERAL IMPORTS */
@@ -19,7 +20,8 @@ public abstract class IRcommand
 	protected static int label_counter=0;
 	protected String getFreshLabel(String msg)
 	{
-		return String.format("Label_%d_%s",label_counter++,msg);
+            return Label.getLabel(String.format("Label_%s_",msg)).name;
+		// return String.format("Label_%d_%s",label_counter++,msg);
 	}
 
 	/***************/

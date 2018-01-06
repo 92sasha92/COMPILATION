@@ -2,7 +2,7 @@ package AST;
 
 import TYPES.*;
 import SYMBOL_TABLE.*;
-import TEMP.*;
+import Temp.*;
 import IR.*;
 
 public class AST_STMT_IF extends AST_STMT
@@ -85,8 +85,8 @@ public class AST_STMT_IF extends AST_STMT
 		return null;		
 	}	
 	
-	public TEMP IRme(){
-		TEMP t = cond.IRme();
+	public Temp IRme(){
+		Temp t = cond.IRme();
 		String label = "endIf";
 		IRcommand_If temp = new IRcommand_If(t, label);
 		label = temp.getLabel();

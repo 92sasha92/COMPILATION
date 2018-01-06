@@ -1,7 +1,7 @@
 package AST;
 
 import TYPES.*;
-import TEMP.*;
+import Temp.*;
 import IR.*;
 
 public class AST_EXP_BINOP extends AST_EXP
@@ -129,11 +129,11 @@ public class AST_EXP_BINOP extends AST_EXP
 		}
 	}
 	
-	public TEMP IRme()
+	public Temp IRme()
 	{
-		TEMP t1 = null;
-		TEMP t2 = null;
-		TEMP dst = TEMP_FACTORY.getInstance().getFreshTEMP();
+		Temp t1 = null;
+		Temp t2 = null;
+		Temp dst = Temp_FACTORY.getInstance().getFreshTemp();
 		
 		assert(false);
 		

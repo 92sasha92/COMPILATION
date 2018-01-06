@@ -1,7 +1,7 @@
 package AST;
 
 import TYPES.*;
-import TEMP.*;
+import Temp.*;
 import IR.*;
 
 public class AST_EXP_INT extends AST_EXP
@@ -39,9 +39,9 @@ public class AST_EXP_INT extends AST_EXP
 			SerialNumber,
 			String.format("INT(%d)",value));
 	}
-	public TEMP IRme()
+	public Temp IRme()
 	{
-		TEMP t = TEMP_FACTORY.getInstance().getFreshTEMP();
+		Temp t = Temp_FACTORY.getInstance().getFreshTemp();
 		IR.getInstance().Add_IRcommand(new IRcommandConstInt(t,value));
 		return t;
 	}

@@ -10,14 +10,14 @@ package IR;
 /*******************/
 /* PROJECT IMPORTS */
 /*******************/
-import TEMP.*;
+import Temp.*;
 import MIPS.*;
 
 public class IRcommandPrintInt extends IRcommand
 {
-	TEMP t;
+	Temp t;
 	
-	public IRcommandPrintInt(TEMP t)
+	public IRcommandPrintInt(Temp t)
 	{
 		this.t = t;
 	}

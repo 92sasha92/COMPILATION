@@ -1,7 +1,7 @@
 package AST;
 
 import TYPES.*;
-import TEMP.*;
+import Temp.*;
 
 public class AST_DEC_LIST extends AST_Node
 {
@@ -66,7 +66,7 @@ public class AST_DEC_LIST extends AST_Node
 		if (tail != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,tail.SerialNumber);
 	}
 	
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		if (head != null) head.IRme();
 		if (tail != null) tail.IRme();

@@ -1,7 +1,7 @@
 package AST;
 
 import TYPES.*;
-import TEMP.*;
+import Temp.*;
 
 public abstract class AST_EXP extends AST_Node
 {
@@ -9,7 +9,7 @@ public abstract class AST_EXP extends AST_Node
 	{
 		return null;
 	}
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		return null;
 	}

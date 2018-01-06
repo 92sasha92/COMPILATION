@@ -5,6 +5,9 @@ import java_cup.runtime.Symbol;
 import AST.*;
 import IR.*;
 import MIPS.*;
+import Temp.*;
+import FlowGraph.*;
+import TempReplacer.*;
 
 public class Main
 {
@@ -76,9 +79,14 @@ public class Main
 			/* [11] Finalize MIPS file */
 			/***************************/
 			sir_MIPS_a_lot.getInstance().finalizeFile();	
+
+			/***************************/
+			/* [12] Allocate MIPS registers */
+			/***************************/
+                        TempReplacer.ReplaceTemps();
 			
 			/*************************/
-			/* [12] Close output file */
+			/* [13] Close output file */
 			/*************************/
 			file_writer.close();
     	}

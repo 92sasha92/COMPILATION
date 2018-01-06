@@ -10,18 +10,18 @@ package IR;
 /*******************/
 /* PROJECT IMPORTS */
 /*******************/
-import TEMP.*;
+import Temp.*;
 import MIPS.*;
 
 public class IRcommand_Binop_Concat_Strings extends IRcommand
 {
-	public TEMP t1;
-	public TEMP t2;
-	public TEMP dst;
+	public Temp t1;
+	public Temp t2;
+	public Temp dst;
         public int leftLength;
         public int rightLength;
 	
-	public IRcommand_Binop_Concat_Strings(TEMP dst,TEMP t1,TEMP t2, int leftLength, int rightLength)
+	public IRcommand_Binop_Concat_Strings(Temp dst,Temp t1,Temp t2, int leftLength, int rightLength)
 	{
 		this.dst = dst;
 		this.t1 = t1;
@@ -35,14 +35,14 @@ public class IRcommand_Binop_Concat_Strings extends IRcommand
 	public void MIPSme()
 	{
             // I really need to document this shit
-		TEMP mallocAddressReg = sir_MIPS_a_lot.getInstance().malloc(leftLength + rightLength + 1); // +1 for null terminator
+		Temp mallocAddressReg = sir_MIPS_a_lot.getInstance().malloc(leftLength + rightLength + 1); // +1 for null terminator
                 sir_MIPS_a_lot.getInstance().move(dst,mallocAddressReg);
 
-    TEMP globalLoopCounter = sir_MIPS_a_lot.getInstance().initializeRegToZero();
-    TEMP loopCounter = sir_MIPS_a_lot.getInstance().initializeRegToZero();
-    TEMP tempVal = sir_MIPS_a_lot.getInstance().initializeRegToZero();
-    TEMP addressToRead = TEMP_FACTORY.getInstance().getFreshTEMP();
-    TEMP addressToWrite = TEMP_FACTORY.getInstance().getFreshTEMP();
+    Temp globalLoopCounter = sir_MIPS_a_lot.getInstance().initializeRegToZero();
+    Temp loopCounter = sir_MIPS_a_lot.getInstance().initializeRegToZero();
+    Temp tempVal = sir_MIPS_a_lot.getInstance().initializeRegToZero();
+    Temp addressToRead = Temp_FACTORY.getInstance().getFreshTemp();
+    Temp addressToWrite = Temp_FACTORY.getInstance().getFreshTemp();
     String firstLoop = getFreshLabel("copyFirstStrLoop");
     String secondLoop = getFreshLabel("copySecondStrLoop");
     String outsideLoops = getFreshLabel("outsideLoops");

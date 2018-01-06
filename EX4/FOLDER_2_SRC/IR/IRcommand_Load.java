@@ -10,15 +10,15 @@ package IR;
 /*******************/
 /* PROJECT IMPORTS */
 /*******************/
-import TEMP.*;
+import Temp.*;
 import MIPS.*;
 
 public class IRcommand_Load extends IRcommand
 {
-	TEMP dst;
-	TEMP src;
+	Temp dst;
+	Temp src;
 	
-	public IRcommand_Load(TEMP dst,TEMP src)
+	public IRcommand_Load(Temp dst,Temp src)
 	{
 		this.dst = dst;
 		this.src = src;

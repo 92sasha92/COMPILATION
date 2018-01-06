@@ -1,7 +1,7 @@
 /***********/
 /* PACKAGE */
 /***********/
-package TEMP;
+package Temp;
 
 /*******************/
 /* GENERAL IMPORTS */
@@ -11,17 +11,20 @@ package TEMP;
 /* PROJECT IMPORTS */
 /*******************/
 
-public class TEMP
+public class Temp
 {
 	private int serial=0;
 	
-	public TEMP(int serial)
+	public Temp(int serial)
 	{
 		this.serial = serial;
 	}
-	
 	public int getSerialNumber()
 	{
 		return serial;
 	}
+	public String toString() {
+		return "Temp_" + serial;
+	}
+
 }

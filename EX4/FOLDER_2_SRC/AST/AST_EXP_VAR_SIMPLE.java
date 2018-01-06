@@ -1,7 +1,7 @@
 package AST;
 
 import IR.*;
-import TEMP.*;
+import Temp.*;
 import MIPS.*;
 import TYPES.*;
 import SYMBOL_TABLE.*;
@@ -77,9 +77,9 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 		
 	}
 	
-	public TEMP IRme()
+	public Temp IRme()
 	{
-		TEMP t = TEMP_FACTORY.getInstance().getFreshTEMP();
+		Temp t = Temp_FACTORY.getInstance().getFreshTemp();
 		IR.getInstance().Add_IRcommand(new IRcommand_Load(
 			t,
 			sir_MIPS_a_lot.getInstance().addressLocalVar(localVariableIndex)));

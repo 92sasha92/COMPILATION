@@ -2,7 +2,7 @@ package AST;
 
 import TYPES.*;
 import SYMBOL_TABLE.*;
-import TEMP.*;
+import Temp.*;
 public class AST_EXP_PARENS extends AST_EXP
 {
 	/****************/
@@ -56,7 +56,7 @@ public class AST_EXP_PARENS extends AST_EXP
 		return null;
 	}
 	
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		if(exp != null) return exp.IRme();
 		return null;

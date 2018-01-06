@@ -2,7 +2,7 @@ package AST;
 
 import TYPES.*;
 import SYMBOL_TABLE.*;
-import TEMP.*;
+import Temp.*;
 
 public class AST_DEC_FUNC extends AST_DEC
 {
@@ -72,7 +72,7 @@ public class AST_DEC_FUNC extends AST_DEC
         return this.SemantMe(false);
     }
 
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		
 		if (body != null) body.IRme();

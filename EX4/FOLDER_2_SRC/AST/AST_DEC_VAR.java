@@ -1,7 +1,7 @@
 package AST;
 
 import IR.*;
-import TEMP.*;
+import Temp.*;
 import MIPS.*;
 import TYPES.*;
 import SYMBOL_TABLE.*;
@@ -81,7 +81,7 @@ public class AST_DEC_VAR extends AST_DEC
         return this.SemantMe(false);
     }
 	
-	public TEMP IRme()
+	public Temp IRme()
 	{
 		if (initialValue != null)
 		{

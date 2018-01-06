@@ -10,14 +10,14 @@ package IR;
 /*******************/
 /* PROJECT IMPORTS */
 /*******************/
-import TEMP.*;
+import Temp.*;
 import MIPS.*;
 
 public class IRcommand_If extends IRcommand
 {
-	TEMP t;
+	Temp t;
 	String label;
-	public IRcommand_If(TEMP t, String label)
+	public IRcommand_If(Temp t, String label)
 	{
 		this.t = t;
 		this.label = getFreshLabel(label);
