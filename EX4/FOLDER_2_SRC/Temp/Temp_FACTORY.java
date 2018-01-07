@@ -15,7 +15,7 @@ public class Temp_FACTORY
 {
         private enum reservedTemps 
         {
-            zero(0), fp(1), sp(2), ra(3);
+            zero(0), fp(1), sp(2), ra(3), a0(4),v0(5);
             private final int value;
             private reservedTemps(int value) {
             this.value = value;

@@ -24,8 +24,7 @@ SRC_FILES                 = ${SRC_DIR}/*.java              		\
                             ${SRC_DIR}/Graph/*.java        		\
                             ${SRC_DIR}/FlowGraph/*.java    		\
                             ${SRC_DIR}/Assem/*.java        		\
-                            ${SRC_DIR}/InterferenceGraph/*.java         \
-                            ${SRC_DIR}/Liveness/*.java         		\
+                            ${SRC_DIR}/RegAlloc/*.java         \
                             ${SRC_DIR}/TempReplacer/*.java        	\
                             ${SRC_DIR}/MIPS/*.java         		\
                             ${SRC_DIR}/TYPES/*.java        		\

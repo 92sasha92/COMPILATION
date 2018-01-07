@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class Label {
 	public String name;
 	private static int count;
-        private static HashMap<String, Label> allLabels = new HashMap<String,Label>();
+    private static HashMap<String, Label> allLabels = new HashMap<String,Label>();
 
 	/**
 	 * a printable representation of the label, for use in assembly language
@@ -25,9 +25,9 @@ public class Label {
 	 * <tt>new Label(s)</tt> with the same name <tt>s</tt>.
 	 */
 
-        public Label(String n) {
-            name = n + count++;
-        }
+    public Label(String n) {
+        name = n + count++;
+    }
 
 	/**
 	 * Makes a new label with an arbitrary name.
@@ -35,22 +35,23 @@ public class Label {
 	public Label() {
 		this("L");
 	}
+	
 
 
-        public static Label getLabel() {
-            Label newLabel = new Label();
-            allLabels.put(newLabel.name,newLabel);
-            return newLabel;
+    public static Label getLabel() {
+        Label newLabel = new Label();
+		allLabels.put(newLabel.name,newLabel);
+		return newLabel;
+	}
+
+    public static Label getLabel(String labelName) {
+        if (allLabels.get(labelName) != null) {
+            return allLabels.get(labelName);
         }
-
-        public static Label getLabel(String labelName) {
-            if (allLabels.get(labelName) != null) {
-                return allLabels.get(labelName);
-            }
-            Label newLabel = new Label(labelName);
-            allLabels.put(labelName,newLabel);
-            return newLabel;
-        }
+        Label newLabel = new Label(labelName);
+        allLabels.put(labelName,newLabel);
+        return newLabel;
+    }
 
 	/**
 	 * Makes a new label whose name is the same as a symbol.
