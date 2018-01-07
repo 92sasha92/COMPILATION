@@ -22,7 +22,9 @@ SRC_FILES                 = ${SRC_DIR}/*.java              		\
                             ${SRC_DIR}/AST/*.java          		\
                             ${SRC_DIR}/Temp/*.java         		\
                             ${SRC_DIR}/Graph/*.java        		\
+							${SRC_DIR}/Util/*.java    		\
                             ${SRC_DIR}/FlowGraph/*.java    		\
+							${SRC_DIR}/Frame/*.java    		\
                             ${SRC_DIR}/Assem/*.java        		\
                             ${SRC_DIR}/RegAlloc/*.java         \
                             ${SRC_DIR}/TempReplacer/*.java        	\
@@ -218,28 +220,6 @@ everything:
 	@echo "*                                                         *"
 	@echo "***********************************************************"
 	#./Allocate_Registers_Ad_Hoc
-	sed -i 's/Temp_0/$$t0/g'     ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/\bTemp_2\b/$$t1/g' ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_4/$$t2/g'     ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_10/$$t3/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_12/$$t4/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_14/$$t5/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/\bTemp_1\b/$$t6/g' ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/\bTemp_3\b/$$t6/g' ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_5/$$t6/g'     ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_9/$$t6/g'     ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_11/$$t0/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_17/$$t1/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_16/$$t2/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_8/$$t3/g'     ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_13/$$t4/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_19/$$t5/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_18/$$t0/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_7/$$t7/g'     ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_15/$$t0/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_21/$$t1/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_20/$$t2/g'    ${OUTPUT_DIR}/MIPS.txt
-	sed -i 's/Temp_6/$$t3/g'     ${OUTPUT_DIR}/MIPS.txt
 	@echo "\n"
 	@echo "*****************************************"
 	@echo "*                                       *"

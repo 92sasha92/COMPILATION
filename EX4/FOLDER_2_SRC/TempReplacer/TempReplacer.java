@@ -98,7 +98,16 @@ public class TempReplacer {
         }
         printInstrList();
         flowGraph = new AssemFlowGraph(instList);
-        //InterferenceGraph interGraph = new Liveness(flowGraph);
+		flowGraph.show(System.out);
+        InterferenceGraph interGraph = new Liveness(flowGraph);
+		//Frame f = new Frame();
+		TempList reg = null;
+		for (int i = 7; i <= 13; i++)
+			reg = new TempList(new Temp(i), reg);
+		HashSet<Temp> registers = new java.util.HashSet();
+		for (TempList tl = reg; tl != null; tl = tl.tail)
+			registers.add(tl.head);
+		
 
     }
 
