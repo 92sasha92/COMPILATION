@@ -45,17 +45,19 @@ public class Color implements TempMap {
 			Node node = null;
 			int max = -1;
 
-			for (NodeList n = interGraph.nodes(); n != null; n = n.tail)
+			for (NodeList n = interGraph.nodes(); n != null; n = n.tail) {
 
 				if (init.tempMap(interGraph.gtemp(n.head)) == null && !selStack.contains(n.head)) {
 
 					int num = n.head.outDegree(); 
+                                        System.out.println("@@@"+num);
 					if (max < num && num < regs.size()) {
 
 						max = num;
 						node = n.head;
 					}
 				}
+                        }
 			if (node == null) {
 
 				System.err.println("Color.color() :");
