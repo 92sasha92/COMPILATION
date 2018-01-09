@@ -5,7 +5,6 @@ import Assem.*;
 import Temp.*;
 import FlowGraph.*;
 import RegAlloc.*;
-//import Liveness.*;
 import java.util.HashSet;
 
 public class TempReplacer {
@@ -72,9 +71,8 @@ public class TempReplacer {
                    addInstruction(lw);
                    break;
                 case "sw":
-                   dstTemps = new TempList(getTemp(tokens[3]),null);
-                   srcTemps = new TempList(getTemp(tokens[1]),null);
-                   OPER sw = new OPER(line, dstTemps, srcTemps);
+                   srcTemps = new TempList(getTemp(tokens[1]),new TempList(getTemp(tokens[3]),null));
+                   OPER sw = new OPER(line, null, srcTemps);
                    addInstruction(sw);
                    break;
                 case "blt":

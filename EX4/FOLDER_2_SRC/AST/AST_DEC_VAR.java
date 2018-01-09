@@ -85,9 +85,10 @@ public class AST_DEC_VAR extends AST_DEC
 	{
 		if (initialValue != null)
 		{
-			IR.getInstance().Add_IRcommand(new IRcommand_Store(
-				sir_MIPS_a_lot.getInstance().addressLocalVar(localVariableIndex),
-				initialValue.IRme()));
+			Temp temp  = Temp_FACTORY.getInstance().getFreshTemp();
+			IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(localVariableIndex, temp));
+			Temp t = initialValue.IRme();
+			IR.getInstance().Add_IRcommand(new IRcommand_Store(temp,t));
 		}
 		return null;
 	}

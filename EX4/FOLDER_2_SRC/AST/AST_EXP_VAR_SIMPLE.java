@@ -79,10 +79,10 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 	
 	public Temp IRme()
 	{
+		Temp temp  = Temp_FACTORY.getInstance().getFreshTemp();
+		IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(localVariableIndex, temp));
 		Temp t = Temp_FACTORY.getInstance().getFreshTemp();
-		IR.getInstance().Add_IRcommand(new IRcommand_Load(
-			t,
-			sir_MIPS_a_lot.getInstance().addressLocalVar(localVariableIndex)));
+		IR.getInstance().Add_IRcommand(new IRcommand_Load(t,temp));
 		System.out.println("varIndex: " + localVariableIndex + " name: " + name);
 
 		return t;

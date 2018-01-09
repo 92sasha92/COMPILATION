@@ -61,12 +61,11 @@ public class sir_MIPS_a_lot
             
         }
 
-	public Temp addressLocalVar(int serialLocalVarNum)
+	public Temp addressLocalVar(int serialLocalVarNum, Temp t)
 	{
-		Temp t  = Temp_FACTORY.getInstance().getFreshTemp();
-		int idx = t.getSerialNumber();
 
-		fileWriter.format("\taddi Temp_%d,$fp,%d\n",idx,-serialLocalVarNum*WORD_SIZE);
+
+		fileWriter.format("\taddi Temp_%d,$fp,%d\n",t.getSerialNumber(),-serialLocalVarNum*WORD_SIZE);
 		
 		return t;
 	}
