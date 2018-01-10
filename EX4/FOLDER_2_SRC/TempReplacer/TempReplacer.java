@@ -5,140 +5,142 @@ import Assem.*;
 import Temp.*;
 import FlowGraph.*;
 import RegAlloc.*;
+//import Liveness.*;
 import java.util.HashSet;
 
 public class TempReplacer {
-    public static final String inputFilename = "FOLDER_5_OUTPUT/MIPS.txt";
-    public static InstrList last = null, instList = null;
-    public static FlowGraph flowGraph = null;
+	static String dirname = "FOLDER_5_OUTPUT/";
+	public static final String inputFilename = dirname + "MIPS.txt";
+	public static InstrList last = null, instList = null;
+	public static FlowGraph flowGraph = null;
 
-    public static void ReplaceTemps() throws IOException{
-		
-        BufferedReader file_reader;
-        file_reader = new BufferedReader(new FileReader(inputFilename));
-        String line;
-        String tokens[] = null;
-        String delims = "[ ,()]";
-        String command = null;
-        String labelName = null;
-        TempList dstTemps = null, srcTemps = null;
-        LabelList labelList = null;
-        LABEL labelDefinition = null;
-        while ((line = file_reader.readLine()) != null) {
-            tokens = line.replace("\t","").split(delims);
-            command = tokens[0];
-            System.out.println(command);
-            switch (command) {
-                case "add":
-                case "sub":
-                case "mul":
-                case "div":
-                    dstTemps = new TempList(getTemp(tokens[1]),null);
-                    srcTemps = new TempList(getTemp(tokens[2]),new TempList(getTemp(tokens[3]),null));
-                    OPER op = new OPER(line, dstTemps, srcTemps);
-                    addInstruction(op);
-                    break;
-                case "addi":
-                    dstTemps = new TempList(getTemp(tokens[1]),null);
-                    srcTemps = new TempList(getTemp(tokens[2]),null);
-                    OPER addi = new OPER(line, dstTemps, srcTemps);
-                    addInstruction(addi);
-                   break;
-                case "j":
-                   labelName = tokens[1];
-                   labelList = new LabelList(Label.getLabel(labelName),null);
-                   OPER j = new OPER(line, null, null, labelList);
-                   addInstruction(j);
-                   break;
-                case "jal":
-                   OPER jal = new OPER(line, null, null);
-                   addInstruction(jal);
-                   break;
-                case "move":
-                   MOVE move = new MOVE(line,getTemp(tokens[1]),getTemp(tokens[2]));
-                   addInstruction(move);
-                   break;
-                case "li":
-                   dstTemps = new TempList(getTemp(tokens[1]),null);
-                   OPER li = new OPER(line, dstTemps, null);
-                   addInstruction(li);
-                   break;
-                case "lb":
-                case "lw":
-                   dstTemps = new TempList(getTemp(tokens[1]),null);
-                   srcTemps = new TempList(getTemp(tokens[3]),null);
-                   OPER lw = new OPER(line, dstTemps, srcTemps);
-                   addInstruction(lw);
-                   break;
-                case "sw":
-                   srcTemps = new TempList(getTemp(tokens[1]),new TempList(getTemp(tokens[3]),null));
-                   OPER sw = new OPER(line, null, srcTemps);
-                   addInstruction(sw);
-                   break;
-                case "blt":
-                case "bge":
-                case "beq":
-                case "bne":
-                   srcTemps = new TempList(getTemp(tokens[1]),new TempList(getTemp(tokens[2]),null));
-                   labelName = tokens[3];
-                   labelList = new LabelList(Label.getLabel(labelName),null);
-                   OPER bOp = new OPER(line, null, srcTemps, labelList);
-                   addInstruction(bOp);
-                   break;
-                default:
-                   if (command.startsWith("Label_")) {
-                       labelName = command.substring(0,command.length()-1);
-                       labelDefinition = new LABEL(command, Label.getLabel(labelName));
-                       addInstruction(labelDefinition);
-                       break;
-                   }
+	public static void ReplaceTemps() throws IOException {
 
-            }
-        }
-        printInstrList();
-        flowGraph = new AssemFlowGraph(instList);
+		BufferedReader file_reader;
+		file_reader = new BufferedReader(new FileReader(inputFilename));
+		String line;
+		String tokens[] = null;
+		String delims = "[ ,()]";
+		String command = null;
+		String labelName = null;
+		TempList dstTemps = null, srcTemps = null;
+		LabelList labelList = null;
+		LABEL labelDefinition = null;
+		while ((line = file_reader.readLine()) != null) {
+			tokens = line.replace("\t", "").split(delims);
+			command = tokens[0];
+			System.out.println(command);
+			switch (command) {
+			case "add":
+			case "sub":
+			case "mul":
+			case "div":
+				dstTemps = new TempList(getTemp(tokens[1]), null);
+				srcTemps = new TempList(getTemp(tokens[2]), new TempList(getTemp(tokens[3]), null));
+				OPER op = new OPER(line, dstTemps, srcTemps);
+				addInstruction(op);
+				break;
+			case "addi":
+				dstTemps = new TempList(getTemp(tokens[1]), null);
+				srcTemps = new TempList(getTemp(tokens[2]), null);
+				OPER addi = new OPER(line, dstTemps, srcTemps);
+				addInstruction(addi);
+				break;
+			case "j":
+				labelName = tokens[1];
+				labelList = new LabelList(Label.getLabel(labelName), null);
+				OPER j = new OPER(line, null, null, labelList);
+				addInstruction(j);
+				break;
+			case "jal":
+				OPER jal = new OPER(line, null, null);
+				addInstruction(jal);
+				break;
+			case "move":
+				MOVE move = new MOVE(line, getTemp(tokens[1]), getTemp(tokens[2]));
+				addInstruction(move);
+				break;
+			case "li":
+				dstTemps = new TempList(getTemp(tokens[1]), null);
+				OPER li = new OPER(line, dstTemps, null);
+				addInstruction(li);
+				break;
+			case "lb":
+			case "lw":
+				dstTemps = new TempList(getTemp(tokens[1]), null);
+				srcTemps = new TempList(getTemp(tokens[3]), null);
+				OPER lw = new OPER(line, dstTemps, srcTemps);
+				addInstruction(lw);
+				break;
+			case "sw":
+				srcTemps = new TempList(getTemp(tokens[1]), new TempList(getTemp(tokens[3]), null));
+				OPER sw = new OPER(line, null, srcTemps);
+				addInstruction(sw);
+				break;
+			case "blt":
+			case "bge":
+			case "beq":
+			case "bne":
+				srcTemps = new TempList(getTemp(tokens[1]), new TempList(getTemp(tokens[2]), null));
+				labelName = tokens[3];
+				labelList = new LabelList(Label.getLabel(labelName), null);
+				OPER bOp = new OPER(line, null, srcTemps, labelList);
+				addInstruction(bOp);
+				break;
+			default:
+				if (command.startsWith("Label_")) {
+					labelName = command.substring(0, command.length() - 1);
+					labelDefinition = new LABEL(command, Label.getLabel(labelName));
+					addInstruction(labelDefinition);
+					break;
+				}
+
+			}
+		}
+		printInstrList();
+		flowGraph = new AssemFlowGraph(instList);
 		flowGraph.show(System.out);
-        InterferenceGraph interGraph = new Liveness(flowGraph);
-		//Frame f = new Frame();
+		InterferenceGraph interGraph = new Liveness(flowGraph);
+		// Frame f = new Frame();
 		TempList reg = null;
-                int numOfReservedTemps = Temp_FACTORY.reservedTemps.values().length;
+		int numOfReservedTemps = Temp_FACTORY.reservedTemps.values().length;
 		HashSet<Temp> registers = new java.util.HashSet();
-		for (int i = numOfReservedTemps; i < numOfReservedTemps + Temp_FACTORY.numOfMipsRegs ; i++) 
-                    registers.add(new Temp(i));
-                ReplacerMap replacerMap = new ReplacerMap();
-                Color color = new Color(interGraph, replacerMap, registers);
-		
+		for (int i = numOfReservedTemps; i < numOfReservedTemps + Temp_FACTORY.numOfMipsRegs; i++)
+			registers.add(Temp_FACTORY.getTemp(i));
+		ReplacerMap replacerMap = new ReplacerMap();
+		Color color = new Color(interGraph, replacerMap, registers);
+		// color.tempMap(color.map.temp);
 
-    }
+	}
 
-    public static Temp getTemp(String tempStr) {
+	public static Temp getTemp(String tempStr) {
 
-        int tempNum;
-        String delim = "_";
-        if (tempStr.charAt(0) != '$') {
-            tempNum =  Integer.parseInt(tempStr.split(delim)[1]);
-            return new Temp(tempNum);
-        }
-        return new Temp(Temp_FACTORY.getInstance().getReservedTempNumber(tempStr.substring(1)));
-    }
+		int tempNum;
+		String delim = "_";
+		if (tempStr.charAt(0) != '$') {
+			tempNum = Integer.parseInt(tempStr.split(delim)[1]);
+			return Temp_FACTORY.allTemps.get(tempNum);
+		}
+		return Temp_FACTORY.getTemp(Temp_FACTORY.getInstance().getReservedTempNumber(tempStr.substring(1)));
+	}
 
-    public static void addInstruction(Instr inst) {
-        if (last != null) {
-            last.tail = new InstrList(inst, null);
-            last = last.tail;
-        } else {
-            instList = new InstrList(inst, null);
-            last = instList;
-        }
-    }
-    public static void printInstrList() {
-        InstrList kaki = instList;
-        for (;kaki != null ;kaki = kaki.tail ) {
-            System.out.println("@@@@@@"+kaki.head.assem);
-        }
+	public static void addInstruction(Instr inst) {
 
-    }
+		if (last != null) {
+			last.tail = new InstrList(inst, null);
+			last = last.tail;
+		} else {
+			instList = new InstrList(inst, null);
+			last = instList;
+		}
+	}
 
+	public static void printInstrList() {
+		InstrList kaki = instList;
+		for (; kaki != null; kaki = kaki.tail) {
+			System.out.println("@@@@@@" + kaki.head.assem);
+		}
 
+	}
 
 }

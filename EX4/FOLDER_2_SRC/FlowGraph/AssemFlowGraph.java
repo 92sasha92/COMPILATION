@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.*;
+//import java.util.*;
 
 import Assem.*;
 import Graph.*;
@@ -29,9 +29,8 @@ public class AssemFlowGraph extends FlowGraph {
 					addEdge(node.head, node.tail.head);
 			} else
 				for (LabelList l = next.labels; l != null; l = l.tail) {
-                                    Iterator<Label> labelz = ((Hashtable<Label,Node>)labels).keySet().iterator();
 					addEdge(node.head, (Node) labels.get(l.head));
-                                }
+                }
 		}
 
 	}

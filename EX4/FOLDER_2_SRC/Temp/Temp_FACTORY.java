@@ -3,6 +3,8 @@
 /***********/
 package Temp;
 
+import java.util.HashMap;
+
 /*******************/
 /* GENERAL IMPORTS */
 /*******************/
@@ -13,6 +15,7 @@ package Temp;
 
 public class Temp_FACTORY
 {
+	public static HashMap<Integer, Temp> allTemps = new HashMap<Integer,Temp>();
     public static final int numOfMipsRegs = 8;
         public enum reservedTemps 
         {
@@ -25,9 +28,18 @@ public class Temp_FACTORY
 
 	private int counter = reservedTemps.values().length + numOfMipsRegs; // should be the last value in the enum + 1
 	
+	
+    public static Temp getTemp(int tempNum) {
+        if (allTemps.get(tempNum) != null) {
+            return allTemps.get(tempNum);
+        }
+        Temp newTemp = new Temp(tempNum);
+        allTemps.put(tempNum,newTemp);
+        return newTemp;
+    }
 	public Temp getFreshTemp()
 	{
-		return new Temp(counter++);
+		return getTemp(counter++);
 	}
 	
         public int getReservedTempNumber(String registerName) {
