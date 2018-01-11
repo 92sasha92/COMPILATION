@@ -5,8 +5,10 @@ import Assem.*;
 import Temp.*;
 import FlowGraph.*;
 import RegAlloc.*;
-//import Liveness.*;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class TempReplacer {
 	static String dirname = "FOLDER_5_OUTPUT/";
@@ -109,10 +111,42 @@ public class TempReplacer {
 			registers.add(Temp_FACTORY.getTemp(i));
 		ReplacerMap replacerMap = new ReplacerMap();
 		Color color = new Color(interGraph, replacerMap, registers);
-		// color.tempMap(color.map.temp);
+		file_reader.close();
+		tempReplaceToReg(color);
 
 	}
+	
+	private static void tempReplaceToReg(Color color) throws IOException{
+		// TODO Auto-generated method stub
+		BufferedReader file_reader = new BufferedReader(new FileReader(inputFilename));
+		String line;
+		String tokens[] = null;
+		String delims = "[ ,()]";
+		List<String> outLines = new ArrayList<String>();
+		while ((line = file_reader.readLine()) != null) {
+			tokens = line.replace("\t", "").split(delims);
+			int i = 1;
 
+			while(i < tokens.length){
+				if(tokens[i].startsWith("Temp_")){
+					Temp temp = getTemp(tokens[i]);
+					line= line.replace(tokens[i], color.tempMap(temp));
+				}
+				i++;
+			}
+			outLines.add(line);
+		}
+		file_reader.close();
+		FileWriter fileW = new FileWriter(inputFilename, false);
+		BufferedWriter bufW = new BufferedWriter(fileW);
+		for(String lineOut : outLines){
+			
+			bufW.write(lineOut);
+			bufW.newLine();
+		}
+		bufW.close();
+	}
+	
 	public static Temp getTemp(String tempStr) {
 
 		int tempNum;
