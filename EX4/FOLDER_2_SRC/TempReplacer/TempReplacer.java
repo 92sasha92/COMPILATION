@@ -24,10 +24,11 @@ public class TempReplacer {
 		String tokens[] = null;
 		String delims = "[ ,()]";
 		String command = null;
-		String labelName = null;
+		String labelName = null,labelDefName = null;
 		TempList dstTemps = null, srcTemps = null;
 		LabelList labelList = null;
 		LABEL labelDefinition = null;
+		boolean isPrevBranch = false;
 		while ((line = file_reader.readLine()) != null) {
 			tokens = line.replace("\t", "").split(delims);
 			command = tokens[0];
@@ -85,15 +86,23 @@ public class TempReplacer {
 			case "bne":
 				srcTemps = new TempList(getTemp(tokens[1]), new TempList(getTemp(tokens[2]), null));
 				labelName = tokens[3];
-				labelList = new LabelList(Label.getLabel(labelName), null);
-				OPER bOp = new OPER(line, null, srcTemps, labelList);
-				addInstruction(bOp);
+//				labelList = new LabelList(Label.getLabel(labelName), null);
+//				OPER bOp = new OPER(line, null, srcTemps, labelList);
+//				addInstruction(bOp);
+				isPrevBranch = true;
 				break;
 			default:
 				if (command.startsWith("Label_")) {
-					labelName = command.substring(0, command.length() - 1);
-					labelDefinition = new LABEL(command, Label.getLabel(labelName));
+					labelDefName = command.substring(0, command.length() - 1);
+					if(isPrevBranch == true){
+						labelList = new LabelList(Label.getLabel(labelName), new LabelList(Label.getLabel(labelDefName), null));
+						OPER bOp = new OPER(line, null, srcTemps, labelList);
+						addInstruction(bOp);
+						isPrevBranch = false;
+					}
+					labelDefinition = new LABEL(command, Label.getLabel(labelDefName));
 					addInstruction(labelDefinition);
+
 					break;
 				}
 
@@ -104,7 +113,6 @@ public class TempReplacer {
 		flowGraph.show(System.out);
 		InterferenceGraph interGraph = new Liveness(flowGraph);
 		// Frame f = new Frame();
-		TempList reg = null;
 		int numOfReservedTemps = Temp_FACTORY.reservedTemps.values().length;
 		HashSet<Temp> registers = new java.util.HashSet();
 		for (int i = numOfReservedTemps; i < numOfReservedTemps + Temp_FACTORY.numOfMipsRegs; i++)
@@ -113,6 +121,7 @@ public class TempReplacer {
 		Color color = new Color(interGraph, replacerMap, registers);
 		file_reader.close();
 		tempReplaceToReg(color);
+		// color.tempMap(color.map.temp);
 
 	}
 	
