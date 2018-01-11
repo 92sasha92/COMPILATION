@@ -42,8 +42,8 @@ public class IRcommand_Binop_EQ_Integers extends IRcommand
 		/* [2] if (t1 = t2) goto label_AssignOne;  */
 		/*     if (t1 != t2) goto label_AssignZero; */
 		/******************************************/
-		sir_MIPS_a_lot.getInstance().beq(t1,t2,label_AssignOne);
-		sir_MIPS_a_lot.getInstance().bne(t1,t2,label_AssignZero);
+		sir_MIPS_a_lot.getInstance().addBranch("beq", t1, t2, label_AssignOne);
+		sir_MIPS_a_lot.getInstance().addBranch("bne", t1, t2, label_AssignZero);
 
 		/************************/
 		/* [3] label_AssignOne: */

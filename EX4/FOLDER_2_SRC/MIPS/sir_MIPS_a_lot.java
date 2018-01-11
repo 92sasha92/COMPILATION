@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 /* PROJECT IMPORTS */
 /*******************/
 import Temp.*;
-
+import IR.IRcommand;
 public class sir_MIPS_a_lot
 {
 	private int WORD_SIZE=4;
@@ -82,7 +82,7 @@ public class sir_MIPS_a_lot
 	{
 		int idxdst=dst.getSerialNumber();
 		int idxsrc=src.getSerialNumber();
-		fileWriter.format("\tlw Temp_%d,%d(Temp_%d)\n",idxsrc,offset, idxdst);		
+		fileWriter.format("\tlw Temp_%d,%d(Temp_%d)\n",idxdst,offset, idxsrc);		
 	}
 	public void load_byte(Temp dst,Temp src)
 	{
@@ -188,39 +188,62 @@ public class sir_MIPS_a_lot
 	{
 		fileWriter.format("\tj %s\n",inlabel);
 	}	
-	public void beq(Temp oprnd1,Temp oprnd2,String label)
+//	public void beq(Temp oprnd1,Temp oprnd2,String label)
+//	{
+//		int i1 =oprnd1.getSerialNumber();
+//		int i2 =oprnd2.getSerialNumber();
+//		
+//		fileWriter.format("\tbeq Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+//	}
+	public void beq(Temp oprnd1, String outlabel)
 	{
+		String branch_not_taken = IRcommand.getFreshLabel("branch_not_taken");
+		int i1 =oprnd1.getSerialNumber();
+		
+		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,outlabel);		
+		label(branch_not_taken);
+	}
+//	public void bne(Temp oprnd1,Temp oprnd2,String label)
+//	{
+//		int i1 =oprnd1.getSerialNumber();
+//		int i2 =oprnd2.getSerialNumber();
+//		
+//		fileWriter.format("\tbne Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+//	}
+//	public void blt(Temp oprnd1,Temp oprnd2,String label)
+//	{
+//		int i1 =oprnd1.getSerialNumber();
+//		int i2 =oprnd2.getSerialNumber();
+//		
+//		fileWriter.format("\tblt Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+//	}
+//	public void bge(Temp oprnd1,Temp oprnd2,String label)
+//	{
+//		int i1 =oprnd1.getSerialNumber();
+//		int i2 =oprnd2.getSerialNumber();
+//		
+//		fileWriter.format("\tbge Temp_%d,Temp_%d,%s\n",i1,i2,label);
+//	}
+	
+	public void addBranch(String b, Temp oprnd1, Temp oprnd2, String outlabel){
 		int i1 =oprnd1.getSerialNumber();
 		int i2 =oprnd2.getSerialNumber();
-		
-		fileWriter.format("\tbeq Temp_%d,Temp_%d,%s\n",i1,i2,label);				
-	}
-	public void beq(Temp oprnd1,String label)
-	{
-		int i1 =oprnd1.getSerialNumber();
-		
-		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,label);				
-	}
-	public void bne(Temp oprnd1,Temp oprnd2,String label)
-	{
-		int i1 =oprnd1.getSerialNumber();
-		int i2 =oprnd2.getSerialNumber();
-		
-		fileWriter.format("\tbne Temp_%d,Temp_%d,%s\n",i1,i2,label);				
-	}
-	public void blt(Temp oprnd1,Temp oprnd2,String label)
-	{
-		int i1 =oprnd1.getSerialNumber();
-		int i2 =oprnd2.getSerialNumber();
-		
-		fileWriter.format("\tblt Temp_%d,Temp_%d,%s\n",i1,i2,label);				
-	}
-	public void bge(Temp oprnd1,Temp oprnd2,String label)
-	{
-		int i1 =oprnd1.getSerialNumber();
-		int i2 =oprnd2.getSerialNumber();
-		
-		fileWriter.format("\tbge Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+		String branch_not_taken = IRcommand.getFreshLabel("branch_not_taken");
+		switch(b){
+			case "bne":
+				fileWriter.format("\tbne Temp_%d,Temp_%d,%s\n",i1,i2,outlabel);
+				break;
+			case "beq":
+				fileWriter.format("\tbeq Temp_%d,Temp_%d,%s\n",i1,i2,outlabel);
+				break;
+			case "blt":
+				fileWriter.format("\tblt Temp_%d,Temp_%d,%s\n",i1,i2,outlabel);
+				break;
+			case "bge":
+				fileWriter.format("\tbge Temp_%d,Temp_%d,%s\n",i1,i2,outlabel);
+				break;
+		}
+		label(branch_not_taken);
 	}
 	
 	/**************************************/
@@ -251,6 +274,7 @@ public class sir_MIPS_a_lot
 				/* [1] Open the MIPS text file and write data section with error message strings */
 				/*********************************************************************************/
 				String dirname="./FOLDER_5_OUTPUT/";
+				//String dirname="C:/comp/kaki/src/";
 				String filename=String.format("MIPS.txt");
 
 				/***************************************/
@@ -288,4 +312,5 @@ public class sir_MIPS_a_lot
 		}
 		return instance;
 	}
+
 }

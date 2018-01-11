@@ -9,7 +9,8 @@ public class AST_EXP_BINOP extends AST_EXP
 	int OP;
 	public AST_EXP left;
 	public AST_EXP right;
-	
+	private TYPE leftType;
+	private TYPE rightType;
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
@@ -78,8 +79,8 @@ public class AST_EXP_BINOP extends AST_EXP
 	}
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
-		TYPE leftType = null;
-		TYPE rightType = null;
+//		TYPE leftType = null;
+//		TYPE rightType = null;
 		TYPE_CLASS classLeftType = null, classRightType = null;
 		TYPE leftArrayType, rightArrayType;
 		if (left  != null) leftType = left.SemantMe();
@@ -141,22 +142,20 @@ public class AST_EXP_BINOP extends AST_EXP
 		if (right != null) t2 = right.IRme();
 		switch(OP){
 			case 0:
-                            if (left instanceof AST_EXP_INT && right instanceof AST_EXP_INT) {
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(dst,t1,t2));
-				break;
-                            }
-                            if (left instanceof AST_EXP_STRING && right instanceof AST_EXP_STRING) {
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst,t1,t2, ((AST_EXP_STRING)left).value.length(),((AST_EXP_STRING)right).value.length()));
-                                break;
-                            }
+                if (leftType instanceof TYPE_INT) {
+                	IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("add",dst,t1,t2));
+                } else if (leftType instanceof TYPE_STRING) {
+                	IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst,t1,t2, ((AST_EXP_STRING)left).value.length(),((AST_EXP_STRING)right).value.length()));
+                }
+                break; 
 			case 1:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Sub_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("sub",dst,t1,t2));
 				break;
 			case 2:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Mul_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("mul",dst,t1,t2));
 				break;
 			case 3:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Div_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("div",dst,t1,t2));
 				break;
 			case 4:
 				IR.getInstance().Add_IRcommand(new IRcommand_Binop_LT_Integers(dst,t1,t2));

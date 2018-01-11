@@ -47,11 +47,10 @@ public class IRcommand_Binop_Concat_Strings extends IRcommand
     String secondLoop = getFreshLabel("copySecondStrLoop");
     String outsideLoops = getFreshLabel("outsideLoops");
 
-
 sir_MIPS_a_lot.getInstance().label(firstLoop);
     sir_MIPS_a_lot.getInstance().add(addressToRead, t1, globalLoopCounter);
     sir_MIPS_a_lot.getInstance().load_byte(tempVal, addressToRead);
-    sir_MIPS_a_lot.getInstance().beq(tempVal, secondLoop);
+    sir_MIPS_a_lot.getInstance().beq(tempVal,secondLoop);
     sir_MIPS_a_lot.getInstance().add(addressToWrite, dst, globalLoopCounter);
     sir_MIPS_a_lot.getInstance().store_byte(tempVal, addressToWrite);
     sir_MIPS_a_lot.getInstance().addi(globalLoopCounter, globalLoopCounter, 1);
@@ -62,7 +61,7 @@ sir_MIPS_a_lot.getInstance().label(firstLoop);
     sir_MIPS_a_lot.getInstance().label(secondLoop);
         sir_MIPS_a_lot.getInstance().add(addressToRead, t2, loopCounter);
         sir_MIPS_a_lot.getInstance().load_byte(tempVal, addressToRead);
-        sir_MIPS_a_lot.getInstance().beq(tempVal, outsideLoops);
+        sir_MIPS_a_lot.getInstance().beq(tempVal,outsideLoops);
         sir_MIPS_a_lot.getInstance().add(addressToWrite, dst, globalLoopCounter);
         sir_MIPS_a_lot.getInstance().store_byte(tempVal, addressToWrite);
         sir_MIPS_a_lot.getInstance().addi(loopCounter, loopCounter, 1);
