@@ -8,6 +8,7 @@ public class IRcommand_Binop_Integers extends IRcommand{
 	public Temp t2;
 	public Temp dst;
 	public String command;
+        private static boolean divInit = false;
 	
 	public IRcommand_Binop_Integers(String command,Temp dst,Temp t1,Temp t2)
 	{
@@ -43,8 +44,10 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		String label_end = getFreshLabel("end");
 		String label_overflow_pos = getFreshLabel("overflow_pos");
 		String label_overflow_neg = getFreshLabel("overflow_neg");
-		String label_no_overflow = getFreshLabel("no_overflow");
-		/*********************/
+                String label_no_overflow = getFreshLabel("no_overflow");
+                String illegal_div_by_0 = null;
+
+                /*********************/
 		/* [4] t4 := t1 op t2 */
 		/*********************/
 		switch(command){
@@ -58,9 +61,13 @@ public class IRcommand_Binop_Integers extends IRcommand{
 				sir_MIPS_a_lot.getInstance().mul(t1_bOp_t2,t1,t2);
 				break;
 			case "div":
+                                if(!divInit){
+		                illegal_div_by_0 = getFreshLabel(illegal_div_by_0);
+                                }
+				sir_MIPS_a_lot.getInstance().beq(t2 ,illegal_div_by_0);
 				sir_MIPS_a_lot.getInstance().div(t1_bOp_t2,t1,t2);
 				break;
-		}
+                }
 		
 		
 		/*********************************************************/
@@ -73,6 +80,14 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		sir_MIPS_a_lot.getInstance().addBranch("blt", t1_bOp_t2, intMin, label_overflow_neg);
 		sir_MIPS_a_lot.getInstance().addBranch("bge", intMax, t1_bOp_t2, label_no_overflow);
 
+               if(command.equals("div") && !divInit){
+			sir_MIPS_a_lot.getInstance().label(illegal_div_by_0);
+			Temp t = Temp_FACTORY.getInstance().getFreshTemp();
+			sir_MIPS_a_lot.getInstance().load_string(t,"Illegal Division By Zero\n");
+			sir_MIPS_a_lot.getInstance().print_string(t);
+			sir_MIPS_a_lot.getInstance().exitProgram();
+			divInit = true;
+		}
 		/***********************/
 		/* [6] label_overflow: */
 		/*                     */

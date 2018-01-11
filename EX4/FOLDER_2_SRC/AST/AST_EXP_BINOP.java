@@ -145,7 +145,7 @@ public class AST_EXP_BINOP extends AST_EXP
                 if (leftType instanceof TYPE_INT) {
                 	IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("add",dst,t1,t2));
                 } else if (leftType instanceof TYPE_STRING) {
-                	IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst,t1,t2, ((AST_EXP_STRING)left).value.length(),((AST_EXP_STRING)right).value.length()));
+                	IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst,t1,t2));
                 }
                 break; 
 			case 1:

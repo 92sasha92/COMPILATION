@@ -69,6 +69,7 @@ public class TempReplacer {
 				addInstruction(move);
 				break;
 			case "li":
+                        case "la":
 				dstTemps = new TempList(getTemp(tokens[1]), null);
 				OPER li = new OPER(line, dstTemps, null);
 				addInstruction(li);
@@ -81,6 +82,7 @@ public class TempReplacer {
 				addInstruction(lw);
 				break;
 			case "sw":
+			case "sb":
 				srcTemps = new TempList(getTemp(tokens[1]), new TempList(getTemp(tokens[3]), null));
 				OPER sw = new OPER(line, null, srcTemps);
 				addInstruction(sw);

@@ -61,6 +61,26 @@ public class sir_MIPS_a_lot
             
         }
 
+        public Temp malloc(Temp tempContainingSize, boolean shouldAddNullByte) {
+            Temp t  = Temp_FACTORY.getInstance().getFreshTemp();
+            int idx = t.getSerialNumber();
+
+            fileWriter.format("\tmove $a0,Temp_%d\n",tempContainingSize.getSerialNumber());
+            if (shouldAddNullByte) {
+                fileWriter.format("\taddi $a0,$a0,1\n");
+            }
+            fileWriter.format("\tli $v0,9\n");
+            fileWriter.format("\tsyscall\n");
+            // address is now in $v0, moving to the Temp
+            fileWriter.format("\tmove Temp_%d,$v0\n",idx);
+            return t;
+        }
+
+        public void exitProgram() {
+		fileWriter.print("\tli $v0,10\n");
+		fileWriter.print("\tsyscall\n");	
+	}
+
 	public Temp addressLocalVar(int serialLocalVarNum, Temp t)
 	{
 
@@ -92,7 +112,7 @@ public class sir_MIPS_a_lot
         {
 		int idxdst=dst.getSerialNumber();
 		int idxsrc=src.getSerialNumber();
-		fileWriter.format("\tlb Temp_%d,%d(Temp_%d)\n",idxsrc,offset,idxdst);		
+		fileWriter.format("\tlb Temp_%d,%d(Temp_%d)\n",idxdst,offset,idxsrc);		
         }
 
 	public void store(Temp dst,Temp src)
@@ -149,6 +169,11 @@ public class sir_MIPS_a_lot
             int idx = t.getSerialNumber();
 	    fileWriter.format("\tadd Temp_%d,$zero,$zero\n",idx);
             return t;
+
+        }
+        public void initializeRegToZero(Temp t) {
+            int idx = t.getSerialNumber();
+	    fileWriter.format("\tadd Temp_%d,$zero,$zero\n",idx);
 
         }
 	public void sub(Temp dst,Temp oprnd1,Temp oprnd2)
@@ -296,7 +321,7 @@ public class sir_MIPS_a_lot
 			System.out.print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 
 			instance.fileWriter.print("string_access_violation: .asciiz \"Access Violation\"\n");
-			instance.fileWriter.print("string_illegal_div_by_0: .asciiz \"Illegal Division By Zero\"\n");
+			// instance.fileWriter.print("string_illegal_div_by_0: .asciiz \"Illegal Division By Zero\"\n");
 			instance.fileWriter.print("string_invalid_ptr_dref: .asciiz \"Invalid Pointer Dereference\"\n");
 				
 			/************************************************/
