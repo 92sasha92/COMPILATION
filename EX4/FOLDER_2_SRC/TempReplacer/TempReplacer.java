@@ -13,13 +13,16 @@ import java.util.List;
 public class TempReplacer {
 	static String dirname = "FOLDER_5_OUTPUT/";
 	public static final String inputFilename = dirname + "MIPS.txt";
+	public static final String originalFilename = dirname + "MIPS_TEMPS.txt";
 	public static InstrList last = null, instList = null;
 	public static FlowGraph flowGraph = null;
 
 	public static void ReplaceTemps() throws IOException {
 
+
 		BufferedReader file_reader;
 		file_reader = new BufferedReader(new FileReader(inputFilename));
+		BufferedWriter originalCopy = new BufferedWriter(new FileWriter(originalFilename));
 		String line;
 		String tokens[] = null;
 		String delims = "[ ,()]";
@@ -29,6 +32,8 @@ public class TempReplacer {
 		LabelList labelList = null;
 		LABEL labelDefinition = null;
 		while ((line = file_reader.readLine()) != null) {
+                    originalCopy.write(line);
+                    originalCopy.newLine();
 			tokens = line.replace("\t", "").split(delims);
 			command = tokens[0];
 			System.out.println(command);
@@ -99,6 +104,7 @@ public class TempReplacer {
 
 			}
 		}
+                originalCopy.close();
 		printInstrList();
 		flowGraph = new AssemFlowGraph(instList);
 		flowGraph.show(System.out);

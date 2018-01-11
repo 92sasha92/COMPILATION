@@ -50,7 +50,6 @@ public class Color implements TempMap {
 				if (init.tempMap(interGraph.gtemp(n.head)) == null && !selStack.contains(n.head)) {
 
 					int num = n.head.outDegree(); 
-                                        System.out.println("@@@"+num);
 					if (max < num && num < regs.size()) {
 
 						max = num;
