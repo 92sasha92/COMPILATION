@@ -2,7 +2,6 @@ package AST;
 
 import IR.*;
 import Temp.*;
-import MIPS.*;
 import TYPES.*;
 import SYMBOL_TABLE.*;
 
@@ -97,8 +96,6 @@ public class AST_DEC_VAR extends AST_DEC
 	{
 		TYPE varType, expType = null, paramT;
 		int scopeIndex, paramIndex;
-		TYPE_CLASS classVarType = null, classExpType = null;
-		TYPE varArrayType, expArrayType;
 		/****************************/
 		/* [1] Check If Type exists */
 		/****************************/
@@ -117,7 +114,7 @@ public class AST_DEC_VAR extends AST_DEC
 		paramT = SYMBOL_TABLE.getInstance().find(name);
 		paramIndex = SYMBOL_TABLE.getInstance().findIndex(name); 
 
-		if (SYMBOL_TABLE.getInstance().find(name) != null && paramIndex >= scopeIndex)
+		if (paramT != null && paramIndex >= scopeIndex)
 		{
 			throw new AST_EXCEPTION(String.format("variable %s already exists in scope\n", name), this.lineNum);			
 		}

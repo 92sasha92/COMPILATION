@@ -2,7 +2,6 @@ package AST;
 
 import Temp.*;
 import TYPES.*;
-import SYMBOL_TABLE.*;
 
 public abstract class AST_Node
 {

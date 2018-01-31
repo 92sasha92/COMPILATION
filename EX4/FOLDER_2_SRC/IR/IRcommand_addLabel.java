@@ -10,7 +10,7 @@ package IR;
 /*******************/
 /* PROJECT IMPORTS */
 /*******************/
-import Temp.*;
+
 import MIPS.*;
 
 public class IRcommand_addLabel extends IRcommand

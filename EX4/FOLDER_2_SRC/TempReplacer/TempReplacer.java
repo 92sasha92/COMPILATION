@@ -12,6 +12,7 @@ import java.util.List;
 
 public class TempReplacer {
 	static String dirname = "FOLDER_5_OUTPUT/";
+	//static String dirname="C:/comp/kaki/src/";
 	public static final String inputFilename = dirname + "MIPS.txt";
 	public static final String originalFilename = dirname + "MIPS_TEMPS.txt";
 	public static InstrList last = null, instList = null;
@@ -122,7 +123,7 @@ public class TempReplacer {
 		InterferenceGraph interGraph = new Liveness(flowGraph);
 		// Frame f = new Frame();
 		int numOfReservedTemps = Temp_FACTORY.reservedTemps.values().length;
-		HashSet<Temp> registers = new java.util.HashSet();
+		HashSet<Temp> registers = new HashSet<Temp>();
 		for (int i = numOfReservedTemps; i < numOfReservedTemps + Temp_FACTORY.numOfMipsRegs; i++)
 			registers.add(Temp_FACTORY.getTemp(i));
 		ReplacerMap replacerMap = new ReplacerMap();

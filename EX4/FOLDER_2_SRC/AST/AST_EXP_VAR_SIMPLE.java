@@ -2,7 +2,6 @@ package AST;
 
 import IR.*;
 import Temp.*;
-import MIPS.*;
 import TYPES.*;
 import SYMBOL_TABLE.*;
 

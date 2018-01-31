@@ -24,7 +24,6 @@ public class TYPE_FUNCTION extends TYPE
 	
 	public boolean isEqual(TYPE_FUNCTION func){
 		TYPE_LIST funcParams = func.params;
-		TYPE funcReturn = func.returnType;
 		if(this.returnType != func.returnType){
 			return false;
 		} else if(this.returnType instanceof TYPE_CLASS){

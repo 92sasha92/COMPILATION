@@ -65,9 +65,6 @@ public class AST_STMT_ASSIGN extends AST_STMT
 	{
 		TYPE varType = null;
 		TYPE expType = null;
-		TYPE_CLASS classVarType = null, classExpType = null;
-		TYPE varArrayType, expArrayType;
-		TYPE_ARRAY varArray= null, expArray = null;
 		if (var != null) varType = var.SemantMe();
 		if (exp != null){
 			expType = exp.SemantMe();

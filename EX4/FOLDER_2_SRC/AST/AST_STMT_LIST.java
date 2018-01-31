@@ -66,9 +66,11 @@ public class AST_STMT_LIST extends AST_Node
 	
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
-		TYPE headType = null,tailType;
+		TYPE headType = null;
 		if (head != null) headType = head.SemantMe();
-		if (tail != null) tailType = tail.SemantMe();
+		if (tail != null) tail.SemantMe();
+		//if (tail != null) tailType = tail.SemantMe();
+		
 
 		return headType;
 

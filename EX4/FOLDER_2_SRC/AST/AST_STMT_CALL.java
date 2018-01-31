@@ -1,7 +1,6 @@
 package AST;
 
 import TYPES.*;
-import SYMBOL_TABLE.*;
 import Temp.*;
 
 public class AST_STMT_CALL extends AST_STMT
