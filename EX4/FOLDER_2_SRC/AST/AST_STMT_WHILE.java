@@ -1,6 +1,11 @@
 package AST;
 
 import TYPES.*;
+import Temp.Temp;
+import IR.IR;
+import IR.IRcommand_If;
+import IR.IRcommand_addLabel;
+import IR.IRcommand_jump;
 import SYMBOL_TABLE.*;
 
 public class AST_STMT_WHILE extends AST_STMT
@@ -81,5 +86,21 @@ public class AST_STMT_WHILE extends AST_STMT
 		/* [4] Return value is irrelevant for class declarations */
 		/*********************************************************/
 		return null;		
+	}
+	
+	public Temp IRme(){
+		Temp t = cond.IRme();
+		String endLabel = "endWhile";
+		String labelStartWhile = "whileCond";
+		IRcommand_If temp = new IRcommand_If(t, labelStartWhile);
+		labelStartWhile = temp.getLabel();
+		IR.getInstance().Add_IRcommand(new IRcommand_addLabel(labelStartWhile));
+		temp = new IRcommand_If(t, endLabel);
+		endLabel = temp.getLabel();
+		IR.getInstance().Add_IRcommand(temp);
+		body.IRme();
+		IR.getInstance().Add_IRcommand(new IRcommand_jump(labelStartWhile));
+		IR.getInstance().Add_IRcommand(new IRcommand_addLabel(endLabel));
+		return null;
 	}
 }
