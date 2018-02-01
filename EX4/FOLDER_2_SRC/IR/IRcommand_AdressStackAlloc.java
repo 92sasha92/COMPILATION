@@ -24,7 +24,6 @@ public class IRcommand_AdressStackAlloc extends IRcommand
 	/***************/
 	public void MIPSme()
 	{
-		sir_MIPS_a_lot.getInstance().addressLocalVar(localVariableIndex,temp);
-
+	    sir_MIPS_a_lot.getInstance().addressLocalVar(localVariableIndex + Temp_FACTORY.numOfMipsRegs + 1,temp); 
 	}
 }

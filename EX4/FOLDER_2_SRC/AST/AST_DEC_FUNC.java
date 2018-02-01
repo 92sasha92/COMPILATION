@@ -3,6 +3,7 @@ package AST;
 import TYPES.*;
 import SYMBOL_TABLE.*;
 import Temp.*;
+import IR.*;
 
 public class AST_DEC_FUNC extends AST_DEC
 {
@@ -11,6 +12,7 @@ public class AST_DEC_FUNC extends AST_DEC
 	/****************/
 	public String returnTypeName;
 	public String name;
+        public String funcLabel;
 	public AST_TYPE_NAME_LIST params = null;
 	public AST_STMT_LIST body;
 	public boolean isMethod = false;
@@ -74,9 +76,16 @@ public class AST_DEC_FUNC extends AST_DEC
 
 	public Temp IRme()
 	{
-		
+		IR.getInstance().Add_IRcommand(new IRcommand_addLabel(funcLabel));
+                int totalLocalVarSize;
+                if (body == null) {
+                    totalLocalVarSize = 0;
+                }
+                else {
+                    totalLocalVarSize = body.totalLocalVarSize;
+                }
+		IR.getInstance().Add_IRcommand(new IRcommand_Func_Prolog(funcLabel, totalLocalVarSize));
 		if (body != null) body.IRme();
-
 		return null;
 	}
 	
@@ -166,7 +175,14 @@ public class AST_DEC_FUNC extends AST_DEC
 		/***************************************************/
 		/* [6] Enter the Function Type to the Symbol Table */
 		/***************************************************/
+                if (name.equals("main")) {
+                    this.funcLabel = "main";
+                }
+                else {
+                    this.funcLabel = IRcommand.getFreshLabel(name);
+                }
         TYPE_FUNCTION typeFunc = new TYPE_FUNCTION(returnType,name,type_list);
+        typeFunc.setFuncLabel(funcLabel);
 		SYMBOL_TABLE.getInstance().enter(name,typeFunc);
 
 		/*********************************************************/

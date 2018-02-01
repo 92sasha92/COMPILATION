@@ -20,7 +20,7 @@ public class sir_MIPS_a_lot
 	/***********************/
 	/* The file writer ... */
 	/***********************/
-	private PrintWriter fileWriter;
+	public PrintWriter fileWriter;
 
 	/***********************/
 	/* The file writer ... */
@@ -47,6 +47,17 @@ public class sir_MIPS_a_lot
 		fileWriter.format("\tli $v0,4\n");
 		fileWriter.format("\tsyscall\n");
 	}
+
+        public void push(Temp t) {
+	    int idx=t.getSerialNumber();
+	    fileWriter.format("\taddi $sp,$sp,-4\n");
+	    fileWriter.format("\tsw Temp_%d,0($sp)\n",idx);		
+        }
+
+        public void push(String reg) {
+	    fileWriter.format("\taddi $sp,$sp,-4\n");
+	    fileWriter.format("\tsw "+reg+",0($sp)\n");		
+        }
 
         public Temp malloc(int size) {
             Temp t  = Temp_FACTORY.getInstance().getFreshTemp();
@@ -83,12 +94,16 @@ public class sir_MIPS_a_lot
 
 	public Temp addressLocalVar(int serialLocalVarNum, Temp t)
 	{
-
-
 		fileWriter.format("\taddi Temp_%d,$fp,%d\n",t.getSerialNumber(),-serialLocalVarNum*WORD_SIZE);
 		
 		return t;
 	}
+        public void moveFpProlog() {
+		fileWriter.format("\taddi $fp,$sp,4\n");
+        }
+        public void moveSpProlog(int totalLocalVarSize) {
+		fileWriter.format("\taddi $sp,$sp,%d\n",-totalLocalVarSize);
+        }
         public void move(Temp dst,Temp src) {
 		int idxdst=dst.getSerialNumber();
 		int idxsrc=src.getSerialNumber();
@@ -213,6 +228,10 @@ public class sir_MIPS_a_lot
 	{
 		fileWriter.format("\tj %s\n",inlabel);
 	}	
+	public void jal(String inlabel)
+	{
+		fileWriter.format("\tjal %s\n",inlabel);
+	}	
 //	public void beq(Temp oprnd1,Temp oprnd2,String label)
 //	{
 //		int i1 =oprnd1.getSerialNumber();
@@ -328,12 +347,12 @@ public class sir_MIPS_a_lot
 			/* [4] Print text section with entry point main */
 			/************************************************/
 			instance.fileWriter.print(".text\n");
-			instance.fileWriter.print("main:\n");
+			// instance.fileWriter.print("main:\n");
 
 			/******************************************/
 			/* [5] Will work with <= 10 variables ... */
 			/******************************************/
-			instance.fileWriter.print("\taddi $fp,$sp,40\n");
+			// instance.fileWriter.print("\taddi $fp,$sp,80\n");
 		}
 		return instance;
 	}

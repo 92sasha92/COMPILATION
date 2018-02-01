@@ -10,6 +10,7 @@ public class AST_STMT_LIST extends AST_Node
 	/****************/
 	public AST_STMT head;
 	public AST_STMT_LIST tail;
+        public int totalLocalVarSize;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -70,8 +71,20 @@ public class AST_STMT_LIST extends AST_Node
 		if (head != null) headType = head.SemantMe();
 		if (tail != null) tail.SemantMe();
 		//if (tail != null) tailType = tail.SemantMe();
-		
-
+                int headVarSize, tailTotalLocalVarSize;
+                if (head == null) {
+                    headVarSize = 0;
+                }
+                else {
+                    headVarSize = head.varSize;
+                }
+                if (tail == null) {
+                    tailTotalLocalVarSize = 0;
+                }
+                else {
+                    tailTotalLocalVarSize = tail.totalLocalVarSize;
+                }
+                this.totalLocalVarSize = headVarSize + tailTotalLocalVarSize;
 		return headType;
 
 	}

@@ -9,6 +9,7 @@ public class IRcommand_Binop_Integers extends IRcommand{
 	public Temp dst;
 	public String command;
         private static boolean divInit = false;
+        private static String illegalDiv;
 	
 	public IRcommand_Binop_Integers(String command,Temp dst,Temp t1,Temp t2)
 	{
@@ -16,6 +17,7 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		this.dst = dst;
 		this.t1 = t1;
 		this.t2 = t2;
+		                
 	}
 	/***************/
 	/* MIPS me !!! */
@@ -25,7 +27,7 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		/******************************************************/
 		/* [0] Allocate a fresh temporary t4 for the addition */
 		/******************************************************/
-		Temp t1_bOp_t2 = Temp_FACTORY.getInstance().getFreshTemp();
+		// Temp t1_bOp_t2 = Temp_FACTORY.getInstance().getFreshTemp();
 
 		/******************************************/
 		/* [1] Allocate a fresh temporary INT_MAX */
@@ -44,28 +46,27 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		String label_end = getFreshLabel("end");
 		String label_overflow_pos = getFreshLabel("overflow_pos");
 		String label_overflow_neg = getFreshLabel("overflow_neg");
-                String label_no_overflow = getFreshLabel("no_overflow");
-                String illegal_div_by_0 = null;
+                // String label_no_overflow = getFreshLabel("no_overflow");
 
                 /*********************/
 		/* [4] t4 := t1 op t2 */
 		/*********************/
 		switch(command){
 			case "add":
-				sir_MIPS_a_lot.getInstance().add(t1_bOp_t2,t1,t2);
+				sir_MIPS_a_lot.getInstance().add(dst,t1,t2);
 				break;
 			case "sub":
-				sir_MIPS_a_lot.getInstance().sub(t1_bOp_t2,t1,t2);
+				sir_MIPS_a_lot.getInstance().sub(dst,t1,t2);
 				break;
 			case "mul":
-				sir_MIPS_a_lot.getInstance().mul(t1_bOp_t2,t1,t2);
+				sir_MIPS_a_lot.getInstance().mul(dst,t1,t2);
 				break;
 			case "div":
                                 if(!divInit){
-		                illegal_div_by_0 = getFreshLabel(illegal_div_by_0);
+                                    illegalDiv = getFreshLabel("illegal_div_by_zero");
                                 }
-				sir_MIPS_a_lot.getInstance().beq(t2 ,illegal_div_by_0);
-				sir_MIPS_a_lot.getInstance().div(t1_bOp_t2,t1,t2);
+				sir_MIPS_a_lot.getInstance().beq(t2 ,illegalDiv);
+				sir_MIPS_a_lot.getInstance().div(dst,t1,t2);
 				break;
                 }
 		
@@ -76,12 +77,12 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		/*     if (32767 >= t1_plus_t2 && t1_plus_t2 >= -32768)*/ 
 		/*			goto label_no_overflow;                      */
 		/*********************************************************/
-		sir_MIPS_a_lot.getInstance().addBranch("blt", intMax, t1_bOp_t2, label_overflow_pos);
-		sir_MIPS_a_lot.getInstance().addBranch("blt", t1_bOp_t2, intMin, label_overflow_neg);
-		sir_MIPS_a_lot.getInstance().addBranch("bge", intMax, t1_bOp_t2, label_no_overflow);
+		sir_MIPS_a_lot.getInstance().addBranch("blt", intMax, dst, label_overflow_pos);
+		sir_MIPS_a_lot.getInstance().addBranch("blt", dst, intMin, label_overflow_neg);
+		sir_MIPS_a_lot.getInstance().addBranch("bge", intMax, dst, label_end);
 
                if(command.equals("div") && !divInit){
-			sir_MIPS_a_lot.getInstance().label(illegal_div_by_0);
+			sir_MIPS_a_lot.getInstance().label(illegalDiv);
 			Temp t = Temp_FACTORY.getInstance().getFreshTemp();
 			sir_MIPS_a_lot.getInstance().load_string(t,"Illegal Division By Zero\n");
 			sir_MIPS_a_lot.getInstance().print_string(t);
@@ -117,22 +118,22 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		/*         goto end;      */
 		/*                        */
 		/**************************/
-		sir_MIPS_a_lot.getInstance().label(label_no_overflow);
-		switch(command){
-			case "add":
-				sir_MIPS_a_lot.getInstance().add(dst,t1,t2);
-				break;
-			case "sub":
-				sir_MIPS_a_lot.getInstance().sub(dst,t1,t2);
-				break;
-			case "mul":
-				sir_MIPS_a_lot.getInstance().mul(dst,t1,t2);
-				break;
-			case "div":
-				sir_MIPS_a_lot.getInstance().div(dst,t1,t2);
-				break;
-		}
-		sir_MIPS_a_lot.getInstance().jump(label_end);
+		// sir_MIPS_a_lot.getInstance().label(label_no_overflow);
+		// switch(command){
+		// 	case "add":
+		// 		sir_MIPS_a_lot.getInstance().add(dst,t1,t2);
+		// 		break;
+		// 	case "sub":
+		// 		sir_MIPS_a_lot.getInstance().sub(dst,t1,t2);
+		// 		break;
+		// 	case "mul":
+		// 		sir_MIPS_a_lot.getInstance().mul(dst,t1,t2);
+		// 		break;
+		// 	case "div":
+		// 		sir_MIPS_a_lot.getInstance().div(dst,t1,t2);
+		// 		break;
+		// }
+		// sir_MIPS_a_lot.getInstance().jump(label_end);
 
 		/******************/
 		/* [9] label_end: */

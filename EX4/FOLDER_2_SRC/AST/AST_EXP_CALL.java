@@ -3,6 +3,7 @@ import TYPES.*;
 import SYMBOL_TABLE.*;
 import Temp.*;
 import IR.*;
+import java.util.LinkedList;
 
 public class AST_EXP_CALL extends AST_EXP
 {
@@ -11,6 +12,7 @@ public class AST_EXP_CALL extends AST_EXP
 	/****************/
 	public String funcName;
 	public AST_EXP_LIST params;
+        public String funcLabel;
 
     // AST_EXP_CALL is sometimes used from AST_STMT_METHOD, in that case we already have the TYPE_FUNCTION and we should use it
     public TYPE_FUNCTION stmtMethod;
@@ -82,6 +84,9 @@ public class AST_EXP_CALL extends AST_EXP
 			funcType = stmtMethod;
         }
 		typeList = ((TYPE_FUNCTION)funcType).params;
+
+                this.funcLabel = ((TYPE_FUNCTION)funcType).funcLabel;
+
 		for (AST_EXP_LIST it = params; it  != null; it = it.tail){
 			paramType = it.head.SemantMe();
 			if(typeList == null){
@@ -99,13 +104,42 @@ public class AST_EXP_CALL extends AST_EXP
 	
 	public Temp IRme()
 	{
-		Temp t=null;
-		
-		if (params != null) { t = params.IRme(); }
-		
-		// IR.getInstance().Add_IRcommand(new IRcommandPrintInt(t));
-		IR.getInstance().Add_IRcommand(new IRcommandPrintString(t));
-		
-		return null;
-	}
+                // push all arguments to the stack
+                // jalr to the function
+                // save $fp to the stack (inside function)
+                // save $ra to the stack (inside function)
+                // push all registers to the stack (inside function)
+                // fp = sp - 4
+                // sp = sp - total local var size
+                // recover everything
+                // return value in $a0
+
+            switch  (funcName) {
+                case "PrintInt":
+                    IR.getInstance().Add_IRcommand(new IRcommandPrintInt(params.IRme()));
+                    return null;
+                case "PrintString":
+                    IR.getInstance().Add_IRcommand(new IRcommandPrintString(params.IRme()));
+                    return null;
+                default:
+
+                    if (params != null) {
+                        AST_EXP_LIST currentParam;
+                        LinkedList <Temp> reversedTemps = new LinkedList <Temp>();
+                        Temp currentParamTemp;
+                        for (currentParam = params; currentParam != null ; currentParam = currentParam.tail) {
+                            currentParamTemp = params.IRme(); 
+                            reversedTemps.addFirst(currentParamTemp);
+                        }
+                        for (Temp currentReversedParamTemp: reversedTemps) {
+                            IR.getInstance().Add_IRcommand(new IRcommand_Push(currentReversedParamTemp));
+                        }
+
+                    }
+                    IR.getInstance().Add_IRcommand(new IRcommand_jump_and_link(funcLabel));
+
+
+                    return null;
+            }
+        }
 }

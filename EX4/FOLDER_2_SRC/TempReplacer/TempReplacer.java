@@ -38,7 +38,6 @@ public class TempReplacer {
                     originalCopy.newLine();
 			tokens = line.replace("\t", "").split(delims);
 			command = tokens[0];
-			System.out.println(command);
 			switch (command) {
 			case "add":
 			case "sub":
@@ -117,7 +116,6 @@ public class TempReplacer {
 			}
 		}
                 originalCopy.close();
-		printInstrList();
 		flowGraph = new AssemFlowGraph(instList);
 		flowGraph.show(System.out);
 		InterferenceGraph interGraph = new Liveness(flowGraph);

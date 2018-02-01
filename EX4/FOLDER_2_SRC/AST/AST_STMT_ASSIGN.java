@@ -1,6 +1,8 @@
 package AST;
 
 import TYPES.*;
+import Temp.*;
+import IR.*;
 
 public class AST_STMT_ASSIGN extends AST_STMT
 {
@@ -74,4 +76,33 @@ public class AST_STMT_ASSIGN extends AST_STMT
 		typesCheck(varType, expType);
 		return null;
 	}
+        public Temp IRme() {
+
+            /***************************************/
+            /* Case 1: Simple Var                  */
+            /***************************************/
+            if (var instanceof AST_EXP_VAR_SIMPLE) {
+
+                // get the temp with the address of the value
+                Temp t = exp.IRme();
+
+                // calculate address to store the value in
+                Temp toStoreAddress  = Temp_FACTORY.getInstance().getFreshTemp();
+                IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(((AST_EXP_VAR_SIMPLE)var).localVariableIndex, toStoreAddress));
+
+                // store the content of exp to the address
+		IR.getInstance().Add_IRcommand(new IRcommand_Store(toStoreAddress,t));
+                return null;
+            }
+            else if (var instanceof AST_EXP_VAR_FIELD) {
+                return null;
+            }
+            else if (var instanceof AST_EXP_VAR_INDEX) {
+                return null;
+            }
+            else {
+                // throw error here!!!
+                return null;
+            }
+        }
 }

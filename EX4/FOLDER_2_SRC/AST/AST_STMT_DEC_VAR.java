@@ -25,6 +25,7 @@ public class AST_STMT_DEC_VAR extends AST_STMT
 	
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
+                this.varSize = 4; // 4 bytes for adresses or int
 		return var.SemantMe();
 	}
 	

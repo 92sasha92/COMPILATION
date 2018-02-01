@@ -11,17 +11,27 @@ public class TYPE_FUNCTION extends TYPE
 	/* types of input params */
 	/*************************/
 	public TYPE_LIST params;
+
+	/*************************/
+	/* A label for the func  */
+	/*************************/
+	public String funcLabel;
+
 	
 	/****************/
 	/* CTROR(S) ... */
 	/****************/
-	public TYPE_FUNCTION(TYPE returnType,String name,TYPE_LIST params)
+	public TYPE_FUNCTION(TYPE returnType,String name, TYPE_LIST params)
 	{
 		this.name = name;
 		this.returnType = returnType;
 		this.params = params;
 	}
 	
+        public void setFuncLabel(String funcLabel) {
+            this.funcLabel = funcLabel;
+        }
+
 	public boolean isEqual(TYPE_FUNCTION func){
 		TYPE_LIST funcParams = func.params;
 		if(this.returnType != func.returnType){
