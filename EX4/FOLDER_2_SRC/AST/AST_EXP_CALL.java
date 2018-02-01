@@ -122,10 +122,10 @@ public class AST_EXP_CALL extends AST_EXP
                     IR.getInstance().Add_IRcommand(new IRcommandPrintString(params.IRme()));
                     return null;
                 default:
-
+                    LinkedList <Temp> reversedTemps = null;
                     if (params != null) {
                         AST_EXP_LIST currentParam;
-                        LinkedList <Temp> reversedTemps = new LinkedList <Temp>();
+                        reversedTemps = new LinkedList <Temp>();
                         Temp currentParamTemp;
                         for (currentParam = params; currentParam != null ; currentParam = currentParam.tail) {
                             currentParamTemp = params.IRme(); 
@@ -137,6 +137,9 @@ public class AST_EXP_CALL extends AST_EXP
 
                     }
                     IR.getInstance().Add_IRcommand(new IRcommand_jump_and_link(funcLabel));
+                    if (params != null) {
+                        IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp", "$sp", 4 * reversedTemps.size()));
+                    }
 
 
                     return null;

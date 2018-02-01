@@ -54,9 +54,19 @@ public class sir_MIPS_a_lot
 	    fileWriter.format("\tsw Temp_%d,0($sp)\n",idx);		
         }
 
+        public void pop(Temp t) {
+	    int idx=t.getSerialNumber();
+	    fileWriter.format("\tlw Temp_%d,0($sp)\n",idx);		
+	    fileWriter.format("\taddi $sp,$sp,4\n");
+        }
+
         public void push(String reg) {
 	    fileWriter.format("\taddi $sp,$sp,-4\n");
 	    fileWriter.format("\tsw "+reg+",0($sp)\n");		
+        }
+        public void pop(String reg) {
+	    fileWriter.format("\tlw "+reg+",0($sp)\n");		
+	    fileWriter.format("\taddi $sp,$sp,4\n");
         }
 
         public Temp malloc(int size) {
@@ -103,6 +113,9 @@ public class sir_MIPS_a_lot
         }
         public void moveSpProlog(int totalLocalVarSize) {
 		fileWriter.format("\taddi $sp,$sp,%d\n",-totalLocalVarSize);
+        }
+        public void moveSpEpilog(int totalLocalVarSize) {
+		fileWriter.format("\taddi $sp,$sp,%d\n",totalLocalVarSize);
         }
         public void move(Temp dst,Temp src) {
 		int idxdst=dst.getSerialNumber();
@@ -179,6 +192,11 @@ public class sir_MIPS_a_lot
 
 		fileWriter.format("\taddi Temp_%d,Temp_%d,%d\n",dstidx,i1,imm);
 	}
+        public void addi(String dst,String oprnd1,int imm)
+	{
+
+		fileWriter.format("\taddi "+dst+","+oprnd1+",%d\n",imm);
+	}
         public Temp initializeRegToZero() {
             Temp t  = Temp_FACTORY.getInstance().getFreshTemp();
             int idx = t.getSerialNumber();
@@ -227,6 +245,10 @@ public class sir_MIPS_a_lot
 	public void jump(String inlabel)
 	{
 		fileWriter.format("\tj %s\n",inlabel);
+	}	
+	public void jr(String reg)
+	{
+		fileWriter.format("\tjr %s\n",reg);
 	}	
 	public void jal(String inlabel)
 	{

@@ -60,6 +60,12 @@ public class TempReplacer {
 				OPER j = new OPER(line, null, null, labelList);
 				addInstruction(j);
 				break;
+                        case "jr":
+				srcTemps = new TempList(getTemp(tokens[1]), null);
+				OPER jr = new OPER(line, null, srcTemps, null);
+				addInstruction(jr);
+				break;
+
 			case "jal":
 				OPER jal = new OPER(line, null, null);
 				addInstruction(jal);

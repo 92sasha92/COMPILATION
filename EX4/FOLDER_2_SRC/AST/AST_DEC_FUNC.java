@@ -17,6 +17,7 @@ public class AST_DEC_FUNC extends AST_DEC
 	public AST_STMT_LIST body;
 	public boolean isMethod = false;
 	public TYPE_CLASS fatherClass = null;
+        public int localVariablesCounter;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -32,6 +33,7 @@ public class AST_DEC_FUNC extends AST_DEC
 		this.name = name;
 		this.params = params;
 		this.body = body;
+                this.localVariablesCounter = 0;
 	}
 
 	/************************************************************/
@@ -86,6 +88,7 @@ public class AST_DEC_FUNC extends AST_DEC
                 }
 		IR.getInstance().Add_IRcommand(new IRcommand_Func_Prolog(funcLabel, totalLocalVarSize));
 		if (body != null) body.IRme();
+		IR.getInstance().Add_IRcommand(new IRcommand_Func_Epilog(funcLabel, totalLocalVarSize));
 		return null;
 	}
 	
@@ -97,7 +100,13 @@ public class AST_DEC_FUNC extends AST_DEC
 		TYPE_LIST p = null;
 		int paramIndex = 0;
 		int scopeIndex = 0;
-		
+
+                for(AST_STMT_LIST body1 = body; body1 != null; body1 = body1.tail){
+                    if(body1.head instanceof AST_STMT_DEC_VAR){
+                        ((AST_STMT_DEC_VAR)body1.head).var.localVariableIndex = ++localVariablesCounter;
+                        AST_DEC_VAR.localVariablesCounter = localVariablesCounter;
+                    }
+                }
 		/*******************/
 		/* [0] return type */
 		/*******************/

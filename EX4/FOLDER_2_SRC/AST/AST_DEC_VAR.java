@@ -34,7 +34,7 @@ public class AST_DEC_VAR extends AST_DEC
 		this.type = type;
 		this.name = name;
 		this.initialValue = initialValue;
-		this.localVariableIndex = ++localVariablesCounter;
+		this.localVariableIndex = 0;
 	}
 	
 	public void setIsFieldToTrue(){
