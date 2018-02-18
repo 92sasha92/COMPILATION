@@ -87,7 +87,7 @@ public class SYMBOL_TABLE
 		PrintMe();
 	}
 	
-	public void enterVar(String name,TYPE t,int varIndex)
+	public void enterVar(String name,TYPE t,int varIndex, SYMBOL_TABLE_ENTRY.varDefinitionType varDefType)
 	{
 		/*************************************************/
 		/* [1] Compute the hash value for this new entry */
@@ -105,6 +105,7 @@ public class SYMBOL_TABLE
 		/**************************************************************************/
 		SYMBOL_TABLE_ENTRY e = new SYMBOL_TABLE_ENTRY(name,t,hashValue,next,top,top_index++);
 		e.varIndex = varIndex;
+                e.varDefType = varDefType;
 
 		/**********************************************/
 		/* [4] Update the top of the symbol table ... */
@@ -125,6 +126,22 @@ public class SYMBOL_TABLE
 	/***********************************************/
 	/* Find the inner-most scope element with name */
 	/***********************************************/
+        public SYMBOL_TABLE_ENTRY.varDefinitionType findDefType(String name)
+	{
+		SYMBOL_TABLE_ENTRY e;
+				
+		for (e = table[hash(name)]; e != null; e = e.next)
+		{
+			if (name.equals(e.name))
+			{
+				return e.varDefType;
+			}
+		}
+		
+		return null;
+	}
+	
+
 	public TYPE find(String name)
 	{
 		SYMBOL_TABLE_ENTRY e;

@@ -108,6 +108,11 @@ public class sir_MIPS_a_lot
 		
 		return t;
 	}
+        public void addressParam(int paramIndex, Temp t)
+        {
+		fileWriter.format("\taddi Temp_%d,$fp,%d\n",t.getSerialNumber(),paramIndex*WORD_SIZE);
+        }
+
         public void moveFpProlog() {
 		fileWriter.format("\taddi $fp,$sp,4\n");
         }

@@ -123,7 +123,14 @@ public class AST_DEC_VAR extends AST_DEC
 		/***************************************************/
 		/* [3] Enter the Var Type to the Symbol Table */
 		/***************************************************/
-		SYMBOL_TABLE.getInstance().enterVar(name,varType,localVariableIndex); 
+                SYMBOL_TABLE_ENTRY.varDefinitionType varDefType;
+                if (this.isField) {
+                    varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD;
+                }
+                else {
+                    varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL;
+                }
+		SYMBOL_TABLE.getInstance().enterVar(name,varType,localVariableIndex, varDefType); 
         if (!nonRecursive) {
 			if (initialValue != null) expType = initialValue.SemantMe();
 			if(isField){

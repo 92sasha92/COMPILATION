@@ -88,7 +88,7 @@ public class AST_STMT_ASSIGN extends AST_STMT
 
                 // calculate address to store the value in
                 Temp toStoreAddress  = Temp_FACTORY.getInstance().getFreshTemp();
-                IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(((AST_EXP_VAR_SIMPLE)var).localVariableIndex, toStoreAddress));
+                IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(((AST_EXP_VAR_SIMPLE)var).VariableIndex, toStoreAddress));
 
                 // store the content of exp to the address
 		IR.getInstance().Add_IRcommand(new IRcommand_Store(toStoreAddress,t));

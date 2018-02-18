@@ -18,6 +18,7 @@ public class AST_DEC_FUNC extends AST_DEC
 	public boolean isMethod = false;
 	public TYPE_CLASS fatherClass = null;
         public int localVariablesCounter;
+        public int localParamCounter;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -34,6 +35,7 @@ public class AST_DEC_FUNC extends AST_DEC
 		this.params = params;
 		this.body = body;
                 this.localVariablesCounter = 0;
+                this.localParamCounter = 0;
 	}
 
 	/************************************************************/
@@ -157,7 +159,7 @@ public class AST_DEC_FUNC extends AST_DEC
 					p.tail = new TYPE_LIST(t, null); 
 					p = p.tail;
 				}
-				SYMBOL_TABLE.getInstance().enter(it.head.name,t);
+				SYMBOL_TABLE.getInstance().enterVar(it.head.name,t,++localParamCounter, SYMBOL_TABLE_ENTRY.varDefinitionType.PARAM);
 			}
 		}
 		

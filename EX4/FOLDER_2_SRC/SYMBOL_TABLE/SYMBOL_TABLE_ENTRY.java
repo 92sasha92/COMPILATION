@@ -22,6 +22,14 @@ public class SYMBOL_TABLE_ENTRY
 	/* name */
 	/********/
 	public String name;
+        public static enum varDefinitionType {
+            LOCAL,
+            PARAM,
+            FIELD,
+            GLOBAL
+        };
+        public varDefinitionType varDefType;
+
 
 	/******************/
 	/* TYPE value ... */

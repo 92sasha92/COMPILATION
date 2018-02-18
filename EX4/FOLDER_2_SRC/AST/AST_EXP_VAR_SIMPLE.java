@@ -11,13 +11,15 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 	/* simple variable name */
 	/************************/
 	public String name;
+        public SYMBOL_TABLE_ENTRY.varDefinitionType varDefType;
+
 	
 	
 	/************************************************/
 	/* PRIMITIVE AD-HOC COUNTER FOR LOCAL VARIABLES */
 	/************************************************/
 	public static int localVariablesCounter = 0;
-	public int localVariableIndex = 0;
+	public int VariableIndex = 0;
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
@@ -55,8 +57,12 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 		TYPE_CLASS classType = null;
 		TYPE field = null;
 		TYPE varType = SYMBOL_TABLE.getInstance().find(name);
+                this.varDefType = SYMBOL_TABLE.getInstance().findDefType(name);
+                if (this.varDefType == null) {
+                    this.varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD;
+                }
 		int varIndex = SYMBOL_TABLE.getInstance().findIndex(name);
-		localVariableIndex = SYMBOL_TABLE.getInstance().findVarIndex(name);
+		VariableIndex = SYMBOL_TABLE.getInstance().findVarIndex(name);
 		int scopeIndex = SYMBOL_TABLE.getInstance().findIndex("SCOPE-BOUNDARY");
 		int classIndex = SYMBOL_TABLE.getInstance().findClassBoundryIndex();
 		if(classScope != null){
@@ -79,10 +85,18 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 	public Temp IRme()
 	{
 		Temp temp  = Temp_FACTORY.getInstance().getFreshTemp();
-		IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(localVariableIndex, temp));
+                if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL) {
+		    IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(VariableIndex, temp));
+                }
+                else if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.PARAM) {
+		    IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(VariableIndex, temp));
+                }
+                else {
+                    // ???
+                }
 		Temp t = Temp_FACTORY.getInstance().getFreshTemp();
 		IR.getInstance().Add_IRcommand(new IRcommand_Load(t,temp));
-		System.out.println("varIndex: " + localVariableIndex + " name: " + name);
+		System.out.println("varIndex: " + VariableIndex + " name: " + name);
 
 		return t;
 	}
