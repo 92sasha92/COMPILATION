@@ -148,6 +148,15 @@ public class sir_MIPS_a_lot
 		fileWriter.format("\tlb Temp_%d,%d(Temp_%d)\n",idxdst,offset,idxsrc);		
         }
 
+	public void store(Temp dst,String constSrcReg)
+	{
+            store(dst,constSrcReg,0);
+	}
+        public void store(Temp dst,String constSrcReg, int offset)
+	{
+		int idxdst=dst.getSerialNumber();
+		fileWriter.format("\tsw %s,%d(Temp_%d)\n",constSrcReg,offset, idxdst);		
+	}
 	public void store(Temp dst,Temp src)
 	{
             store(dst,src,0);

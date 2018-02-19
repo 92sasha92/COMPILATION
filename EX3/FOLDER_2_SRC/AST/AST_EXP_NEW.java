@@ -98,4 +98,58 @@ public class AST_EXP_NEW extends AST_EXP
             }
             
         }
+        public Temp IRme() throws AST_EXCEPTION {
+            int sizeToMalloc = 0;
+            Temp sizeToMallocTemp = null;
+            Temp mallocAddress = null;
+            TYPE_CLASS classType = null;
+            if (exp == null) { // class
+                classType = (TYPE_CLASS)(SYMBOL_TABLE.getInstance().find(type));
+		for (; classType != null ; classType = classType.father) {
+		    for (TYPE_LIST varList = classType.data_members; varList  != null; varList = varList.tail){
+                        sizeToMalloc += 4;
+                    }
+                }
+                sizeToMalloc += 4; // for virtual methods table
+                IR.getInstance().Add_IRcommand(new IRcommandConstInt(sizeToMallocTemp,sizeToMalloc));
+            }
+            else { // array
+                sizeToMallocTemp = exp.IRme();
+            }
+            IR.getInstance().Add_IRcommand(new IRcommand_Malloc(sizeToMallocTemp, mallocAddress));
+            if (exp == null) { // class
+                TYPE_VAR_DEC currentVar = null;
+                TYPE_CLASS currentClass,currentClassSon = null;
+                for (currentClass = classType; currentClass.father != null ;currentClass = currentClass.father);
+                // currentClass is now the root class
+
+                int fieldOffset = 0;
+                // we are about to go down in the inheritance tree in a stupid way: start from the root, then look for the class whose father is the root, and so on...
+                    while (currentClass != null) {
+
+                        for (TYPE_LIST varList = currentClass.data_members; varList  != null; varList = varList.tail){
+                            currentVar = (TYPE_VAR_DEC)varList.head;
+                            Temp initializedFieldTemp = null;
+                            if (currentVar.initialValue != null) {
+                                initializedFieldTemp = currentVar.IRme();
+                            }
+                            fieldOffset++;
+
+                        }
+
+                        // set the direct son of currentClass
+                        if (currentClass.name.equals(classType.name)) {
+                            currentClass = null;
+                        }
+                        else {
+                            // set currentClassSon
+                            for (currentClassSon = classType; !currentClass.father.name.equals(currentClass.name) != null ;currentClassSon = currentClassSon.father);
+                            // next iteration
+                            currentClass = currentClassSon;
+                        }
+
+            }
+
+        }
+        }
 }

@@ -82,14 +82,17 @@ public class AST_DEC_VAR extends AST_DEC
 	
 	public Temp IRme()
 	{
+            Temp t = null;
 		if (initialValue != null)
 		{
+		    t = initialValue.IRme();
+                    if (!this.isField) {
 		        Temp temp  = Temp_FACTORY.getInstance().getFreshTemp();
 	                IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(localVariableIndex, temp));
-			Temp t = initialValue.IRme();
 			IR.getInstance().Add_IRcommand(new IRcommand_Store(temp,t));
+                    }
 		}
-		return null;
+		return t;
 	}
 	
 	public TYPE SemantMe(boolean nonRecursive) throws AST_EXCEPTION
@@ -153,7 +156,13 @@ public class AST_DEC_VAR extends AST_DEC
 		/*********************************************************/
 		/* [4] Return value is irrelevant for class declarations */
 		/*********************************************************/
-		return new TYPE_VAR_DEC(varType, this.name);		
+                TYPE_VAR_DEC typeVarDec = new TYPE_VAR_DEC(varType, this.name);		
+                if (initialValue instanceof AST_EXP_STRING) {
+                    typeVarDec.setInitialValue(((AST_EXP_STRING)initialValue).value);
+                } else if (initialValue instanceof AST_EXP_INT) {
+                    typeVarDec.setInitialValue(((AST_EXP_INT)initialValue).value);
+                }
+		return typeVarDec;
 	}
 	
 }

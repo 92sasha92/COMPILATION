@@ -1,6 +1,8 @@
 package AST;
 import TYPES.*;
 import SYMBOL_TABLE.*;
+import Temp.*;
+import IR.*;
 
 
 public class AST_EXP_NEW extends AST_EXP
@@ -97,5 +99,70 @@ public class AST_EXP_NEW extends AST_EXP
                 throw new AST_EXCEPTION(String.format("'%s' is not a variable type\n", type), this.lineNum);
             }
             
+        }
+        public Temp IRme() {
+            int sizeToMalloc = 0;
+            Temp sizeToMallocTemp = null;
+            Temp mallocAddress = null;
+            TYPE_CLASS classType = null, currentClass = null, currentClassSon = null;
+            if (exp == null) { // class
+                sizeToMalloc += 4; // for virtual table
+                classType = (TYPE_CLASS)(SYMBOL_TABLE.getInstance().find(type));
+		for (currentClass = classType; currentClass != null ; currentClass = currentClass.father) {
+		    for (TYPE_LIST varList = currentClass.data_members; varList  != null; varList = varList.tail){
+                        sizeToMalloc += 4;
+                    }
+                }
+                sizeToMalloc += 4; // for virtual methods table
+                IR.getInstance().Add_IRcommand(new IRcommandConstInt(sizeToMallocTemp,sizeToMalloc));
+            }
+            else { // array
+                sizeToMallocTemp = exp.IRme();
+            }
+            IR.getInstance().Add_IRcommand(new IRcommand_Malloc(sizeToMallocTemp, mallocAddress));
+            if (exp == null) { // class
+                TYPE_VAR_DEC currentVar = null;
+                for (currentClass = classType; currentClass.father != null ;currentClass = currentClass.father);
+                // currentClass is now the root class
+
+                int fieldOffset = 4; // start from 4 and not 0 to skip virtual table
+                // we are about to go down in the inheritance tree in a stupid way: start from the root, then look for the class whose father is the root, and so on...
+                    while (currentClass != null) {
+
+                        for (TYPE_LIST varList = currentClass.data_members; varList  != null; varList = varList.tail){
+                            currentVar = (TYPE_VAR_DEC)varList.head;
+                            if (currentVar.integerInitialValue != 0) {
+		                Temp intVal  = Temp_FACTORY.getInstance().getFreshTemp();
+		                Temp fieldMemAddr  = Temp_FACTORY.getInstance().getFreshTemp();
+                                IR.getInstance().Add_IRcommand(new IRcommandConstInt(intVal,currentVar.integerInitialValue));
+                                IR.getInstance().Add_IRcommand(new IRcommand_Addi(fieldMemAddr,mallocAddress,fieldOffset));
+                                IR.getInstance().Add_IRcommand(new IRcommand_Store(fieldMemAddr,intVal));
+                            }
+                            else if (currentVar.stringInitialValue != null) {
+		                Temp stringVal  = Temp_FACTORY.getInstance().getFreshTemp();
+		                Temp fieldMemAddr  = Temp_FACTORY.getInstance().getFreshTemp();
+                                IR.getInstance().Add_IRcommand(new IRcommandConstString(stringVal,currentVar.stringInitialValue));
+                                IR.getInstance().Add_IRcommand(new IRcommand_Addi(fieldMemAddr,mallocAddress,fieldOffset));
+                                IR.getInstance().Add_IRcommand(new IRcommand_Store(fieldMemAddr,stringVal));
+                            }
+                            fieldOffset+=4;
+
+                        }
+
+                        // set the direct son of currentClass
+                        if (currentClass.name.equals(classType.name)) {
+                            currentClass = null;
+                        }
+                        else {
+                            // set currentClassSon
+                            for (currentClassSon = classType; !currentClass.father.name.equals(currentClass.name) ;currentClassSon = currentClassSon.father);
+                            // next iteration
+                            currentClass = currentClassSon;
+                        }
+
+            }
+
+        }
+        return mallocAddress;
         }
 }

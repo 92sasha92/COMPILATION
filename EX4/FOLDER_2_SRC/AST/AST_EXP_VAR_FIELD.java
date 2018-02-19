@@ -1,11 +1,13 @@
 package AST;
 
 import TYPES.*;
+import Temp.*;
 
 public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 {
 	public AST_EXP_VAR var;
 	public String fieldName;
+        public int fieldOffset;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -20,6 +22,7 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 		System.out.format("====================== var -> var DOT ID( %s )\n",fieldName);
 		this.var = var;
 		this.fieldName = fieldName;
+                this.fieldOffset = 0;
 	}
 
 	/*************************************************/
@@ -81,6 +84,7 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 				{
 					return ((TYPE_VAR_DEC)it.head).t;
 				}
+                                fieldOffset += 4;
 			}
         }
 		
@@ -89,4 +93,9 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 		/*********************************************/
 		throw new AST_EXCEPTION(String.format("field %s does not exist in class\n", fieldName), this.lineNum);
 	}
+        public Temp IRme()
+        {
+
+            return null;
+        }
 }
