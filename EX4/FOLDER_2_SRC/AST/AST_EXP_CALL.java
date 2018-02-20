@@ -13,6 +13,7 @@ public class AST_EXP_CALL extends AST_EXP
 	public String funcName;
 	public AST_EXP_LIST params;
         public String funcLabel;
+        public Temp classInstanceAddress;
 
     // AST_EXP_CALL is sometimes used from AST_STMT_METHOD, in that case we already have the TYPE_FUNCTION and we should use it
     public TYPE_FUNCTION stmtMethod;
@@ -105,6 +106,7 @@ public class AST_EXP_CALL extends AST_EXP
 	public Temp IRme()
 	{
                 // push all arguments to the stack
+                // if method, also push class instance address
                 // jalr to the function
                 // save $fp to the stack (inside function)
                 // save $ra to the stack (inside function)
@@ -128,8 +130,11 @@ public class AST_EXP_CALL extends AST_EXP
                         reversedTemps = new LinkedList <Temp>();
                         Temp currentParamTemp;
                         for (currentParam = params; currentParam != null ; currentParam = currentParam.tail) {
-                            currentParamTemp = params.IRme(); 
+                            currentParamTemp = currentParam.IRme(); 
                             reversedTemps.addFirst(currentParamTemp);
+                        }
+                        if (this.classInstanceAddress != null) {
+                            reversedTemps.add(this.classInstanceAddress);
                         }
                         for (Temp currentReversedParamTemp: reversedTemps) {
                             IR.getInstance().Add_IRcommand(new IRcommand_Push(currentReversedParamTemp));

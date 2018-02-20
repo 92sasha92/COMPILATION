@@ -147,6 +147,10 @@ public class sir_MIPS_a_lot
 		int idxsrc=src.getSerialNumber();
 		fileWriter.format("\tlb Temp_%d,%d(Temp_%d)\n",idxdst,offset,idxsrc);		
         }
+        public void load_address(Temp dst, String name) {
+		int idxdst=dst.getSerialNumber();
+		fileWriter.format("\tla Temp_%d,%s\n",idxdst,name);
+        }
 
 	public void store(Temp dst,String constSrcReg)
 	{
@@ -255,6 +259,10 @@ public class sir_MIPS_a_lot
 	public void label(String inlabel)
 	{
 		fileWriter.format("%s:\n",inlabel);
+	}	
+	public void word(String word)
+	{
+		fileWriter.format("\t.word %s\n",word);
 	}	
 	public void jump(String inlabel)
 	{

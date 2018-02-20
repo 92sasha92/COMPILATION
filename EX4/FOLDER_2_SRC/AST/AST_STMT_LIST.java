@@ -35,6 +35,15 @@ public class AST_STMT_LIST extends AST_Node
 		this.tail = tail;
 	}
 
+        public void setInstanceAddress(Temp instanceAddr) {
+            if (head != null) {
+                head.classInstanceAddress = instanceAddr;
+            }
+            if (tail == null) {
+                return;
+            }
+            tail.setInstanceAddress(instanceAddr);
+        }
 	/******************************************************/
 	/* The printing message for a statement list AST node */
 	/******************************************************/

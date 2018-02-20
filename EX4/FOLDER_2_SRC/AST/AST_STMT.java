@@ -1,10 +1,12 @@
 package AST;
 
 import TYPES.*;
+import Temp.*;
 
 public abstract class AST_STMT extends AST_Node
 {
     public int varSize;
+    public Temp classInstanceAddress;
 	/*********************************************************/
 	/* The default message for an unknown AST statement node */
 	/*********************************************************/

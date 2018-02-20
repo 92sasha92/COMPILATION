@@ -1,5 +1,6 @@
 package AST;
 import TYPES.*;
+import Temp.*;
 
 public class AST_EXP_METHOD extends AST_EXP
 {
@@ -89,5 +90,9 @@ public class AST_EXP_METHOD extends AST_EXP
                 }
             }
             throw new AST_EXCEPTION(String.format("Couldn't find the method %s in the class %s\n", expCall.funcName, firstClass.name), this.lineNum);
+        }
+        public Temp IRme() {
+            expCall.classInstanceAddress = var.IRme();
+            return expCall.IRme();
         }
 }

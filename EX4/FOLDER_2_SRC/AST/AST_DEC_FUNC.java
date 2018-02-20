@@ -17,6 +17,7 @@ public class AST_DEC_FUNC extends AST_DEC
 	public AST_STMT_LIST body;
 	public boolean isMethod = false;
 	public TYPE_CLASS fatherClass = null;
+        public String className = null;
         public int localVariablesCounter;
         public int localParamCounter;
 	
@@ -70,6 +71,10 @@ public class AST_DEC_FUNC extends AST_DEC
 
 	public void setIsMethodToTrue(){
 		this.isMethod = true;
+                this.localParamCounter++; //because the class instace address is always the first parameter, so start counting from 2 and not 1
+	}
+	public void setClassName(String className){
+		this.className = className;
 	}
 	public void setFatherClass(TYPE_CLASS cl){
 		this.fatherClass = cl;
@@ -89,7 +94,14 @@ public class AST_DEC_FUNC extends AST_DEC
                     totalLocalVarSize = body.totalLocalVarSize;
                 }
 		IR.getInstance().Add_IRcommand(new IRcommand_Func_Prolog(funcLabel, totalLocalVarSize));
-		if (body != null) body.IRme();
+		if (body != null) {
+                    if (this.isMethod) {
+		        Temp instanceParam  = Temp_FACTORY.getInstance().getFreshTemp();
+		        IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(1, instanceParam)); // the instance address parameter is the first parameter
+                        body.setInstanceAddress(instanceParam);
+                    }
+                    body.IRme();
+                }
 		IR.getInstance().Add_IRcommand(new IRcommand_Func_Epilog(funcLabel, totalLocalVarSize));
 		return null;
 	}
@@ -190,7 +202,12 @@ public class AST_DEC_FUNC extends AST_DEC
                     this.funcLabel = "main";
                 }
                 else {
-                    this.funcLabel = IRcommand.getFreshLabel(name);
+                    if (this.isMethod && this.className != null) {
+                        this.funcLabel = this.name + "_" + className;
+                    }
+                    else {
+                        this.funcLabel = IRcommand.getFreshLabel(name);
+                    }
                 }
         TYPE_FUNCTION typeFunc = new TYPE_FUNCTION(returnType,name,type_list);
         typeFunc.setFuncLabel(funcLabel);

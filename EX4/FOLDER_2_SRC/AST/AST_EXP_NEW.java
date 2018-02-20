@@ -102,11 +102,10 @@ public class AST_EXP_NEW extends AST_EXP
         }
         public Temp IRme() {
             int sizeToMalloc = 0;
-            Temp sizeToMallocTemp = null;
-            Temp mallocAddress = null;
+            Temp sizeToMallocTemp = Temp_FACTORY.getInstance().getFreshTemp();
+            Temp mallocAddress = Temp_FACTORY.getInstance().getFreshTemp();
             TYPE_CLASS classType = null, currentClass = null, currentClassSon = null;
             if (exp == null) { // class
-                sizeToMalloc += 4; // for virtual table
                 classType = (TYPE_CLASS)(SYMBOL_TABLE.getInstance().find(type));
 		for (currentClass = classType; currentClass != null ; currentClass = currentClass.father) {
 		    for (TYPE_LIST varList = currentClass.data_members; varList  != null; varList = varList.tail){
@@ -118,9 +117,18 @@ public class AST_EXP_NEW extends AST_EXP
             }
             else { // array
                 sizeToMallocTemp = exp.IRme();
+                Temp regWithFour = Temp_FACTORY.getInstance().getFreshTemp();
+                IR.getInstance().Add_IRcommand(new IRcommandConstInt(regWithFour,4));
+                IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("mul",sizeToMallocTemp, sizeToMallocTemp, regWithFour)); // multiply the length of the array by 4
             }
             IR.getInstance().Add_IRcommand(new IRcommand_Malloc(sizeToMallocTemp, mallocAddress));
             if (exp == null) { // class
+                String tableName = "class_"+type+"_table";    
+                Temp tempWithTableAddr = Temp_FACTORY.getInstance().getFreshTemp();
+                IR.getInstance().Add_IRcommand(new IRcommand_Load_Address(tempWithTableAddr,tableName));
+                IR.getInstance().Add_IRcommand(new IRcommand_Store(mallocAddress,tempWithTableAddr));
+
+
                 TYPE_VAR_DEC currentVar = null;
                 for (currentClass = classType; currentClass.father != null ;currentClass = currentClass.father);
                 // currentClass is now the root class
@@ -155,7 +163,7 @@ public class AST_EXP_NEW extends AST_EXP
                         }
                         else {
                             // set currentClassSon
-                            for (currentClassSon = classType; !currentClass.father.name.equals(currentClass.name) ;currentClassSon = currentClassSon.father);
+                            for (currentClassSon = classType; !currentClassSon.father.name.equals(currentClass.name) ;currentClassSon = currentClassSon.father);
                             // next iteration
                             currentClass = currentClassSon;
                         }

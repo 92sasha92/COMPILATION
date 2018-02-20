@@ -91,8 +91,12 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
                 else if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.PARAM) {
 		    IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(VariableIndex, temp));
                 }
+                else if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD){
+                    // load the address of the field into temp
+                }
                 else {
-                    // ???
+                    System.out.println("ERROR!!!");
+                    return null;
                 }
 		Temp t = Temp_FACTORY.getInstance().getFreshTemp();
 		IR.getInstance().Add_IRcommand(new IRcommand_Load(t,temp));

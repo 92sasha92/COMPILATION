@@ -2,6 +2,8 @@ package AST;
 
 import TYPES.*;
 import SYMBOL_TABLE.*;
+import Temp.*;
+import IR.*;
 
 public class AST_DEC_CLASS extends AST_DEC
 {
@@ -10,6 +12,8 @@ public class AST_DEC_CLASS extends AST_DEC
 	/********/
 	public String className;
 	public String extendName = null;
+        public int localVariablesCounter;
+
 
 	/****************/
 	/* DATA MEMBERS */
@@ -29,6 +33,7 @@ public class AST_DEC_CLASS extends AST_DEC
 		this.className = className;
 		this.extendName = extendName;
 		this.data_members = data_members;
+                this.localVariablesCounter = 0;
 	}
 
 	/*********************************************************/
@@ -133,6 +138,9 @@ public class AST_DEC_CLASS extends AST_DEC
                 if(l.head.varDec != null){
 					l.head.varDec.setIsFieldToTrue();
 					l.head.varDec.setFatherClass(extendsType);
+                                        if (!nonRecursive) { // we should run this line only once per field
+					    l.head.varDec.localVariableIndex = ++localVariablesCounter;
+                                        }
                     t = l.head.varDec.SemantMe(nonRecursive);
                     if (param_List == null){
                         param_List = new TYPE_LIST(t, null);
@@ -150,6 +158,7 @@ public class AST_DEC_CLASS extends AST_DEC
                 if(l.head.funcDec != null){
 					l.head.funcDec.setIsMethodToTrue();
 					l.head.funcDec.setFatherClass(extendsType);
+					l.head.funcDec.setClassName(className);
                     t = l.head.funcDec.SemantMe(nonRecursive);
                     if (method_List == null){
                         method_List = new TYPE_LIST(t, null);
@@ -165,6 +174,28 @@ public class AST_DEC_CLASS extends AST_DEC
 
 
             return new TYPE_CLASS(extendsType,className, param_List, method_List);
+    }
+
+    public Temp IRme() {
+
+        // build the virtualMethodTable
+	    TYPE_CLASS classType = null,extendsType = null;
+	    classType = (TYPE_CLASS)SYMBOL_TABLE.getInstance().find(className);
+            String tableName = "class_" + this.className + "_table";
+            IR.getInstance().Add_IRcommand(new IRcommand_addLabel(tableName));
+            for (String funcName : classType.virtualMethodTable.keySet()) {
+                IR.getInstance().Add_IRcommand(new IRcommand_addWord(funcName + "_" + classType.virtualMethodTable.get(funcName)));
+            }
+
+            // IR all the functions
+            for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
+                if(l.head.funcDec != null){
+                    l.head.funcDec.IRme();
+                }
+            }
+	
+
+        return null;
     }
 
 }

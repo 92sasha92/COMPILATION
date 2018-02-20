@@ -1,4 +1,5 @@
 package TYPES;
+import java.util.LinkedHashMap;
 
 public class TYPE_CLASS extends TYPE
 {
@@ -15,6 +16,8 @@ public class TYPE_CLASS extends TYPE
 	public TYPE_LIST data_members;
 	
 	public TYPE_LIST method_List;
+
+        public LinkedHashMap<String, String> virtualMethodTable;
 	
 	/****************/
 	/* CTROR(S) ... */
@@ -25,9 +28,24 @@ public class TYPE_CLASS extends TYPE
 		this.father = father;
 		this.data_members = data_members;
 		this.method_List = method_List;
+                this.setVirtualMethodTable();
 	}
 	
-	
+        public void setVirtualMethodTable() {
+            if (this.father != null) {
+                this.virtualMethodTable = (LinkedHashMap)this.father.virtualMethodTable.clone();
+            }
+            else {
+                this.virtualMethodTable = new LinkedHashMap<String,String>();
+            }
+			
+            TYPE_FUNCTION currentMethod = null;
+            for (TYPE_LIST methodList = this.method_List; methodList  != null; methodList = methodList.tail){
+                    currentMethod = (TYPE_FUNCTION)methodList.head;
+                    this.virtualMethodTable.put(currentMethod.name, this.name);
+            }
+        }
+
 	public boolean isSonOf(String name){
 		TYPE_CLASS classType;
 		for (classType = this; classType != null ; classType = classType.father) {
