@@ -203,6 +203,19 @@ public class sir_MIPS_a_lot
 		fileWriter.format("\tla Temp_%d,str%d\n",idx,asciizIndex);
                 asciizIndex++;
         }
+        public void create_global(Temp t, String name) {
+                int idx=t.getSerialNumber();
+		fileWriter.format("\t.data\n");
+		fileWriter.format("\tglobal_%s: .word 0\n",name);
+		fileWriter.format("\t.text\n");
+		fileWriter.format("\tla Temp_%d,global_%s\n",idx,name);
+
+        }
+        public void load_global(Temp t, String name) {
+                int idx=t.getSerialNumber();
+		fileWriter.format("\tla Temp_%d,global_%s\n",idx,name);
+
+        }
 	public void add(Temp dst,Temp oprnd1,Temp oprnd2)
 	{
 		int i1 =oprnd1.getSerialNumber();

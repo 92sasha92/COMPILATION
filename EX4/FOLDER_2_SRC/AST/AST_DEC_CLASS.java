@@ -147,7 +147,8 @@ public class AST_DEC_CLASS extends AST_DEC
 
             for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
                 if(l.head.varDec != null){
-					l.head.varDec.setIsFieldToTrue();
+					// l.head.varDec.setIsFieldToTrue();
+                                        l.head.varDec.varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD;
 					l.head.varDec.setFatherClass(extendsType);
                                         if (!nonRecursive) { // we should run this line only once per field
 					    l.head.varDec.localVariableIndex = ++this.localVariablesCounter;

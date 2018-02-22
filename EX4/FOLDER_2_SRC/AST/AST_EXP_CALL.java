@@ -149,17 +149,18 @@ public class AST_EXP_CALL extends AST_EXP
                     IR.getInstance().Add_IRcommand(new IRcommandPrintString(params.IRme()));
                     return null;
                 default:
-                    LinkedList <Temp> reversedTemps = null;
+                    LinkedList <Temp> reversedTemps = new LinkedList <Temp>();                    
                     if (params != null) {
                         AST_EXP_LIST currentParam;
-                        reversedTemps = new LinkedList <Temp>();
+                       
                         Temp currentParamTemp;
                         for (currentParam = params; currentParam != null ; currentParam = currentParam.tail) {
                             currentParamTemp = currentParam.IRme(); 
                             reversedTemps.addFirst(currentParamTemp);
                         }
-                        if (this.classType != null && this.isMethodFromClass) {
-                            Temp instanceAddr = Temp_FACTORY.getInstance().getFreshTemp();
+                    }
+                    if (this.classType != null && this.isMethodFromClass) {
+                        Temp instanceAddr = Temp_FACTORY.getInstance().getFreshTemp();
                             IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(1,instanceAddr));
                             IR.getInstance().Add_IRcommand(new IRcommand_Load(instanceAddr,instanceAddr));
                             this.classInstanceAddress = instanceAddr;
@@ -172,7 +173,6 @@ public class AST_EXP_CALL extends AST_EXP
                             IR.getInstance().Add_IRcommand(new IRcommand_Push(currentReversedParamTemp));
                         }
 
-                    }
                     if (this.classInstanceAddress == null) { // if this is not a method but a function, jump to the label
                         IR.getInstance().Add_IRcommand(new IRcommand_jump_and_link(funcLabel));
                     }
@@ -183,7 +183,6 @@ public class AST_EXP_CALL extends AST_EXP
                             System.out.println("ERROR!!!");
                             return null;
                         }
-                        System.out.println("@@"+indexOfFunc);
                         Temp funcAddr = Temp_FACTORY.getInstance().getFreshTemp();
                         IR.getInstance().Add_IRcommand(new IRcommand_Load(funcAddr,this.classInstanceAddress));
                         IR.getInstance().Add_IRcommand(new IRcommand_Addi(funcAddr, funcAddr,indexOfFunc * 4));

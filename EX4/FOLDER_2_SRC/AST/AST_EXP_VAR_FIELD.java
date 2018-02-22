@@ -2,6 +2,7 @@ package AST;
 
 import TYPES.*;
 import Temp.*;
+import SYMBOL_TABLE.*;
 
 public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 {
@@ -56,7 +57,10 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 	{
 		TYPE t = null;
 		TYPE_CLASS tc = null;
-		
+		this.varDefType = SYMBOL_TABLE.getInstance().findDefType(fieldName);
+                if (this.varDefType == null) {
+                    this.varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD;
+                }
 		/******************************/
 		/* [1] Recursively semant var */
 		/******************************/

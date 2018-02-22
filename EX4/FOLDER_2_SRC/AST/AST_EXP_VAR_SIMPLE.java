@@ -103,7 +103,8 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
                     IR.getInstance().Add_IRcommand(new IRcommand_Addi(varAddress,varAddress, VariableIndex * 4)); // note that localVariableIndex starts with 1, and this is good because we need to skip the virtualMethodTable
                 }
                 else if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.GLOBAL){
-                    // implement here!
+                    boolean shouldCreate = false;
+                    IR.getInstance().Add_IRcommand(new IRcommand_GlobalVariable(varAddress, this.name, shouldCreate));
                 }
                 else {
                     System.out.println("ERROR!!!");

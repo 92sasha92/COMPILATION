@@ -13,8 +13,10 @@ public class AST_DEC_VAR extends AST_DEC
 	public String type;
 	public String name;
 	public AST_EXP initialValue;
-	public boolean isField = false;
+	// public boolean isField = false;
+        public SYMBOL_TABLE_ENTRY.varDefinitionType varDefType;
 	public TYPE_CLASS fatherClass = null;
+         
 	
 	/************************************************/
 	/* PRIMITIVE AD-HOC COUNTER FOR LOCAL VARIABLES */
@@ -35,11 +37,12 @@ public class AST_DEC_VAR extends AST_DEC
 		this.name = name;
 		this.initialValue = initialValue;
 		this.localVariableIndex = 0;
+                this.varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL; //default is local
 	}
 	
-	public void setIsFieldToTrue(){
-		this.isField = true;
-	}
+	// public void setIsFieldToTrue(){
+	// 	this.isField = true;
+	// }
 
 	/********************************************************/
 	/* The printing message for a declaration list AST node */
@@ -86,11 +89,19 @@ public class AST_DEC_VAR extends AST_DEC
 		if (initialValue != null)
 		{
 		    t = initialValue.IRme();
-                    if (!this.isField) {
-		        Temp temp  = Temp_FACTORY.getInstance().getFreshTemp();
-	                IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(localVariableIndex, temp));
-			IR.getInstance().Add_IRcommand(new IRcommand_Store(temp,t));
+		    Temp varAddress  = Temp_FACTORY.getInstance().getFreshTemp();
+                    if (this.varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL) {
+	                IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(localVariableIndex, varAddress));
                     }
+                    else if (this.varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.GLOBAL) {
+                        boolean shouldCreate = true;
+	                IR.getInstance().Add_IRcommand(new IRcommand_GlobalVariable(varAddress, this.name, shouldCreate));
+                    }
+                    else {
+                        System.out.println("ERROR!!!"+this.varDefType );
+                        return null;
+                    }
+		    IR.getInstance().Add_IRcommand(new IRcommand_Store(varAddress,t));
 		}
 		return t;
 	}
@@ -114,6 +125,9 @@ public class AST_DEC_VAR extends AST_DEC
 		/* [2] Check That Name does NOT exist */
 		/**************************************/
 		scopeIndex = SYMBOL_TABLE.getInstance().findIndex("SCOPE-BOUNDARY");
+                if (scopeIndex == 0) {
+                    this.varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.GLOBAL;
+                }
 		paramT = SYMBOL_TABLE.getInstance().find(name);
 		paramIndex = SYMBOL_TABLE.getInstance().findIndex(name); 
 
@@ -126,17 +140,18 @@ public class AST_DEC_VAR extends AST_DEC
 		/***************************************************/
 		/* [3] Enter the Var Type to the Symbol Table */
 		/***************************************************/
-                SYMBOL_TABLE_ENTRY.varDefinitionType varDefType;
-                if (this.isField) {
-                    varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD;
-                }
-                else {
-                    varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL;
-                }
-		SYMBOL_TABLE.getInstance().enterVar(name,varType,localVariableIndex, varDefType); 
+                // SYMBOL_TABLE_ENTRY.varDefinitionType varDefType;
+                // if (this.isField) {
+                //     varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD;
+                // }
+                // else {
+                //     varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL;
+                // }
+
+		SYMBOL_TABLE.getInstance().enterVar(name,varType,localVariableIndex, this.varDefType); 
         if (!nonRecursive) {
 			if (initialValue != null) expType = initialValue.SemantMe();
-			if(isField){
+			if(this.varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD) {
 				if(this.fatherClass != null){
 					if(!(fatherClass.isLegalFieldDec(new TYPE_VAR_DEC(varType, this.name)))){
 						throw new AST_EXCEPTION("Shadowing fields is illegal", this.lineNum);

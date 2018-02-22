@@ -48,6 +48,10 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 	public TYPE SemantMe() throws AST_EXCEPTION {
 		TYPE t = null, iType;
 		TYPE_ARRAY arrayType = null;
+                // this.varDefType = SYMBOL_TABLE.getInstance().findDefType(name);
+                // if (this.varDefType == null) {
+                //     this.varDefType = SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD;
+                // }
 		/******************************/
 		/* [1] Recursively semant var */
 		/******************************/
