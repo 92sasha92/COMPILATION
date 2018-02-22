@@ -93,9 +93,9 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 		/*********************************************/
 		throw new AST_EXCEPTION(String.format("field %s does not exist in class\n", fieldName), this.lineNum);
 	}
-        public Temp IRme()
+        public Temp IRme(boolean shouldLoad)
         {
-
+            // implement me
             return null;
         }
 }

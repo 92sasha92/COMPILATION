@@ -4,6 +4,7 @@ import SYMBOL_TABLE.*;
 import Temp.*;
 import IR.*;
 import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class AST_EXP_CALL extends AST_EXP
 {
@@ -14,6 +15,8 @@ public class AST_EXP_CALL extends AST_EXP
 	public AST_EXP_LIST params;
         public String funcLabel;
         public Temp classInstanceAddress;
+        public boolean isMethodFromClass;
+        public TYPE_CLASS classType;
 
     // AST_EXP_CALL is sometimes used from AST_STMT_METHOD, in that case we already have the TYPE_FUNCTION and we should use it
     public TYPE_FUNCTION stmtMethod;
@@ -34,6 +37,10 @@ public class AST_EXP_CALL extends AST_EXP
 
     public void setStmtMethod(TYPE_FUNCTION stmtMethod) {
         this.stmtMethod = stmtMethod;
+    }
+
+    public void setClassType (TYPE_CLASS classType) {
+        this.classType = classType;
     }
 
 	/************************************************************/
@@ -76,7 +83,18 @@ public class AST_EXP_CALL extends AST_EXP
             funcType = SYMBOL_TABLE.getInstance().find(funcName);
             if (funcType == null)
             {
-				throw new AST_EXCEPTION(String.format("Non existing function %s\n", funcName), this.lineNum);
+                TYPE_FOR_SCOPE_BOUNDARIES classBoundry = (TYPE_FOR_SCOPE_BOUNDARIES)(SYMBOL_TABLE.getInstance().findClassBoundry());
+                if (classBoundry == null) {
+		    throw new AST_EXCEPTION(String.format("Non existing function %s\n", funcName), this.lineNum);
+                }
+                else {
+                    TYPE_CLASS classType = (TYPE_CLASS)(classBoundry.returnType);
+                    funcType = classType.getFunc(this.funcName);
+                    if (funcType == null) {
+		        throw new AST_EXCEPTION(String.format("Non existing function %s\n", funcName), this.lineNum);
+                    }
+                    this.isMethodFromClass = true;
+                }
             } else if(!(funcType instanceof TYPE_FUNCTION)) {
                 throw new AST_EXCEPTION(String.format("'%s' is not a function type\n", funcType.name), this.lineNum);
             }
@@ -87,6 +105,13 @@ public class AST_EXP_CALL extends AST_EXP
 		typeList = ((TYPE_FUNCTION)funcType).params;
 
                 this.funcLabel = ((TYPE_FUNCTION)funcType).funcLabel;
+
+                TYPE_FOR_SCOPE_BOUNDARIES classBoundry = (TYPE_FOR_SCOPE_BOUNDARIES)(SYMBOL_TABLE.getInstance().findClassBoundry());
+                if (classBoundry != null) {
+                this.classType = (TYPE_CLASS)(classBoundry.returnType);
+                }
+
+                // this.isMethodFromClass = (classBoundry != null);
 
 		for (AST_EXP_LIST it = params; it  != null; it = it.tail){
 			paramType = it.head.SemantMe();
@@ -133,6 +158,13 @@ public class AST_EXP_CALL extends AST_EXP
                             currentParamTemp = currentParam.IRme(); 
                             reversedTemps.addFirst(currentParamTemp);
                         }
+                        if (this.classType != null && this.isMethodFromClass) {
+                            Temp instanceAddr = Temp_FACTORY.getInstance().getFreshTemp();
+                            IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(1,instanceAddr));
+                            IR.getInstance().Add_IRcommand(new IRcommand_Load(instanceAddr,instanceAddr));
+                            this.classInstanceAddress = instanceAddr;
+                        }
+
                         if (this.classInstanceAddress != null) {
                             reversedTemps.add(this.classInstanceAddress);
                         }
@@ -141,13 +173,36 @@ public class AST_EXP_CALL extends AST_EXP
                         }
 
                     }
-                    IR.getInstance().Add_IRcommand(new IRcommand_jump_and_link(funcLabel));
+                    if (this.classInstanceAddress == null) { // if this is not a method but a function, jump to the label
+                        IR.getInstance().Add_IRcommand(new IRcommand_jump_and_link(funcLabel));
+                    }
+                    else if (this.classType != null && this.classInstanceAddress != null) {
+                        ArrayList keyList = new ArrayList(this.classType.virtualMethodTable.keySet());
+                        int indexOfFunc = keyList.indexOf(this.funcName);
+                        if (indexOfFunc == -1) {
+                            System.out.println("ERROR!!!");
+                            return null;
+                        }
+                        System.out.println("@@"+indexOfFunc);
+                        Temp funcAddr = Temp_FACTORY.getInstance().getFreshTemp();
+                        IR.getInstance().Add_IRcommand(new IRcommand_Load(funcAddr,this.classInstanceAddress));
+                        IR.getInstance().Add_IRcommand(new IRcommand_Addi(funcAddr, funcAddr,indexOfFunc * 4));
+                        IR.getInstance().Add_IRcommand(new IRcommand_Load(funcAddr,funcAddr));
+                        IR.getInstance().Add_IRcommand(new IRcommand_jump_and_link(funcAddr));
+
+                    }
+                    else {
+                        System.out.println("ERROR!!!");
+                        return null;
+                    }
                     if (params != null) {
                         IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp", "$sp", 4 * reversedTemps.size()));
                     }
 
-
-                    return null;
+                    Temp returnTemp = Temp_FACTORY.getInstance().getFreshTemp();
+                    IR.getInstance().Add_IRcommand(new IRcommand_mixedMove(returnTemp, "$v0"));
+                    
+                    return returnTemp;
             }
         }
 }

@@ -11,7 +11,6 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 	/* simple variable name */
 	/************************/
 	public String name;
-        public SYMBOL_TABLE_ENTRY.varDefinitionType varDefType;
 
 	
 	
@@ -69,6 +68,13 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 			classType = (TYPE_CLASS)((TYPE_FOR_SCOPE_BOUNDARIES)classScope).returnType;
 			field = classType.getField(this.name);
 			if(field != null){
+                                if (varType == null) {
+                                    VariableIndex = classType.getFieldIndex(this.name);
+                                    if (VariableIndex < 0) {
+                                        System.out.println("ERROR!!!");
+                                        return null;
+                                    }
+                                }
 				if(classIndex <= scopeIndex && varType != null && varType.name.equals(((TYPE_VAR_DEC)field).t.name)){
 					return varType;
 				}
@@ -82,26 +88,35 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 		
 	}
 	
-	public Temp IRme()
+	public Temp IRme(boolean shouldLoad)
 	{
-		Temp temp  = Temp_FACTORY.getInstance().getFreshTemp();
+		Temp varAddress  = Temp_FACTORY.getInstance().getFreshTemp();
                 if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL) {
-		    IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(VariableIndex, temp));
+		    IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(VariableIndex, varAddress));
                 }
                 else if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.PARAM) {
-		    IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(VariableIndex, temp));
+		    IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(VariableIndex, varAddress));
                 }
                 else if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD){
-                    // load the address of the field into temp
+		    IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(1, varAddress)); // instace address is the first parameter
+		    IR.getInstance().Add_IRcommand(new IRcommand_Load(varAddress, varAddress)); // load the address from the stack
+                    IR.getInstance().Add_IRcommand(new IRcommand_Addi(varAddress,varAddress, VariableIndex * 4)); // note that localVariableIndex starts with 1, and this is good because we need to skip the virtualMethodTable
+                }
+                else if (varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.GLOBAL){
+                    // implement here!
                 }
                 else {
                     System.out.println("ERROR!!!");
                     return null;
                 }
-		Temp t = Temp_FACTORY.getInstance().getFreshTemp();
-		IR.getInstance().Add_IRcommand(new IRcommand_Load(t,temp));
-		System.out.println("varIndex: " + VariableIndex + " name: " + name);
+                if (!shouldLoad) {
+                    return varAddress;
+                }
+                else {
+                    Temp t = Temp_FACTORY.getInstance().getFreshTemp();
+                    IR.getInstance().Add_IRcommand(new IRcommand_Load(t,varAddress));
 
-		return t;
+                    return t;
+                }
 	}
 }

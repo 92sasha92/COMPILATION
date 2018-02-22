@@ -13,6 +13,7 @@ public class AST_DEC_FUNC extends AST_DEC
 	public String returnTypeName;
 	public String name;
         public String funcLabel;
+        public String returnLabel;
 	public AST_TYPE_NAME_LIST params = null;
 	public AST_STMT_LIST body;
 	public boolean isMethod = false;
@@ -71,7 +72,7 @@ public class AST_DEC_FUNC extends AST_DEC
 
 	public void setIsMethodToTrue(){
 		this.isMethod = true;
-                this.localParamCounter++; //because the class instace address is always the first parameter, so start counting from 2 and not 1
+                this.localParamCounter = 1; //because the class instace address is always the first parameter, so start counting from 2 and not 1
 	}
 	public void setClassName(String className){
 		this.className = className;
@@ -95,13 +96,10 @@ public class AST_DEC_FUNC extends AST_DEC
                 }
 		IR.getInstance().Add_IRcommand(new IRcommand_Func_Prolog(funcLabel, totalLocalVarSize));
 		if (body != null) {
-                    if (this.isMethod) {
-		        Temp instanceParam  = Temp_FACTORY.getInstance().getFreshTemp();
-		        IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(1, instanceParam)); // the instance address parameter is the first parameter
-                        body.setInstanceAddress(instanceParam);
-                    }
+                    Temp returnTemp = null;
                     body.IRme();
                 }
+		IR.getInstance().Add_IRcommand(new IRcommand_addLabel(this.returnLabel));
 		IR.getInstance().Add_IRcommand(new IRcommand_Func_Epilog(funcLabel, totalLocalVarSize));
 		return null;
 	}
@@ -198,17 +196,24 @@ public class AST_DEC_FUNC extends AST_DEC
 		/***************************************************/
 		/* [6] Enter the Function Type to the Symbol Table */
 		/***************************************************/
+                boolean shouldEnumerate;
                 if (name.equals("main")) {
                     this.funcLabel = "main";
                 }
                 else {
                     if (this.isMethod && this.className != null) {
-                        this.funcLabel = this.name + "_" + className;
+                        shouldEnumerate = false;
+                        this.funcLabel = IRcommand.getFreshLabel(this.name + "_" + className, shouldEnumerate);
                     }
                     else {
-                        this.funcLabel = IRcommand.getFreshLabel(name);
+                        shouldEnumerate = true;
+                        this.funcLabel = IRcommand.getFreshLabel(this.name, shouldEnumerate);
                     }
                 }
+
+                this.returnLabel = IRcommand.getFreshLabel(this.funcLabel + "_return", false);
+                body.insertReturnLabel(this.returnLabel);
+
         TYPE_FUNCTION typeFunc = new TYPE_FUNCTION(returnType,name,type_list);
         typeFunc.setFuncLabel(funcLabel);
 		SYMBOL_TABLE.getInstance().enter(name,typeFunc);

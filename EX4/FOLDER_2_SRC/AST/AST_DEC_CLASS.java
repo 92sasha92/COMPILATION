@@ -98,14 +98,22 @@ public class AST_DEC_CLASS extends AST_DEC
 		/***************************/
 		/* [4] Semant Data Members */
 		/***************************/
+            
+                TYPE_CLASS newTypeClass = new TYPE_CLASS((TYPE_CLASS)extendsType, className, null, null);
+                if (extendsType != null) {
+                    this.localVariablesCounter = ((TYPE_CLASS)extendsType).localVariablesCounter;
+                }
+                newTypeClass.localVariablesCounter = this.localVariablesCounter;
 
         /* GUY - first we add TYPE_CLASS to the scope with no members and methods */
-		SYMBOL_TABLE.getInstance().enter(className,new TYPE_CLASS((TYPE_CLASS)extendsType, className, null, null));
+		SYMBOL_TABLE.getInstance().enter(className,newTypeClass);
 
         /* GUY - Now we can semant the members and they will recognize the type of the class because it's in the scope
         * BUT - we pass true to tell the SemantMe's of FUNC_DEC and VAR_DEC to NOT semant the body,parameters,expressions etc - because it will cause problems if they
         * try to find a member of this class, because we inserted a class without members to the scope*/
         TYPE_CLASS cT = this.SemantClassMembers(true, (TYPE_CLASS)extendsType);
+
+        cT.localVariablesCounter = this.localVariablesCounter;
 
         /* GUY - now cT contains the TYPE_CLASS *WITH* all the members and methods, but we should semant them as well because we didn't do it the first time */
 		SYMBOL_TABLE.getInstance().endScope();
@@ -114,6 +122,7 @@ public class AST_DEC_CLASS extends AST_DEC
         /* passing false tells the SemantMe's to Semant everything recursively */
         cT = this.SemantClassMembers(false, (TYPE_CLASS)extendsType);
 
+        cT.localVariablesCounter = this.localVariablesCounter;
 		/*****************/
 		/* [5] End Scope */
 		/*****************/
@@ -134,12 +143,14 @@ public class AST_DEC_CLASS extends AST_DEC
             TYPE_LIST method_List=null;
             TYPE_LIST p=  null;
             TYPE t = null;
+
+
             for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
                 if(l.head.varDec != null){
 					l.head.varDec.setIsFieldToTrue();
 					l.head.varDec.setFatherClass(extendsType);
                                         if (!nonRecursive) { // we should run this line only once per field
-					    l.head.varDec.localVariableIndex = ++localVariablesCounter;
+					    l.head.varDec.localVariableIndex = ++this.localVariablesCounter;
                                         }
                     t = l.head.varDec.SemantMe(nonRecursive);
                     if (param_List == null){
@@ -153,6 +164,7 @@ public class AST_DEC_CLASS extends AST_DEC
 
 
             }
+
 
             for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
                 if(l.head.funcDec != null){
@@ -178,22 +190,24 @@ public class AST_DEC_CLASS extends AST_DEC
 
     public Temp IRme() {
 
-        // build the virtualMethodTable
-	    TYPE_CLASS classType = null,extendsType = null;
-	    classType = (TYPE_CLASS)SYMBOL_TABLE.getInstance().find(className);
-            String tableName = "class_" + this.className + "_table";
-            IR.getInstance().Add_IRcommand(new IRcommand_addLabel(tableName));
-            for (String funcName : classType.virtualMethodTable.keySet()) {
-                IR.getInstance().Add_IRcommand(new IRcommand_addWord(funcName + "_" + classType.virtualMethodTable.get(funcName)));
+        // IR all the functions
+        for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
+            if(l.head.funcDec != null){
+                l.head.funcDec.IRme();
             }
+        }
 
-            // IR all the functions
-            for (AST_CFIELD_LIST l = this.data_members; l != null;l = l.tail){
-                if(l.head.funcDec != null){
-                    l.head.funcDec.IRme();
-                }
-            }
-	
+        // build the virtualMethodTable
+        TYPE_CLASS classType = null,extendsType = null;
+        classType = (TYPE_CLASS)SYMBOL_TABLE.getInstance().find(className);
+        String tableName = "class_" + this.className + "_table";
+
+        IR.getInstance().Add_IRcommand(new IRcommand_addLabel(tableName));
+        for (String funcName : classType.virtualMethodTable.keySet()) {
+            IR.getInstance().Add_IRcommand(new IRcommand_addWord(funcName + "_" + classType.virtualMethodTable.get(funcName)));
+        }
+
+
 
         return null;
     }

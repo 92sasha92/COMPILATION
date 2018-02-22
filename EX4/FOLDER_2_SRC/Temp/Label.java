@@ -25,8 +25,14 @@ public class Label {
 	 * <tt>new Label(s)</tt> with the same name <tt>s</tt>.
 	 */
 
+    public Label(String n, boolean shouldEnumerate) {
+        name = n;
+        if (shouldEnumerate) {
+            name += (count++);
+        }
+    }
     public Label(String n) {
-        name = n + count++;
+        this(n, true);
     }
 
 	/**
@@ -48,10 +54,19 @@ public class Label {
         if (allLabels.get(labelName) != null) {
             return allLabels.get(labelName);
         }
-        Label newLabel = new Label(labelName);
-        allLabels.put(labelName,newLabel);
+        Label newLabel = new Label(labelName, true);
+        allLabels.put(newLabel.name,newLabel);
         return newLabel;
     }
+    public static Label getLabel(String labelName, boolean shouldEnumerate) {
+        if (allLabels.get(labelName) != null) {
+            return allLabels.get(labelName);
+        }
+        Label newLabel = new Label(labelName, shouldEnumerate);
+        allLabels.put(newLabel.name,newLabel);
+        return newLabel;
+    }
+
 
 	/**
 	 * Makes a new label whose name is the same as a symbol.

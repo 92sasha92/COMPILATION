@@ -80,47 +80,52 @@ public class AST_STMT_ASSIGN extends AST_STMT
         public Temp IRme() {
 
             Temp t = exp.IRme();
-            if (var instanceof AST_EXP_VAR_SIMPLE) {
-                if (((AST_EXP_VAR_SIMPLE)var).varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL) {
-                    // get the temp with the address of the value
-
-                    // calculate address to store the value in
-                    Temp toStoreAddress  = Temp_FACTORY.getInstance().getFreshTemp();
-                    IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(((AST_EXP_VAR_SIMPLE)var).VariableIndex, toStoreAddress));
-
-                    // store the content of exp to the address
-                    IR.getInstance().Add_IRcommand(new IRcommand_Store(toStoreAddress,t));
-                    return null;
-                }
-                else if (((AST_EXP_VAR_SIMPLE)var).varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD) {
-                    if (this.classInstanceAddress != null) {
-                        Temp toStoreAddress  = Temp_FACTORY.getInstance().getFreshTemp();
-                        IR.getInstance().Add_IRcommand(new IRcommand_Addi(toStoreAddress,this.classInstanceAddress, ((AST_EXP_VAR_SIMPLE)var).VariableIndex * 4)); // note that localVariableIndex starts with 1, and this is good because we need to skip the virtualMethodTable
-                        // store the content of exp to the address
-                        IR.getInstance().Add_IRcommand(new IRcommand_Store(toStoreAddress,t));
-                        return null;
-                    }
-                    else {
-                        System.out.println("ERROR!!!");
-                        return null;
-                    }
-                }
-                else if (((AST_EXP_VAR_SIMPLE)var).varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.GLOBAL) { // is this even possible?
-                    return null;
-                }
-
-            }
-            else if (var instanceof AST_EXP_VAR_FIELD) {
-                // get the AST_EXP_VAR inside of the AST_EXP_VAR_FIELD, get the address of the object in the heap that it points to, use the fieldOffset to calculate the address...
-            }
-            else if (var instanceof AST_EXP_VAR_INDEX) {
-                return null;
-            }
-            System.out.println("ERROR!!!");
+            boolean shouldLoad = false;
+            Temp toStoreAddress  = var.IRme(shouldLoad);
+            IR.getInstance().Add_IRcommand(new IRcommand_Store(toStoreAddress,t));
             return null;
+
+            // if (var instanceof AST_EXP_VAR_SIMPLE) {
+            //     if (((AST_EXP_VAR_SIMPLE)var).varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL) {
+            //         // get the temp with the address of the value
+
+            //         // calculate address to store the value in
+            //         Temp toStoreAddress  = Temp_FACTORY.getInstance().getFreshTemp();
+            //         IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(((AST_EXP_VAR_SIMPLE)var).VariableIndex, toStoreAddress));
+
+            //         // store the content of exp to the address
+            //         IR.getInstance().Add_IRcommand(new IRcommand_Store(toStoreAddress,t));
+            //         return null;
+            //     }
+            //     else if (((AST_EXP_VAR_SIMPLE)var).varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.FIELD) {
+            //             Temp toStoreAddress  = Temp_FACTORY.getInstance().getFreshTemp();
+
+		        // IR.getInstance().Add_IRcommand(new IRcommand_LoadParamToTemp(1, toStoreAddress)); // the instance address parameter is the first parameter
+		        // IR.getInstance().Add_IRcommand(new IRcommand_Load(toStoreAddress, toStoreAddress)); // load the instance address from the stack
+            //             IR.getInstance().Add_IRcommand(new IRcommand_Addi(toStoreAddress,toStoreAddress, ((AST_EXP_VAR_SIMPLE)var).VariableIndex * 4)); // note that localVariableIndex starts with 1, and this is good because we need to skip the virtualMethodTable
+            //             // store the content of exp to the address
+            //             IR.getInstance().Add_IRcommand(new IRcommand_Store(toStoreAddress,t));
+            //             return null;
+            //     }
+            //     else if (((AST_EXP_VAR_SIMPLE)var).varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.PARAM) { // is this even possible?
+            //         return null;
+            //     }
+            //     else if (((AST_EXP_VAR_SIMPLE)var).varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.GLOBAL) { // is this even possible?
+            //         return null;
+            //     }
+
+            // }
+            // else if (var instanceof AST_EXP_VAR_FIELD) {
+            //     // get the AST_EXP_VAR inside of the AST_EXP_VAR_FIELD, get the address of the object in the heap that it points to, use the fieldOffset to calculate the address...
+            // }
+            // else if (var instanceof AST_EXP_VAR_INDEX) {
+            //     return null;
+            // }
+            // System.out.println("ERROR!!!");
+            // return null;
         }
 
-        public void setInstanceAddress(Temp tempWithAddr) {
-            this.classInstanceAddress = tempWithAddr;
-        }
+        // public void setInstanceAddress(Temp tempWithAddr) {
+        //     this.classInstanceAddress = tempWithAddr;
+        // }
 }

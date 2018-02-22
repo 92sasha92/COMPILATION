@@ -1,6 +1,7 @@
 package AST;
 
 import TYPES.*;
+import Temp.*;
 
 public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 {
@@ -69,4 +70,8 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 		return arrayType.type;
 
 	}
+        public Temp IRme(boolean shouldLoad) {
+            // implement me
+            return null;
+        }
 }

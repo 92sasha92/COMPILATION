@@ -6,7 +6,8 @@ import Temp.*;
 public abstract class AST_STMT extends AST_Node
 {
     public int varSize;
-    public Temp classInstanceAddress;
+    public String returnLabel;
+    // public Temp classInstanceAddress;
 	/*********************************************************/
 	/* The default message for an unknown AST statement node */
 	/*********************************************************/

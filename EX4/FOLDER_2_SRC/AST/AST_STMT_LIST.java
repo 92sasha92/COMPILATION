@@ -35,15 +35,15 @@ public class AST_STMT_LIST extends AST_Node
 		this.tail = tail;
 	}
 
-        public void setInstanceAddress(Temp instanceAddr) {
-            if (head != null) {
-                head.classInstanceAddress = instanceAddr;
-            }
-            if (tail == null) {
-                return;
-            }
-            tail.setInstanceAddress(instanceAddr);
-        }
+        // public void setInstanceAddress(Temp instanceAddr) {
+        //     if (head != null) {
+        //         head.classInstanceAddress = instanceAddr;
+        //     }
+        //     if (tail == null) {
+        //         return;
+        //     }
+        //     tail.setInstanceAddress(instanceAddr);
+        // }
 	/******************************************************/
 	/* The printing message for a statement list AST node */
 	/******************************************************/
@@ -97,10 +97,26 @@ public class AST_STMT_LIST extends AST_Node
 		return headType;
 
 	}
+
+        public void insertReturnLabel(String label) {
+		if (head != null) {
+                    head.returnLabel = label;
+                    if (head instanceof AST_STMT_IF) {
+                        ((AST_STMT_IF)head).body.insertReturnLabel(label);
+                    }
+                    if (head instanceof AST_STMT_WHILE) {
+                        ((AST_STMT_WHILE)head).body.insertReturnLabel(label);
+                    }
+                }
+                if (tail != null) {
+                    tail.insertReturnLabel(label);
+                }
+        }
 	
 	public Temp IRme()
 	{
 		if (head != null) head.IRme();
+                
 		if (tail != null) tail.IRme();
 		
 		return null;

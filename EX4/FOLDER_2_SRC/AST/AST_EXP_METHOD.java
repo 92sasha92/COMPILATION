@@ -8,7 +8,7 @@ public class AST_EXP_METHOD extends AST_EXP
 	/* DATA MEMBERS */
 	/****************/
 	public AST_EXP_VAR var;
-    public AST_EXP_CALL expCall;
+        public AST_EXP_CALL expCall;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -68,11 +68,14 @@ public class AST_EXP_METHOD extends AST_EXP
             {
 				throw new AST_EXCEPTION(String.format("'%s' is not of class type\n", varType.name), this.lineNum);
             }
-            
+
             /****************************/
             /* [3] check if the method is in the class hierarchy, starting from the bottom and going up */
             /****************************/
             TYPE_CLASS firstClass = (TYPE_CLASS)varType;
+
+            expCall.setClassType(firstClass);
+
             for (classType = firstClass; classType != null ; classType = classType.father) {
 				for (TYPE_LIST methodList = classType.method_List; methodList  != null; methodList = methodList.tail){
                     if (!(methodList.head instanceof TYPE_FUNCTION)) {

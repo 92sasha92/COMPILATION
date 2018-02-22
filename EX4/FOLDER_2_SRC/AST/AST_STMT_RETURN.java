@@ -2,6 +2,8 @@ package AST;
 
 import TYPES.*;
 import SYMBOL_TABLE.*;
+import Temp.*;
+import IR.*;
 
 public class AST_STMT_RETURN extends AST_STMT
 {
@@ -63,5 +65,13 @@ public class AST_STMT_RETURN extends AST_STMT
 		
 		return new TYPE_RETURN(returnType);
 	}
+
+        public Temp IRme() {
+            if (exp != null) {
+	        IR.getInstance().Add_IRcommand(new IRcommand_mixedMove("$v0",exp.IRme()));
+            }
+	    IR.getInstance().Add_IRcommand(new IRcommand_jump(this.returnLabel));
+            return null;
+        }
 	
 }

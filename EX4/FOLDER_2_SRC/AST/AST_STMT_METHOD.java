@@ -1,5 +1,6 @@
 package AST;
 import TYPES.*;
+import Temp.*;
 
 public class AST_STMT_METHOD extends AST_STMT
 {
@@ -51,5 +52,9 @@ public class AST_STMT_METHOD extends AST_STMT
 	}
         public TYPE SemantMe() throws AST_EXCEPTION {
             return expMethod.SemantMe();
+        }
+
+        public Temp IRme() {
+            return expMethod.IRme();
         }
 }

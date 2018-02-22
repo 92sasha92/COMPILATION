@@ -61,6 +61,7 @@ public class TempReplacer {
 				addInstruction(j);
 				break;
                         case "jr":
+                        case "jalr":
 				srcTemps = new TempList(getTemp(tokens[1]), null);
 				OPER jr = new OPER(line, null, srcTemps, null);
 				addInstruction(jr);
@@ -105,7 +106,7 @@ public class TempReplacer {
 				isPrevBranch = true;
 				break;
 			default:
-				if (command.startsWith("Label_")) {
+				if (command.contains("_")) {
 					labelDefName = command.substring(0, command.length() - 1);
 					if(isPrevBranch == true){
 						labelList = new LabelList(Label.getLabel(labelName), new LabelList(Label.getLabel(labelDefName), null));

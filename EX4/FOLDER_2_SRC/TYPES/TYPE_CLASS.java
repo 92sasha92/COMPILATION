@@ -19,6 +19,7 @@ public class TYPE_CLASS extends TYPE
 
         public LinkedHashMap<String, String> virtualMethodTable;
 	
+        public int localVariablesCounter;
 	/****************/
 	/* CTROR(S) ... */
 	/****************/
@@ -112,4 +113,44 @@ public class TYPE_CLASS extends TYPE
 		}
 		return null;
 	}
+        public TYPE getFunc(String name){
+		TYPE_FUNCTION currentFunc = null;
+		for (TYPE_CLASS classType = this; classType != null ; classType = classType.father) {
+			for (TYPE_LIST funcList = classType.method_List; funcList  != null; funcList = funcList.tail){
+                    currentFunc = (TYPE_FUNCTION)funcList.head;
+                    if (currentFunc.name.equals(name)) {
+			    return funcList.head;
+                    }
+            }
+		}
+		return null;
+	}
+        public int getFieldIndex(String name){
+            int counter = this.localVariablesCounter;
+            int fieldCounter =0;
+            int foundIndex = -1;
+            
+
+
+            TYPE_VAR_DEC currentVar = null;
+            for (TYPE_CLASS classType = this.father; classType != null ; classType = classType.father) {
+                for (TYPE_LIST varList = classType.data_members; varList  != null; varList = varList.tail){
+                    currentVar = (TYPE_VAR_DEC)varList.head;
+                    if (currentVar.name.equals(name)) {
+                        foundIndex = fieldCounter;
+                    }
+                    fieldCounter++;
+                }
+                counter -= fieldCounter;
+                if (foundIndex > -1) {
+                    counter += foundIndex;
+                    return counter+1;
+                }
+                fieldCounter = 0;
+            }
+            return -1;
+	}
+        // public void getLocalVariablesCounter(int localVariablesCounter) {
+        //     this.localVariablesCounter = localVariablesCounter;
+        // }
 }

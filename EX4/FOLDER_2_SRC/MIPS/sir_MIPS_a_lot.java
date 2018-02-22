@@ -127,6 +127,14 @@ public class sir_MIPS_a_lot
 		int idxsrc=src.getSerialNumber();
 		fileWriter.format("\tmove Temp_%d,Temp_%d\n",idxdst,idxsrc);		
         }
+        public void mixedMove(String dst, Temp src) {
+		int idxsrc=src.getSerialNumber();
+		fileWriter.format("\tmove %s,Temp_%d\n",dst,idxsrc);		
+        }
+        public void mixedMove(Temp dst, String src) {
+		int idxdst=dst.getSerialNumber();
+		fileWriter.format("\tmove Temp_%d,%s\n",idxdst,src);		
+        }
         public void load(Temp dst,Temp src)
 	{
             load(dst,src,0);
@@ -275,6 +283,11 @@ public class sir_MIPS_a_lot
 	public void jal(String inlabel)
 	{
 		fileWriter.format("\tjal %s\n",inlabel);
+	}	
+	public void jalr(Temp funcAddr)
+	{
+		int funcidx=funcAddr.getSerialNumber();
+		fileWriter.format("\tjalr Temp_%d\n",funcidx);
 	}	
 //	public void beq(Temp oprnd1,Temp oprnd2,String label)
 //	{
