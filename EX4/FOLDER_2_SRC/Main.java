@@ -66,6 +66,7 @@ public class Main
                         boolean globalInitialization = true;
 			AST.IRme(globalInitialization);
                         AST.jumpToRealMain();
+                        AST.printConcatStringDefinition();
                         globalInitialization = false;
 			AST.IRme(globalInitialization);
 			
