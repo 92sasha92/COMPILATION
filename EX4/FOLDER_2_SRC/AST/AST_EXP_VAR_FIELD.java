@@ -3,6 +3,7 @@ package AST;
 import TYPES.*;
 import Temp.*;
 import SYMBOL_TABLE.*;
+import IR.*;
 
 public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 {
@@ -78,28 +79,61 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 			tc = (TYPE_CLASS) t;
 		}
 		
-		/************************************/
-		/* [3] Look for fiedlName inside the class hierarchy */
-		/************************************/
-        for (TYPE_CLASS classType = tc; classType != null ; classType = classType.father) {
-			for (TYPE_LIST it = classType.data_members; it != null; it = it.tail)
-			{
-				if (((TYPE_VAR_DEC)(it).head).name.equals(fieldName))
-				{
-					return ((TYPE_VAR_DEC)it.head).t;
-				}
-                                fieldOffset += 4;
-			}
-        }
+                return getFieldVardecAndSetOffset(tc);
 		
-		/*********************************************/
-		/* [4] fieldName does not exist in class var */
-		/*********************************************/
-		throw new AST_EXCEPTION(String.format("field %s does not exist in class\n", fieldName), this.lineNum);
+		
 	}
         public Temp IRme(boolean shouldLoad)
         {
-            // implement me
-            return null;
+            Temp varAddress = var.IRme();
+            IR.getInstance().Add_IRcommand(new IRcommand_Addi(varAddress,varAddress,fieldOffset));
+            if (!shouldLoad) {
+                return varAddress;
+            }
+            else {
+                Temp t = Temp_FACTORY.getInstance().getFreshTemp();
+                IR.getInstance().Add_IRcommand(new IRcommand_Load(t,varAddress));
+
+                return t;
+            }
+        }
+
+        public TYPE getFieldVardecAndSetOffset(TYPE_CLASS tc) throws AST_EXCEPTION{
+            TYPE_VAR_DEC currentVar = null;
+            TYPE_CLASS currentClass = null;
+            TYPE_CLASS currentClassSon = null;
+            for (currentClass = tc; currentClass.father != null ;currentClass = currentClass.father);
+            // currentClass is now the root class
+
+            fieldOffset = 4; // start from 4 and not 0 to skip virtual table
+            // we are about to go down in the inheritance tree in a stupid way: start from the root, then look for the class whose father is the root, and so on...
+            while (currentClass != null) {
+
+                for (TYPE_LIST varList = currentClass.data_members; varList  != null; varList = varList.tail){
+                    currentVar = (TYPE_VAR_DEC)varList.head;
+                    if (fieldName.equals(currentVar.name)) {
+                        return ((TYPE_VAR_DEC)currentVar).t;
+                    }
+
+                    fieldOffset+=4;
+
+                }
+
+                // set the direct son of currentClass
+                if (currentClass.name.equals(tc.name)) {
+                    currentClass = null;
+                }
+                else {
+                    // set currentClassSon
+                    for (currentClassSon = tc; !currentClassSon.father.name.equals(currentClass.name) ;currentClassSon = currentClassSon.father);
+                    // next iteration
+                    currentClass = currentClassSon;
+                }
+
+            }
+            /*********************************************/
+            /* [4] fieldName does not exist in class var */
+            /*********************************************/
+            throw new AST_EXCEPTION(String.format("field %s does not exist in class\n", fieldName), this.lineNum);
         }
 }

@@ -29,6 +29,7 @@ SRC_FILES                 = ${SRC_DIR}/*.java              		\
                             ${SRC_DIR}/RegAlloc/*.java         \
                             ${SRC_DIR}/TempReplacer/*.java        	\
                             ${SRC_DIR}/MIPS/*.java         		\
+                            ${SRC_DIR}/ExtraFunctions/*.java         		\
                             ${SRC_DIR}/TYPES/*.java        		\
                             ${SRC_DIR}/SYMBOL_TABLE/*.java
 EXTERNAL_JAR_FILES        = ${EXTERNAL_JARS_DIR}/java-cup-11b-runtime.jar

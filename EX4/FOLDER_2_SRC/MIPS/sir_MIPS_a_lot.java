@@ -145,6 +145,11 @@ public class sir_MIPS_a_lot
 		int idxsrc=src.getSerialNumber();
 		fileWriter.format("\tlw Temp_%d,%d(Temp_%d)\n",idxdst,offset, idxsrc);		
 	}
+        public void load(Temp dst,String src, int offset)
+	{
+		int idxdst=dst.getSerialNumber();
+		fileWriter.format("\tlw Temp_%d,%d(%s)\n",idxdst,offset, src);		
+	}
 	public void load_byte(Temp dst,Temp src)
 	{
             load_byte(dst,src,0);
@@ -233,7 +238,6 @@ public class sir_MIPS_a_lot
 	}
         public void addi(String dst,String oprnd1,int imm)
 	{
-
 		fileWriter.format("\taddi "+dst+","+oprnd1+",%d\n",imm);
 	}
         public Temp initializeRegToZero() {
@@ -317,13 +321,12 @@ public class sir_MIPS_a_lot
 		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,outlabel);		
 		label(branch_not_taken);
 	}
-//	public void bne(Temp oprnd1,Temp oprnd2,String label)
-//	{
-//		int i1 =oprnd1.getSerialNumber();
-//		int i2 =oprnd2.getSerialNumber();
-//		
-//		fileWriter.format("\tbne Temp_%d,Temp_%d,%s\n",i1,i2,label);				
-//	}
+	public void bne(Temp oprnd1, String label)
+	{
+		int i1 =oprnd1.getSerialNumber();
+		
+		fileWriter.format("\tbne Temp_%d,$zero,%s\n",i1,label);				
+	}
 //	public void blt(Temp oprnd1,Temp oprnd2,String label)
 //	{
 //		int i1 =oprnd1.getSerialNumber();

@@ -179,24 +179,7 @@ public class AST_DEC_FUNC extends AST_DEC
 				throw new AST_EXCEPTION(String.format("%s function overiding is illigal\n", this.name), this.lineNum);
 			}
 		}
-		
-		SYMBOL_TABLE.getInstance().enter(name,new TYPE_FUNCTION(returnType,name,type_list));
-		/*******************/
-		/* [4] Semant Body */
-		/*******************/
-        if (!nonRecursive) {
-			body.SemantMe();
-        }
-
-		/*****************/
-		/* [5] End Scope */
-		/*****************/
-		SYMBOL_TABLE.getInstance().endScope();
-
-		/***************************************************/
-		/* [6] Enter the Function Type to the Symbol Table */
-		/***************************************************/
-                boolean shouldEnumerate;
+		boolean shouldEnumerate;
                 if (name.equals("main")) {
                     shouldEnumerate = false;
                     this.funcLabel = IRcommand.getFreshLabel("main_real", shouldEnumerate);
@@ -212,10 +195,29 @@ public class AST_DEC_FUNC extends AST_DEC
                     }
                 }
 
+
+                TYPE_FUNCTION typeFunc = new TYPE_FUNCTION(returnType,name,type_list);
+                typeFunc.setFuncLabel(funcLabel);
+		SYMBOL_TABLE.getInstance().enter(name,typeFunc);
+		/*******************/
+		/* [4] Semant Body */
+		/*******************/
+        if (!nonRecursive) {
+			body.SemantMe();
+        }
+
+		/*****************/
+		/* [5] End Scope */
+		/*****************/
+		SYMBOL_TABLE.getInstance().endScope();
+
+		/***************************************************/
+		/* [6] Enter the Function Type to the Symbol Table */
+		/***************************************************/
                 this.returnLabel = IRcommand.getFreshLabel(this.funcLabel + "_return", false);
                 body.insertReturnLabel(this.returnLabel);
 
-        TYPE_FUNCTION typeFunc = new TYPE_FUNCTION(returnType,name,type_list);
+        typeFunc = new TYPE_FUNCTION(returnType,name,type_list);
         typeFunc.setFuncLabel(funcLabel);
 		SYMBOL_TABLE.getInstance().enter(name,typeFunc);
 

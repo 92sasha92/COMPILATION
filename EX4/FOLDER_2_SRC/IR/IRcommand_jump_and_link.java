@@ -29,7 +29,7 @@ public class IRcommand_jump_and_link extends IRcommand {
 		sir_MIPS_a_lot.getInstance().jalr(this.funcAddr);
             }
             else {
-                System.out.println("ERROR!!!");
+                System.out.println("ERROR!!!!!!!!!");
             }
 	}
 

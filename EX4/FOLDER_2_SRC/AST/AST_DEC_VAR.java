@@ -98,7 +98,7 @@ public class AST_DEC_VAR extends AST_DEC
 	                IR.getInstance().Add_IRcommand(new IRcommand_GlobalVariable(varAddress, this.name, shouldCreate));
                     }
                     else {
-                        System.out.println("ERROR!!!"+this.varDefType );
+                        System.out.println("ERROR!!!!!!!!"+this.varDefType );
                         return null;
                     }
 		    IR.getInstance().Add_IRcommand(new IRcommand_Store(varAddress,t));

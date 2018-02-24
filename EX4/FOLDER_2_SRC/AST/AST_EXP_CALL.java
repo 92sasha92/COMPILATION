@@ -180,7 +180,7 @@ public class AST_EXP_CALL extends AST_EXP
                         ArrayList keyList = new ArrayList(this.classType.virtualMethodTable.keySet());
                         int indexOfFunc = keyList.indexOf(this.funcName);
                         if (indexOfFunc == -1) {
-                            System.out.println("ERROR!!!");
+                            System.out.println("ERROR!!!!");
                             return null;
                         }
                         Temp funcAddr = Temp_FACTORY.getInstance().getFreshTemp();
@@ -191,7 +191,7 @@ public class AST_EXP_CALL extends AST_EXP
 
                     }
                     else {
-                        System.out.println("ERROR!!!");
+                        System.out.println("ERROR!!!!!");
                         return null;
                     }
                     if (params != null) {

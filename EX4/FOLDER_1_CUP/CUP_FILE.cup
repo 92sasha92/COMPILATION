@@ -126,8 +126,7 @@ precedence left GT;
 precedence left LT;
 precedence left PLUS;
 precedence left MINUS;
-precedence left TIMES;
-precedence left DIVIDE;
+precedence left TIMES,DIVIDE;
 precedence left UMINUS;
 
 

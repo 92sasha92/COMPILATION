@@ -71,7 +71,7 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
                                 if (varType == null) {
                                     VariableIndex = classType.getFieldIndex(this.name);
                                     if (VariableIndex < 0) {
-                                        System.out.println("ERROR!!!");
+                                        System.out.println("ERROR!!!!!!");
                                         return null;
                                     }
                                 }
@@ -107,7 +107,7 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
                     IR.getInstance().Add_IRcommand(new IRcommand_GlobalVariable(varAddress, this.name, shouldCreate));
                 }
                 else {
-                    System.out.println("ERROR!!!");
+                    System.out.println("ERROR!!!!!!!");
                     return null;
                 }
                 if (!shouldLoad) {

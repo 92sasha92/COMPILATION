@@ -32,16 +32,15 @@ public class IRcommand_Binop_Concat_Strings_Definition extends IRcommand
             Temp t2 = Temp_FACTORY.getInstance().getFreshTemp();
             Temp dst = Temp_FACTORY.getInstance().getFreshTemp();
 
-            sir_MIPS_a_lot.getInstance().pop(t2);
-            sir_MIPS_a_lot.getInstance().pop(t1);
             sir_MIPS_a_lot.getInstance().push("$ra");
 
             Temp currentTemp;
             for (int i = Temp_FACTORY.reservedTemps.values().length; i < 8 + Temp_FACTORY.reservedTemps.values().length; i++) {
                 currentTemp = Temp_FACTORY.getTemp(i);
-                System.out.println("!!"+currentTemp);
                 sir_MIPS_a_lot.getInstance().push(currentTemp);
             }
+            sir_MIPS_a_lot.getInstance().load(t2,"$sp",9 * 4);
+            sir_MIPS_a_lot.getInstance().load(t1,"$sp",10 * 4);
 
             Temp loopCounter = sir_MIPS_a_lot.getInstance().initializeRegToZero();
             Temp tempVal = sir_MIPS_a_lot.getInstance().initializeRegToZero();
@@ -124,6 +123,9 @@ public class IRcommand_Binop_Concat_Strings_Definition extends IRcommand
                 sir_MIPS_a_lot.getInstance().pop(currentTemp);
             }
             sir_MIPS_a_lot.getInstance().pop("$ra");
+
+            sir_MIPS_a_lot.getInstance().addi("$sp","$sp",8);
+
             sir_MIPS_a_lot.getInstance().jr("$ra");
         } 
 

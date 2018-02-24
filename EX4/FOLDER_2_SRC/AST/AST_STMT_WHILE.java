@@ -2,10 +2,7 @@ package AST;
 
 import TYPES.*;
 import Temp.Temp;
-import IR.IR;
-import IR.IRcommand_If;
-import IR.IRcommand_addLabel;
-import IR.IRcommand_jump;
+import IR.*;
 import SYMBOL_TABLE.*;
 
 public class AST_STMT_WHILE extends AST_STMT
@@ -89,6 +86,8 @@ public class AST_STMT_WHILE extends AST_STMT
 	}
 	
 	public Temp IRme(){
+                String beforeCond = IRcommand.getFreshLabel("beforeCond");
+		IR.getInstance().Add_IRcommand(new IRcommand_addLabel(beforeCond));
 		Temp t = cond.IRme();
 		String endLabel = "endWhile";
 		String labelStartWhile = "whileCond";
@@ -99,7 +98,7 @@ public class AST_STMT_WHILE extends AST_STMT
 		endLabel = temp.getLabel();
 		IR.getInstance().Add_IRcommand(temp);
 		body.IRme();
-		IR.getInstance().Add_IRcommand(new IRcommand_jump(labelStartWhile));
+		IR.getInstance().Add_IRcommand(new IRcommand_jump(beforeCond));
 		IR.getInstance().Add_IRcommand(new IRcommand_addLabel(endLabel));
 		return null;
 	}

@@ -85,9 +85,9 @@ public class AST_DEC_LIST extends AST_Node
         public void printMainLabel() {
 	        IR.getInstance().Add_IRcommand(new IRcommand_addLabel(this.mainLabel));
         }
-        public void printConcatStringDefinition() {
-	        IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings_Definition());
-        }
+        // public void printConcatStringDefinition() {
+	        // IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings_Definition());
+        // }
         public void jumpToRealMain() {
 	        IR.getInstance().Add_IRcommand(new IRcommand_jump("main_real"));
         }

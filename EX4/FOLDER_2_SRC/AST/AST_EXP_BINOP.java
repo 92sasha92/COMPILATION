@@ -3,10 +3,12 @@ package AST;
 import TYPES.*;
 import Temp.*;
 import IR.*;
+import ExtraFunctions.*;
 
 public class AST_EXP_BINOP extends AST_EXP
 {
 	int OP;
+        int regsNeeded;
 	public AST_EXP left;
 	public AST_EXP right;
 	private TYPE leftType;
@@ -83,8 +85,20 @@ public class AST_EXP_BINOP extends AST_EXP
 //		TYPE rightType = null;
 		TYPE_CLASS classLeftType = null, classRightType = null;
 		TYPE leftArrayType, rightArrayType;
+                // if (left instanceof AST_EXP_BINOP && right instanceof AST_EXP_BINOP) {
+                // }
 		if (left  != null) leftType = left.SemantMe();
 		if (right != null) rightType = right.SemantMe();
+                // if (left.regsNeeded == right.regsNeeded) {
+                //     this.regsNeeded = left.regsNeeded + 1;
+                // }
+                // else if (left.regsNeeded > right.regsNeeded) {
+                //     this.regsNeeded = left.regsNeeded;
+                // }
+                // else {
+                //     this.regsNeeded = right.regsNeeded;
+                // }
+
 		//op = 6 is "="
 		if(OP == 6){
 			if(leftType == TYPE_NIL.getInstance() || rightType == TYPE_NIL.getInstance()){
@@ -122,8 +136,15 @@ public class AST_EXP_BINOP extends AST_EXP
 			}
 			return TYPE_INT.getInstance();
 		} else if ((leftType == TYPE_INT.getInstance()) && (rightType == TYPE_INT.getInstance())) {
+                    if (OP >= 0 && OP < 3) {
+                        ExtraFunctions.getInstance().addFunction(new IRcommand_Binop_Check_Overflow_Definition());
+                    }
+                    else if (OP == 3) {
+                        ExtraFunctions.getInstance().addFunction(new IRcommand_Binop_Illegal_Div_Definition());
+                    }
 			return TYPE_INT.getInstance();
 		} else if((leftType == TYPE_STRING.getInstance()) && (rightType == TYPE_STRING.getInstance()) && OP == 0) {
+                        ExtraFunctions.getInstance().addFunction(new IRcommand_Binop_Concat_Strings_Definition());
 			return TYPE_STRING.getInstance();
 		} else {
 			throw new AST_EXCEPTION("Non matching types", this.lineNum);

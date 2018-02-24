@@ -79,9 +79,17 @@ public class AST_STMT_ASSIGN extends AST_STMT
         }
         public Temp IRme() {
 
-            Temp t = exp.IRme();
             boolean shouldLoad = false;
-            Temp toStoreAddress  = var.IRme(shouldLoad);
+            Temp t = null;
+            Temp toStoreAddress = null;
+            if (var instanceof AST_EXP_VAR_SIMPLE) {
+                t = exp.IRme();
+                toStoreAddress  = var.IRme(shouldLoad);
+            }
+            else {
+                toStoreAddress  = var.IRme(shouldLoad);
+                t = exp.IRme();
+            }
             IR.getInstance().Add_IRcommand(new IRcommand_Store(toStoreAddress,t));
             return null;
 

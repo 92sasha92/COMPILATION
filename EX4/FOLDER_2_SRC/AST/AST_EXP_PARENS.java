@@ -8,6 +8,7 @@ public class AST_EXP_PARENS extends AST_EXP
 	/* DATA MEMBERS */
 	/****************/
 	public AST_EXP exp;
+        public int regsNeeded;
 
 	/******************/
 	/* CONSTRUCTOR(S) */

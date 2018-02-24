@@ -1,10 +1,10 @@
-   
 import java.io.*;
 import java.io.PrintWriter;
 import java_cup.runtime.Symbol;
 import AST.*;
 import IR.*;
 import MIPS.*;
+import ExtraFunctions.*;
 import Temp.*;
 import FlowGraph.*;
 import TempReplacer.*;
@@ -66,7 +66,9 @@ public class Main
                         boolean globalInitialization = true;
 			AST.IRme(globalInitialization);
                         AST.jumpToRealMain();
-                        AST.printConcatStringDefinition();
+                        ExtraFunctions instance = ExtraFunctions.getInstance();
+                        instance.writeFunctions();
+                        // AST.printConcatStringDefinition();
                         globalInitialization = false;
 			AST.IRme(globalInitialization);
 			
