@@ -2,6 +2,7 @@ package AST;
 
 import TYPES.*;
 import Temp.*;
+import IR.*;
 
 public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 {
@@ -75,7 +76,23 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 
 	}
         public Temp IRme(boolean shouldLoad) {
-            // implement me
-            return null;
+            Temp varAddress = var.IRme(true); // do not load content
+            Temp arrayOffset = index.IRme();
+            Temp regWithFour = Temp_FACTORY.getInstance().getFreshTemp();
+            IR.getInstance().Add_IRcommand(new IRcommandConstInt(regWithFour,4));
+
+            boolean isAddresses = true; // to not check for overflow
+            IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("mul",arrayOffset,arrayOffset, regWithFour,isAddresses));
+            IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("add",varAddress,varAddress, arrayOffset,isAddresses));
+
+            if (!shouldLoad) {
+                return varAddress;
+            }
+            else {
+                Temp t = Temp_FACTORY.getInstance().getFreshTemp();
+                IR.getInstance().Add_IRcommand(new IRcommand_Load(t,varAddress));
+
+                return t;
+            }
         }
 }

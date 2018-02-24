@@ -2,6 +2,7 @@ package AST;
 
 import TYPES.*;
 import Temp.*;
+import IR.*;
 
 public class AST_DEC_LIST extends AST_Node
 {
@@ -10,6 +11,7 @@ public class AST_DEC_LIST extends AST_Node
 	/****************/
 	public AST_DEC head;
 	public AST_DEC_LIST tail;
+        public String mainLabel;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -23,6 +25,8 @@ public class AST_DEC_LIST extends AST_Node
 
 		this.head = head;
 		this.tail = tail;
+                boolean shouldEnumerate = false;
+                this.mainLabel = IRcommand.getFreshLabel("main",shouldEnumerate);
 	}
 
 	public TYPE SemantMe() throws AST_EXCEPTION
@@ -66,11 +70,22 @@ public class AST_DEC_LIST extends AST_Node
 		if (tail != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,tail.SerialNumber);
 	}
 	
-	public Temp IRme()
+	public Temp IRme(boolean globalInitialization)
 	{
-		if (head != null) head.IRme();
-		if (tail != null) tail.IRme();
+		if (head != null) {
+                    if ((globalInitialization && (head instanceof AST_DEC_VAR)) || (!globalInitialization && !(head instanceof AST_DEC_VAR)))  {
+                        head.IRme();
+                    }
+
+                }
+		if (tail != null) tail.IRme(globalInitialization);
 		
 		return null;			
 	}
+        public void printMainLabel() {
+	        IR.getInstance().Add_IRcommand(new IRcommand_addLabel(this.mainLabel));
+        }
+        public void jumpToRealMain() {
+	        IR.getInstance().Add_IRcommand(new IRcommand_jump("main_real"));
+        }
 }

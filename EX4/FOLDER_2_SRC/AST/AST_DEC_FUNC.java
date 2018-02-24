@@ -198,7 +198,8 @@ public class AST_DEC_FUNC extends AST_DEC
 		/***************************************************/
                 boolean shouldEnumerate;
                 if (name.equals("main")) {
-                    this.funcLabel = "main";
+                    shouldEnumerate = false;
+                    this.funcLabel = IRcommand.getFreshLabel("main_real", shouldEnumerate);
                 }
                 else {
                     if (this.isMethod && this.className != null) {

@@ -32,7 +32,7 @@ public class IRcommand_Func_Epilog extends IRcommand
 	{
 	    sir_MIPS_a_lot.getInstance().fileWriter.print("\t# --- function epilog ---\n");
 
-            if (funcLabel.equals("main")) {
+            if (funcLabel.equals("main_real")) {
 		// sir_MIPS_a_lot.getInstance().fileWriter.format("\taddi $fp,$sp,%d\n",totalLocalVarSize + 9 * 4); // 8 for registers and 1 for saved ra
             }
             else {

@@ -119,7 +119,8 @@ public class AST_EXP_NEW extends AST_EXP
                 sizeToMallocTemp = exp.IRme();
                 Temp regWithFour = Temp_FACTORY.getInstance().getFreshTemp();
                 IR.getInstance().Add_IRcommand(new IRcommandConstInt(regWithFour,4));
-                IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("mul",sizeToMallocTemp, sizeToMallocTemp, regWithFour)); // multiply the length of the array by 4
+                boolean isAddresses = true;
+                IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("mul",sizeToMallocTemp, sizeToMallocTemp, regWithFour, isAddresses)); // multiply the length of the array by 4
             }
             IR.getInstance().Add_IRcommand(new IRcommand_Malloc(sizeToMallocTemp, mallocAddress));
             if (exp == null) { // class

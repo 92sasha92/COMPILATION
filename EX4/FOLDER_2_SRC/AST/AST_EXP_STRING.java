@@ -45,7 +45,6 @@ public class AST_EXP_STRING extends AST_EXP
         }
         public Temp IRme()
         {
-            System.out.println("@@@@@@@@@@@@@@@@@: "+ this.value);
             Temp t = Temp_FACTORY.getInstance().getFreshTemp();
             IR.getInstance().Add_IRcommand(new IRcommandConstString(t,value));
             return t;

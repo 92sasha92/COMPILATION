@@ -10,13 +10,24 @@ public class IRcommand_Binop_Integers extends IRcommand{
 	public String command;
         private static boolean divInit = false;
         private static String illegalDiv;
+        public boolean isAddresses;
 	
-	public IRcommand_Binop_Integers(String command,Temp dst,Temp t1,Temp t2)
+	public IRcommand_Binop_Integers(String command,Temp dst,Temp t1,Temp t2, boolean isAddresses)
 	{
 		this.command = command;
 		this.dst = dst;
 		this.t1 = t1;
 		this.t2 = t2;
+                this.isAddresses = isAddresses;
+		                
+	}
+        public IRcommand_Binop_Integers(String command,Temp dst,Temp t1,Temp t2)
+	{
+		this.command = command;
+		this.dst = dst;
+		this.t1 = t1;
+		this.t2 = t2;
+                this.isAddresses = false;
 		                
 	}
 	/***************/
@@ -29,25 +40,31 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		/******************************************************/
 		// Temp t1_bOp_t2 = Temp_FACTORY.getInstance().getFreshTemp();
 
+            Temp intMin=null,intMax = null;
+            String label_end=null,label_overflow_pos=null,label_overflow_neg = null;
+            //isAddresses = true;
+
+            if (!isAddresses) {
 		/******************************************/
 		/* [1] Allocate a fresh temporary INT_MAX */
 		/******************************************/
-		Temp intMax = Temp_FACTORY.getInstance().getFreshTemp();
-		Temp intMin = Temp_FACTORY.getInstance().getFreshTemp();
+		intMax = Temp_FACTORY.getInstance().getFreshTemp();
+	//	intMin = Temp_FACTORY.getInstance().getFreshTemp();
 		/************************************/
 		/* [2] intMax := 32767 (= 2^15 - 1) */
 		/*	   intMin := -32768 (= -2^15)	*/
 		/************************************/
 		sir_MIPS_a_lot.getInstance().li(intMax,32767);
-		sir_MIPS_a_lot.getInstance().li(intMin,-32768);
+		//sir_MIPS_a_lot.getInstance().li(intMin,-32768);
 		/****************************************************/
 		/* [3] Allocate a fresh label for possible overflow */
 		/****************************************************/
-		String label_end = getFreshLabel("end");
-		String label_overflow_pos = getFreshLabel("overflow_pos");
-		String label_overflow_neg = getFreshLabel("overflow_neg");
+		label_end = getFreshLabel("end");
+		label_overflow_pos = getFreshLabel("overflow_pos");
+		label_overflow_neg = getFreshLabel("overflow_neg");
                 // String label_no_overflow = getFreshLabel("no_overflow");
 
+            }
                 /*********************/
 		/* [4] t4 := t1 op t2 */
 		/*********************/
@@ -71,6 +88,7 @@ public class IRcommand_Binop_Integers extends IRcommand{
                 }
 		
 		
+                if (!isAddresses) {
 		/*********************************************************/
 		/* [5] if (32767 <  t1_plus_t2) goto label_overflow;    */
         /*      if (t1_plus_t2 < -32768) goto label_overflow;   */
@@ -78,7 +96,7 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		/*			goto label_no_overflow;                      */
 		/*********************************************************/
 		sir_MIPS_a_lot.getInstance().addBranch("blt", intMax, dst, label_overflow_pos);
-		sir_MIPS_a_lot.getInstance().addBranch("blt", dst, intMin, label_overflow_neg);
+		//sir_MIPS_a_lot.getInstance().addBranch("blt", dst, intMin, label_overflow_neg);
 		sir_MIPS_a_lot.getInstance().addBranch("bge", intMax, dst, label_end);
 
                if(command.equals("div") && !divInit){
@@ -139,5 +157,6 @@ public class IRcommand_Binop_Integers extends IRcommand{
 		/* [9] label_end: */
 		/******************/
 		sir_MIPS_a_lot.getInstance().label(label_end);		
+                }
 	}
 }

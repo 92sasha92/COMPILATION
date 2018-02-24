@@ -153,7 +153,8 @@ public class TempReplacer {
 			while(i < tokens.length){
 				if(tokens[i].startsWith("Temp_")){
 					Temp temp = getTemp(tokens[i]);
-					line= line.replace(tokens[i], color.tempMap(temp));
+                                        System.out.println("@@"+temp);
+					line= line.replaceFirst(tokens[i], "\\"+ color.tempMap(temp));
 				}
 				i++;
 			}

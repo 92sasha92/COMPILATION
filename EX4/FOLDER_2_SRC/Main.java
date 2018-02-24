@@ -62,7 +62,12 @@ public class Main
 			/**********************/
 			/* [8] IR the AST ... */
 			/**********************/
-			AST.IRme();
+                        AST.printMainLabel();
+                        boolean globalInitialization = true;
+			AST.IRme(globalInitialization);
+                        AST.jumpToRealMain();
+                        globalInitialization = false;
+			AST.IRme(globalInitialization);
 			
 			/***********************/
 			/* [9] MIPS the IR ... */
