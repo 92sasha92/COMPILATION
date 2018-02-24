@@ -56,6 +56,7 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 	}
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
+            regsNeeded = 2;
 		TYPE t = null;
 		TYPE_CLASS tc = null;
 		this.varDefType = SYMBOL_TABLE.getInstance().findDefType(fieldName);

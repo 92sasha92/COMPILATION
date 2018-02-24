@@ -1,6 +1,7 @@
 package AST;
 import TYPES.*;
 import Temp.*;
+import java.lang.Math;
 
 public class AST_EXP_METHOD extends AST_EXP
 {
@@ -88,7 +89,9 @@ public class AST_EXP_METHOD extends AST_EXP
                         /****************************/
                         // found the method
                         expCall.setStmtMethod(currentMethod);
-                        return expCall.SemantMe();
+                        TYPE result = expCall.SemantMe();
+                        regsNeeded = Math.max(var.regsNeeded,expCall.regsNeeded) + 1;
+                        return result;
                     }
                 }
             }

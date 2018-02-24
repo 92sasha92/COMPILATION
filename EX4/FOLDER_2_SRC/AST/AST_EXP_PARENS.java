@@ -8,7 +8,6 @@ public class AST_EXP_PARENS extends AST_EXP
 	/* DATA MEMBERS */
 	/****************/
 	public AST_EXP exp;
-        public int regsNeeded;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -52,7 +51,11 @@ public class AST_EXP_PARENS extends AST_EXP
 	}
 	
 	public TYPE SemantMe() throws AST_EXCEPTION {
-		if(exp != null) return exp.SemantMe();
+		if(exp != null) {
+                    TYPE result = exp.SemantMe();
+                    regsNeeded = exp.regsNeeded;
+                    return result;
+                }
 		return null;
 	}
 	

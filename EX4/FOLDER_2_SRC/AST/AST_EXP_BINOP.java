@@ -8,7 +8,6 @@ import ExtraFunctions.*;
 public class AST_EXP_BINOP extends AST_EXP
 {
 	int OP;
-        int regsNeeded;
 	public AST_EXP left;
 	public AST_EXP right;
 	private TYPE leftType;
@@ -85,20 +84,15 @@ public class AST_EXP_BINOP extends AST_EXP
 //		TYPE rightType = null;
 		TYPE_CLASS classLeftType = null, classRightType = null;
 		TYPE leftArrayType, rightArrayType;
-                // if (left instanceof AST_EXP_BINOP && right instanceof AST_EXP_BINOP) {
-                // }
+                
 		if (left  != null) leftType = left.SemantMe();
 		if (right != null) rightType = right.SemantMe();
-                // if (left.regsNeeded == right.regsNeeded) {
-                //     this.regsNeeded = left.regsNeeded + 1;
-                // }
-                // else if (left.regsNeeded > right.regsNeeded) {
-                //     this.regsNeeded = left.regsNeeded;
-                // }
-                // else {
-                //     this.regsNeeded = right.regsNeeded;
-                // }
-
+                if (left.regsNeeded == right.regsNeeded) {
+                    this.regsNeeded = left.regsNeeded + 1;
+                }
+                else {
+                    this.regsNeeded = Math.max(left.regsNeeded, right.regsNeeded);
+                }
 		//op = 6 is "="
 		if(OP == 6){
 			if(leftType == TYPE_NIL.getInstance() || rightType == TYPE_NIL.getInstance()){
@@ -157,10 +151,14 @@ public class AST_EXP_BINOP extends AST_EXP
 		Temp t2 = null;
 		Temp dst = Temp_FACTORY.getInstance().getFreshTemp();
 		
-		assert(false);
-		
-		if (left  != null) t1 = left.IRme();
-		if (right != null) t2 = right.IRme();
+                if (left.regsNeeded > right.regsNeeded) {
+                    t1 = left.IRme();
+                    t2 = right.IRme();
+                }
+                else {
+                    t2 = right.IRme();
+                    t1 = left.IRme();
+                }
 		switch(OP){
 			case 0:
                 if (leftType instanceof TYPE_INT) {

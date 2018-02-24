@@ -52,6 +52,7 @@ public class AST_EXP_VAR_SIMPLE extends AST_EXP_VAR
 	}
 	public TYPE SemantMe()
 	{
+            regsNeeded = 1;
 		TYPE classScope = SYMBOL_TABLE.getInstance().findClassBoundry();
 		TYPE_CLASS classType = null;
 		TYPE field = null;

@@ -5,6 +5,7 @@ import Temp.*;
 import IR.*;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.lang.Math;
 
 public class AST_EXP_CALL extends AST_EXP
 {
@@ -113,8 +114,10 @@ public class AST_EXP_CALL extends AST_EXP
 
                 // this.isMethodFromClass = (classBoundry != null);
 
+                int maxParamRegs = 0;
 		for (AST_EXP_LIST it = params; it  != null; it = it.tail){
 			paramType = it.head.SemantMe();
+                        maxParamRegs = Math.max(it.head.regsNeeded , maxParamRegs);
 			if(typeList == null){
 				throw new AST_EXCEPTION(String.format("Too many arguments for function %s", funcName), this.lineNum);
 			} 
@@ -125,6 +128,7 @@ public class AST_EXP_CALL extends AST_EXP
 			throw new AST_EXCEPTION(String.format("Not enouth arguments for function %s", funcName), this.lineNum);
 		}
 		
+                regsNeeded = Math.max(maxParamRegs,2);
 		return ((TYPE_FUNCTION)funcType).returnType;
 	}
 	

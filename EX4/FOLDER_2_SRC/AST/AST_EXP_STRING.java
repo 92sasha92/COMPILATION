@@ -41,6 +41,7 @@ public class AST_EXP_STRING extends AST_EXP
 	}
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
+            regsNeeded = 1;
 		return TYPE_STRING.getInstance();
         }
         public Temp IRme()

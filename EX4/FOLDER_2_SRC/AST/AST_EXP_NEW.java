@@ -68,6 +68,7 @@ public class AST_EXP_NEW extends AST_EXP
             /**************************************/
             if (exp != null) { 
                 TYPE expType = exp.SemantMe();
+                regsNeeded = Math.max(2, exp.regsNeeded);
                 if (!(expType instanceof TYPE_INT)) {
 	            throw new AST_EXCEPTION(String.format("Array size must be of integral size. got %s instead\n", expType.name), this.lineNum);
                 }

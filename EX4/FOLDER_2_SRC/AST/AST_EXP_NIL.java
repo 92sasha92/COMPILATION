@@ -36,6 +36,7 @@ public class AST_EXP_NIL extends AST_EXP
 	}
 	
 	public TYPE SemantMe() throws AST_EXCEPTION {
+            regsNeeded = 1;
 		return TYPE_NIL.getInstance();
 	}
 

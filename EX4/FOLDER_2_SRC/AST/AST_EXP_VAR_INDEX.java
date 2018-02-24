@@ -47,6 +47,7 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 	}
 	
 	public TYPE SemantMe() throws AST_EXCEPTION {
+            regsNeeded = 2;
 		TYPE t = null, iType;
 		TYPE_ARRAY arrayType = null;
                 // this.varDefType = SYMBOL_TABLE.getInstance().findDefType(name);
@@ -76,7 +77,7 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 
 	}
         public Temp IRme(boolean shouldLoad) {
-            Temp varAddress = var.IRme(true); // do not load content
+            Temp varAddress = var.IRme(true); 
             Temp arrayOffset = index.IRme();
             Temp regWithFour = Temp_FACTORY.getInstance().getFreshTemp();
             IR.getInstance().Add_IRcommand(new IRcommandConstInt(regWithFour,4));
