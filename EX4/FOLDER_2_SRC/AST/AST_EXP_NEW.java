@@ -3,6 +3,7 @@ import TYPES.*;
 import SYMBOL_TABLE.*;
 import Temp.*;
 import IR.*;
+import ExtraFunctions.*;
 
 
 public class AST_EXP_NEW extends AST_EXP
@@ -69,6 +70,8 @@ public class AST_EXP_NEW extends AST_EXP
             if (exp != null) { 
                 TYPE expType = exp.SemantMe();
                 regsNeeded = Math.max(2, exp.regsNeeded);
+                ExtraFunctions.getInstance().addFunction(new IRcommand_Save_Array_Length_Definition());
+                ExtraFunctions.getInstance().addFunction(new IRcommand_Create_New_Array_Definition());
                 if (!(expType instanceof TYPE_INT)) {
 	            throw new AST_EXCEPTION(String.format("Array size must be of integral size. got %s instead\n", expType.name), this.lineNum);
                 }
@@ -102,29 +105,19 @@ public class AST_EXP_NEW extends AST_EXP
             
         }
         public Temp IRme() {
-            int sizeToMalloc = 0;
             Temp sizeToMallocTemp = Temp_FACTORY.getInstance().getFreshTemp();
             Temp mallocAddress = Temp_FACTORY.getInstance().getFreshTemp();
             TYPE_CLASS classType = null, currentClass = null, currentClassSon = null;
             if (exp == null) { // class
+            int sizeToMalloc = 4; // if class we need the vtable
                 classType = (TYPE_CLASS)(SYMBOL_TABLE.getInstance().find(type));
 		for (currentClass = classType; currentClass != null ; currentClass = currentClass.father) {
 		    for (TYPE_LIST varList = currentClass.data_members; varList  != null; varList = varList.tail){
                         sizeToMalloc += 4;
                     }
                 }
-                sizeToMalloc += 4; // for virtual methods table
                 IR.getInstance().Add_IRcommand(new IRcommandConstInt(sizeToMallocTemp,sizeToMalloc));
-            }
-            else { // array
-                sizeToMallocTemp = exp.IRme();
-                Temp regWithFour = Temp_FACTORY.getInstance().getFreshTemp();
-                IR.getInstance().Add_IRcommand(new IRcommandConstInt(regWithFour,4));
-                boolean isAddresses = true;
-                IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("mul",sizeToMallocTemp, sizeToMallocTemp, regWithFour, isAddresses)); // multiply the length of the array by 4
-            }
-            IR.getInstance().Add_IRcommand(new IRcommand_Malloc(sizeToMallocTemp, mallocAddress));
-            if (exp == null) { // class
+                IR.getInstance().Add_IRcommand(new IRcommand_Malloc(sizeToMallocTemp, mallocAddress));
                 String tableName = "class_"+type+"_table";    
                 Temp tempWithTableAddr = Temp_FACTORY.getInstance().getFreshTemp();
                 IR.getInstance().Add_IRcommand(new IRcommand_Load_Address(tempWithTableAddr,tableName));
@@ -170,9 +163,25 @@ public class AST_EXP_NEW extends AST_EXP
                             currentClass = currentClassSon;
                         }
 
-            }
+                    }
 
-        }
+
+
+            }
+            else { // array
+                sizeToMallocTemp = exp.IRme();
+
+                IR.getInstance().Add_IRcommand(new IRcommand_Push(sizeToMallocTemp));
+
+                boolean shouldEnumerate = false;
+                String createNewArray = IRcommand.getFreshLabel("Create_New_Array_Definition", shouldEnumerate);
+                IR.getInstance().Add_IRcommand(new IRcommand_jump_and_link(createNewArray));
+
+                IR.getInstance().Add_IRcommand(new IRcommand_mixedMove(mallocAddress,"$v0"));
+
+
+            
+           }
         return mallocAddress;
         }
 }

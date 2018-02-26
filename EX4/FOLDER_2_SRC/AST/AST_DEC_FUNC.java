@@ -115,7 +115,8 @@ public class AST_DEC_FUNC extends AST_DEC
 
                 for(AST_STMT_LIST body1 = body; body1 != null; body1 = body1.tail){
                     if(body1.head instanceof AST_STMT_DEC_VAR){
-                        ((AST_STMT_DEC_VAR)body1.head).var.localVariableIndex = ++localVariablesCounter;
+                        if (!nonRecursive)  localVariablesCounter++;
+                        ((AST_STMT_DEC_VAR)body1.head).var.localVariableIndex = localVariablesCounter;
                         AST_DEC_VAR.localVariablesCounter = localVariablesCounter;
                     }
                 }

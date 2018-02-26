@@ -119,7 +119,9 @@ public class AST_DEC_VAR extends AST_DEC
 			throw new AST_EXCEPTION(String.format("Non existing type %s\n", type), this.lineNum);
 		} else if (!(varType instanceof TYPE_INT) && !(varType instanceof TYPE_ARRAY) && !(varType instanceof TYPE_CLASS) && !(varType instanceof TYPE_STRING)) {//add for array as well
 			throw new AST_EXCEPTION(String.format("'%s' is not a variable type\n", type), this.lineNum);
-		}
+		} else if (!(type.equals(varType.name))) {
+			throw new AST_EXCEPTION(String.format("'%s' is not a variable type\n", type), this.lineNum);
+                }
 		
 		/**************************************/
 		/* [2] Check That Name does NOT exist */

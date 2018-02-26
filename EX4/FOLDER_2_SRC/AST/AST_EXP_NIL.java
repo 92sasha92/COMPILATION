@@ -1,6 +1,8 @@
 package AST;
 
 import TYPES.*;
+import IR.*;
+import Temp.*;
 
 public class AST_EXP_NIL extends AST_EXP
 {
@@ -39,5 +41,12 @@ public class AST_EXP_NIL extends AST_EXP
             regsNeeded = 1;
 		return TYPE_NIL.getInstance();
 	}
+
+        public Temp IRme() {
+		Temp zero  = Temp_FACTORY.getInstance().getFreshTemp();
+	        IR.getInstance().Add_IRcommand(new IRcommandConstInt(zero, 0));
+                return zero;
+        }
+
 
 }

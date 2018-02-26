@@ -81,10 +81,10 @@ public class AST_EXP_CALL extends AST_EXP
 		/* [1] Check If Type exists */
 		/****************************/
        if (stmtMethod == null) {
+            TYPE_FOR_SCOPE_BOUNDARIES classBoundry = (TYPE_FOR_SCOPE_BOUNDARIES)(SYMBOL_TABLE.getInstance().findClassBoundry());
             funcType = SYMBOL_TABLE.getInstance().find(funcName);
             if (funcType == null)
             {
-                TYPE_FOR_SCOPE_BOUNDARIES classBoundry = (TYPE_FOR_SCOPE_BOUNDARIES)(SYMBOL_TABLE.getInstance().findClassBoundry());
                 if (classBoundry == null) {
 		    throw new AST_EXCEPTION(String.format("Non existing function %s\n", funcName), this.lineNum);
                 }
@@ -98,6 +98,9 @@ public class AST_EXP_CALL extends AST_EXP
                 }
             } else if(!(funcType instanceof TYPE_FUNCTION)) {
                 throw new AST_EXCEPTION(String.format("'%s' is not a function type\n", funcType.name), this.lineNum);
+            }
+            else if (classBoundry != null && SYMBOL_TABLE.getInstance().findIndex(funcName) >= SYMBOL_TABLE.getInstance().findClassBoundryIndex()) { // method in class scope 
+                    this.isMethodFromClass = true;
             }
         }
         else {
@@ -198,9 +201,7 @@ public class AST_EXP_CALL extends AST_EXP
                         System.out.println("ERROR!!!!!");
                         return null;
                     }
-                    if (params != null) {
-                        IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp", "$sp", 4 * reversedTemps.size()));
-                    }
+                    IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp", "$sp", 4 * reversedTemps.size()));
 
                     Temp returnTemp = Temp_FACTORY.getInstance().getFreshTemp();
                     IR.getInstance().Add_IRcommand(new IRcommand_mixedMove(returnTemp, "$v0"));

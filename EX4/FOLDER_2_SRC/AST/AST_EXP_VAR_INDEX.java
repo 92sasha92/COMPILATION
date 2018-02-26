@@ -3,6 +3,7 @@ package AST;
 import TYPES.*;
 import Temp.*;
 import IR.*;
+import ExtraFunctions.*;
 
 public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 {
@@ -47,6 +48,7 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 	}
 	
 	public TYPE SemantMe() throws AST_EXCEPTION {
+            ExtraFunctions.getInstance().addFunction(new IRcommand_CalculateAdress_Definition());
             regsNeeded = 2;
 		TYPE t = null, iType;
 		TYPE_ARRAY arrayType = null;
@@ -77,14 +79,16 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 
 	}
         public Temp IRme(boolean shouldLoad) {
-            Temp varAddress = var.IRme(true); 
+            Temp varAddress = var.IRme(); 
             Temp arrayOffset = index.IRme();
-            Temp regWithFour = Temp_FACTORY.getInstance().getFreshTemp();
-            IR.getInstance().Add_IRcommand(new IRcommandConstInt(regWithFour,4));
+            IR.getInstance().Add_IRcommand(new IRcommand_CalculateAdress(varAddress, arrayOffset));
 
-            boolean isAddresses = true; // to not check for overflow
-            IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("mul",arrayOffset,arrayOffset, regWithFour,isAddresses));
-            IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("add",varAddress,varAddress, arrayOffset,isAddresses));
+            // Temp regWithFour = Temp_FACTORY.getInstance().getFreshTemp();
+            // IR.getInstance().Add_IRcommand(new IRcommandConstInt(regWithFour,4));
+
+            // boolean isAddresses = true; // to not check for overflow
+            // IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("mul",arrayOffset,arrayOffset, regWithFour,isAddresses));
+            // IR.getInstance().Add_IRcommand(new IRcommand_Binop_Integers("add",varAddress,varAddress, arrayOffset,isAddresses));
 
             if (!shouldLoad) {
                 return varAddress;

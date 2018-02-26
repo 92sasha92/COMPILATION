@@ -4,6 +4,7 @@ import TYPES.*;
 import Temp.*;
 import SYMBOL_TABLE.*;
 import IR.*;
+// import ExtraFunctions.*;
 
 public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 {
@@ -56,6 +57,7 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 	}
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
+            // ExtraFunctions.getInstance().addFunction(new IRcommand_CalculateAdress_Definition());
             regsNeeded = 2;
 		TYPE t = null;
 		TYPE_CLASS tc = null;

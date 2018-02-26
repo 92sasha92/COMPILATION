@@ -16,7 +16,7 @@ public class IRcommand_CalculateAdress extends IRcommand {
 	@Override
 	public void MIPSme() {
         boolean shouldEnumerate = false;
-        String funcName = getFreshLabel("Calculate_Adress", shouldEnumerate);
+        String funcName = getFreshLabel("Calculate_Address", shouldEnumerate);
 
         sir_MIPS_a_lot.getInstance().push(varAddress);
         sir_MIPS_a_lot.getInstance().push(offset);
