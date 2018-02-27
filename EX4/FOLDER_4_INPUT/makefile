@@ -62,7 +62,8 @@ CUP_FLAGS =                                \
 #########################
 # DEFINITIONS :: PARSER #
 #########################
-INPUT    = ${INPUT_DIR}/Input.txt
+INPUT    = ${INPUT_DIR}/fibonacci
+# INPUT    = ${INPUT_DIR}/TEST_17_Global_Variables.txt
 OUTPUT   = ${OUTPUT_DIR}/SemanticStatus.txt
 
 ##########
@@ -220,6 +221,7 @@ everything:
 	@echo "*                                                         *"
 	@echo "*                                                         *"
 	@echo "***********************************************************"
+	#./Allocate_Registers_Ad_Hoc
 	@echo "\n"
 	@echo "*****************************************"
 	@echo "*                                       *"
@@ -229,3 +231,4 @@ everything:
 	@echo "*                                       *"
 	@echo "*****************************************"
 	spim -f ${OUTPUT_DIR}/MIPS.txt > ${OUTPUT_DIR}/MIPS_OUTPUT.txt	
+	cat ${OUTPUT_DIR}/MIPS_OUTPUT.txt	

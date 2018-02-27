@@ -1,0 +1,24 @@
+class Song
+{
+	string title;
+	string artist;
+	string album;
+	
+	void play()
+	{
+	int tt;
+	}
+}
+
+	void main()
+	{
+		
+		PrintInt(1);
+		Song mySong;
+		
+		PrintInt(2);
+		mySong.play();
+		
+		// This line shouldnt be executed
+		PrintInt(3);
+	}
