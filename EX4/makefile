@@ -230,4 +230,4 @@ everything:
 	@echo "*                                       *"
 	@echo "*****************************************"
 	spim -f ${OUTPUT_DIR}/MIPS.txt > ${OUTPUT_DIR}/MIPS_OUTPUT.txt	
-	cat ${OUTPUT_DIR}/MIPS_OUTPUT.txt	
+	# cat ${OUTPUT_DIR}/MIPS_OUTPUT.txt	

@@ -165,13 +165,13 @@ public class AST_EXP_CALL extends AST_EXP
                         for (currentParam = params; currentParam != null ; currentParam = currentParam.tail) {
                             numOfParams++;
                         }
+                        IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp","$sp",-numOfParams * 4));
                         int i = 0;
                         for (currentParam = params; currentParam != null ; currentParam = currentParam.tail) {
                             currentParamTemp = currentParam.IRme(); 
-                            IR.getInstance().Add_IRcommand(new IRcommand_Push_Offset(currentParamTemp, -4*(numOfParams - i)));
+                            IR.getInstance().Add_IRcommand(new IRcommand_Push_Offset(currentParamTemp, 4*i));
                             i++;
                         }
-                        IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp","$sp",-numOfParams * 4));
 
                     }
                     if (this.classType != null && this.isMethodFromClass) {

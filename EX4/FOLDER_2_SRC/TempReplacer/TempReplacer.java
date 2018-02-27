@@ -12,7 +12,6 @@ import java.util.List;
 
 public class TempReplacer {
 	static String dirname = "FOLDER_5_OUTPUT/";
-	//static String dirname="C:/comp/kaki/src/";
 	public static final String inputFilename = dirname + "MIPS.txt";
 	public static final String originalFilename = dirname + "MIPS_TEMPS.txt";
 	public static InstrList last = null, instList = null;
@@ -128,7 +127,7 @@ public class TempReplacer {
 		}
                 originalCopy.close();
 		flowGraph = new AssemFlowGraph(instList);
-		flowGraph.show(System.out);
+		// flowGraph.show(System.out);
 		InterferenceGraph interGraph = new Liveness(flowGraph);
 		// Frame f = new Frame();
 		int numOfReservedTemps = Temp_FACTORY.reservedTemps.values().length;
@@ -196,12 +195,6 @@ public class TempReplacer {
 		}
 	}
 
-	public static void printInstrList() {
-		InstrList kaki = instList;
-		for (; kaki != null; kaki = kaki.tail) {
-			System.out.println("@@@@@@" + kaki.head.assem);
-		}
-
-	}
+	
 
 }
