@@ -1,2 +1,0 @@
-array inArray = int[]
-inArray h:= new int[8];

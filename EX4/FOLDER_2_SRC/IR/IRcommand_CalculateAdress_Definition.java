@@ -36,27 +36,27 @@ public class IRcommand_CalculateAdress_Definition extends IRcommand{
 
         //Temp regWithFour = sir_MIPS_a_lot.getInstance().initializeRegToZero();
         Temp regWithFour = Temp_FACTORY.getInstance().getFreshTemp();
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
         sir_MIPS_a_lot.getInstance().li(regWithFour, 4);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
         sir_MIPS_a_lot.getInstance().mul(arrayOffset, arrayOffset, regWithFour);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
         sir_MIPS_a_lot.getInstance().add(varAddress, varAddress, arrayOffset);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
         sir_MIPS_a_lot.getInstance().addi(varAddress, varAddress, 4); // skip the first element (length of array)
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
-        sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
+        // sir_MIPS_a_lot.getInstance().addi("$zero", "$zero", 0);
 
 
         sir_MIPS_a_lot.getInstance().mixedMove("$v0",varAddress);

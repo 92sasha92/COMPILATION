@@ -16,6 +16,7 @@ public class AST_DEC_VAR extends AST_DEC
 	// public boolean isField = false;
         public SYMBOL_TABLE_ENTRY.varDefinitionType varDefType;
 	public TYPE_CLASS fatherClass = null;
+        public TYPE IRvarType = null;
          
 	
 	/************************************************/
@@ -86,9 +87,8 @@ public class AST_DEC_VAR extends AST_DEC
 	public Temp IRme()
 	{
             Temp t = null;
-		if (initialValue != null)
+		if (initialValue != null || IRvarType instanceof TYPE_CLASS || IRvarType instanceof TYPE_ARRAY)
 		{
-		    t = initialValue.IRme();
 		    Temp varAddress  = Temp_FACTORY.getInstance().getFreshTemp();
                     if (this.varDefType == SYMBOL_TABLE_ENTRY.varDefinitionType.LOCAL) {
 	                IR.getInstance().Add_IRcommand(new IRcommand_AdressStackAlloc(localVariableIndex, varAddress));
@@ -100,6 +100,13 @@ public class AST_DEC_VAR extends AST_DEC
                     else {
                         System.out.println("ERROR!!!!!!!!"+this.varDefType );
                         return null;
+                    }
+                    if (initialValue != null) {
+		        t = initialValue.IRme();
+                    }
+                    else {
+		        t  = Temp_FACTORY.getInstance().getFreshTemp();
+		        IR.getInstance().Add_IRcommand(new IRcommandConstInt(t,0));
                     }
 		    IR.getInstance().Add_IRcommand(new IRcommand_Store(varAddress,t));
 		}
@@ -114,6 +121,7 @@ public class AST_DEC_VAR extends AST_DEC
 		/* [1] Check If Type exists */
 		/****************************/
 		varType = SYMBOL_TABLE.getInstance().find(type);
+                this.IRvarType = varType;
 		if (varType == null)
 		{
 			throw new AST_EXCEPTION(String.format("Non existing type %s\n", type), this.lineNum);

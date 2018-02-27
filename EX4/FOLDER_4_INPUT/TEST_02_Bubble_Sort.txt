@@ -2,22 +2,29 @@ array IntArray = int[]
 
 void BubbleSort(IntArray arr, int size)
 {
-    int i := 0;
-    int min := -32767;
+    int i         := 0;
+    int j         := 0;
+    int min :=   32767;
     int minIndex := -1;
+    int temp     :=  0;
     
     while (i < size)
     {
-        int j := i+1;
-        while (j<size)
+        j := i;
+        min := 32767;
+        while ( j < size )
         {
             if (arr[j] < min)
             {
-                int i := arr[minIndex];
-                arr[minIndex] := arr[j];
-                arr[j] := i;
+                min := arr[j];
+                minIndex := j;
             }
+            j := j + 1;
         }
+        temp := arr[i];
+	arr[i] := min;
+	arr[minIndex] := temp;
+	i := i + 1;
     }
 }
 
@@ -35,3 +42,4 @@ void main()
     
     BubbleSort(arr,7);
 }
+

@@ -1,6 +1,7 @@
 package AST;
 import TYPES.*;
 import SYMBOL_TABLE.*;
+import java.lang.Math;
 
 
 public class AST_EXP_NEW extends AST_EXP

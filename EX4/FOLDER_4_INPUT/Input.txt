@@ -1,8 +1,18 @@
-int main()
-{
-	int i := 6;
-	int j := 8;
-	int k := 9;
-	PrintInt((k - j)+k+55);
+void foo() {
+    int k := 4;
 }
 
+class A {
+int r := 2;
+void func(int k, int p) {
+        PrintInt(r);
+        PrintInt(p);
+}
+}
+void main()
+{
+    int k := 3;
+    int p := 4;
+    A a := new A;
+    a.func(k,p);
+}

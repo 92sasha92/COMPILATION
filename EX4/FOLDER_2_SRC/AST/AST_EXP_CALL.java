@@ -157,14 +157,22 @@ public class AST_EXP_CALL extends AST_EXP
                     return null;
                 default:
                     LinkedList <Temp> reversedTemps = new LinkedList <Temp>();                    
+                    int numOfParams = 0;
                     if (params != null) {
                         AST_EXP_LIST currentParam;
                        
                         Temp currentParamTemp;
                         for (currentParam = params; currentParam != null ; currentParam = currentParam.tail) {
-                            currentParamTemp = currentParam.IRme(); 
-                            reversedTemps.addFirst(currentParamTemp);
+                            numOfParams++;
                         }
+                        int i = 0;
+                        for (currentParam = params; currentParam != null ; currentParam = currentParam.tail) {
+                            currentParamTemp = currentParam.IRme(); 
+                            IR.getInstance().Add_IRcommand(new IRcommand_Push_Offset(currentParamTemp, -4*(numOfParams - i)));
+                            i++;
+                        }
+                        IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp","$sp",-numOfParams * 4));
+
                     }
                     if (this.classType != null && this.isMethodFromClass) {
                         Temp instanceAddr = Temp_FACTORY.getInstance().getFreshTemp();
@@ -174,10 +182,8 @@ public class AST_EXP_CALL extends AST_EXP
                         }
 
                         if (this.classInstanceAddress != null) {
-                            reversedTemps.add(this.classInstanceAddress);
-                        }
-                        for (Temp currentReversedParamTemp: reversedTemps) {
-                            IR.getInstance().Add_IRcommand(new IRcommand_Push(currentReversedParamTemp));
+                            IR.getInstance().Add_IRcommand(new IRcommand_Push(this.classInstanceAddress));
+                            numOfParams++;
                         }
 
                     if (this.classInstanceAddress == null) { // if this is not a method but a function, jump to the label
@@ -201,7 +207,7 @@ public class AST_EXP_CALL extends AST_EXP
                         System.out.println("ERROR!!!!!");
                         return null;
                     }
-                    IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp", "$sp", 4 * reversedTemps.size()));
+                    IR.getInstance().Add_IRcommand(new IRcommand_Addi("$sp", "$sp", 4 * numOfParams));
 
                     Temp returnTemp = Temp_FACTORY.getInstance().getFreshTemp();
                     IR.getInstance().Add_IRcommand(new IRcommand_mixedMove(returnTemp, "$v0"));

@@ -49,6 +49,7 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 	
 	public TYPE SemantMe() throws AST_EXCEPTION {
             ExtraFunctions.getInstance().addFunction(new IRcommand_CalculateAdress_Definition());
+            ExtraFunctions.getInstance().addFunction(new IRcommand_Check_Invalid_Pointer_Definition());
             regsNeeded = 2;
 		TYPE t = null, iType;
 		TYPE_ARRAY arrayType = null;
@@ -80,6 +81,7 @@ public class AST_EXP_VAR_INDEX extends AST_EXP_VAR
 	}
         public Temp IRme(boolean shouldLoad) {
             Temp varAddress = var.IRme(); 
+            IR.getInstance().Add_IRcommand(new IRcommand_Check_Invalid_Pointer(varAddress));
             Temp arrayOffset = index.IRme();
             IR.getInstance().Add_IRcommand(new IRcommand_CalculateAdress(varAddress, arrayOffset));
 

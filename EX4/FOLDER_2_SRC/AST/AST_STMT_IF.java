@@ -73,6 +73,7 @@ public class AST_STMT_IF extends AST_STMT
 		/* [2] Semant Data Members */
 		/***************************/
 		body.SemantMe();
+                this.varSize = body.totalLocalVarSize;
 
 		/*****************/
 		/* [3] End Scope */

@@ -48,6 +48,14 @@ public class sir_MIPS_a_lot
 		fileWriter.format("\tsyscall\n");
 	}
 
+        public void print_space()
+        {
+		fileWriter.format("\tli $a0,%d\n",32); // space character
+		fileWriter.format("\tli $v0,11\n");
+		fileWriter.format("\tsyscall\n");
+
+        }
+
         public void push(Temp t) {
 	    int idx=t.getSerialNumber();
 	    fileWriter.format("\taddi $sp,$sp,-4\n");
@@ -63,6 +71,10 @@ public class sir_MIPS_a_lot
         public void push(String reg) {
 	    fileWriter.format("\taddi $sp,$sp,-4\n");
 	    fileWriter.format("\tsw "+reg+",0($sp)\n");		
+        }
+        public void push_offset(Temp reg, int offset) {
+	    int idx=reg.getSerialNumber();
+	    fileWriter.format("\tsw Temp_%d,%d($sp)\n", idx, offset);		
         }
         public void pop(String reg) {
 	    fileWriter.format("\tlw "+reg+",0($sp)\n");		
@@ -414,7 +426,7 @@ public class sir_MIPS_a_lot
 
 			// instance.fileWriter.print("string_access_violation: .asciiz \"Access Violation\"\n");
 			// instance.fileWriter.print("string_illegal_div_by_0: .asciiz \"Illegal Division By Zero\"\n");
-			instance.fileWriter.print("string_invalid_ptr_dref: .asciiz \"Invalid Pointer Dereference\"\n");
+			// instance.fileWriter.print("string_invalid_ptr_dref: .asciiz \"Invalid Pointer Dereference\"\n");
 				
 			/************************************************/
 			/* [4] Print text section with entry point main */

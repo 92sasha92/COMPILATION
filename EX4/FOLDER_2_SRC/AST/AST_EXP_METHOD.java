@@ -2,6 +2,8 @@ package AST;
 import TYPES.*;
 import Temp.*;
 import java.lang.Math;
+import ExtraFunctions.*;
+import IR.*;
 
 public class AST_EXP_METHOD extends AST_EXP
 {
@@ -56,6 +58,7 @@ public class AST_EXP_METHOD extends AST_EXP
             TYPE varType = null;
             TYPE_CLASS classType = null;
             TYPE_FUNCTION currentMethod = null;
+            ExtraFunctions.getInstance().addFunction(new IRcommand_Check_Invalid_Pointer_Definition());
 			
             /****************************/
             /* [1] Semant var */
@@ -99,6 +102,7 @@ public class AST_EXP_METHOD extends AST_EXP
         }
         public Temp IRme() {
             expCall.classInstanceAddress = var.IRme();
+            IR.getInstance().Add_IRcommand(new IRcommand_Check_Invalid_Pointer(expCall.classInstanceAddress));
             return expCall.IRme();
         }
 }

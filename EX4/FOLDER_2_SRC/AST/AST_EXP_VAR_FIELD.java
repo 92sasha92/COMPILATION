@@ -4,7 +4,7 @@ import TYPES.*;
 import Temp.*;
 import SYMBOL_TABLE.*;
 import IR.*;
-// import ExtraFunctions.*;
+import ExtraFunctions.*;
 
 public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 {
@@ -58,6 +58,7 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
 	public TYPE SemantMe() throws AST_EXCEPTION
 	{
             // ExtraFunctions.getInstance().addFunction(new IRcommand_CalculateAdress_Definition());
+            ExtraFunctions.getInstance().addFunction(new IRcommand_Check_Invalid_Pointer_Definition());
             regsNeeded = 2;
 		TYPE t = null;
 		TYPE_CLASS tc = null;
@@ -89,6 +90,7 @@ public class AST_EXP_VAR_FIELD extends AST_EXP_VAR
         public Temp IRme(boolean shouldLoad)
         {
             Temp varAddress = var.IRme();
+            IR.getInstance().Add_IRcommand(new IRcommand_Check_Invalid_Pointer(varAddress));
             IR.getInstance().Add_IRcommand(new IRcommand_Addi(varAddress,varAddress,fieldOffset));
             if (!shouldLoad) {
                 return varAddress;
