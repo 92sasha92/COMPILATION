@@ -18,7 +18,7 @@ public class Main
 		Symbol s;
 		AST_DEC_LIST AST;
 		FileReader file_reader;
-		PrintWriter file_writer = null;
+		// PrintWriter file_writer = null;
 		String inputFilename = argv[0];
 		String outputFilename = argv[1];
 		
@@ -32,7 +32,7 @@ public class Main
 			/********************************/
 			/* [2] Initialize a file writer */
 			/********************************/
-			file_writer = new PrintWriter(outputFilename);
+			// file_writer = new PrintWriter(outputFilename);
 			
 			/******************************/
 			/* [3] Initialize a new lexer */
@@ -51,7 +51,7 @@ public class Main
 			/*************************/
 			/* [6] Print the AST ... */
 			/*************************/
-			AST.PrintMe();
+			// AST.PrintMe();
 			/**************************/
 			/* [7] Semant the AST ... */
 			/**************************/
@@ -62,6 +62,8 @@ public class Main
 			/**********************/
 			/* [8] IR the AST ... */
 			/**********************/
+
+			sir_MIPS_a_lot.filename = outputFilename;
                         AST.printMainLabel();
                         boolean globalInitialization = true;
 			AST.IRme(globalInitialization);
@@ -91,21 +93,21 @@ public class Main
 			/***************************/
 			/* [12] Allocate MIPS registers */
 			/***************************/
-                        TempReplacer.ReplaceTemps();
+                        TempReplacer.ReplaceTemps(outputFilename);
 			
 			/*************************/
 			/* [13] Close output file */
 			/*************************/
-			file_writer.close();
+			// file_writer.close();
     	}
 			     
 		catch (Exception e)
 		{
 			if(e instanceof AST_EXCEPTION ) {
-			    file_writer.print("ERROR(" + ((AST_EXCEPTION)e).lineNum + ")\r\n");
+			    // file_writer.print("ERROR(" + ((AST_EXCEPTION)e).lineNum + ")\r\n");
 				System.out.println("ERROR(" + ((AST_EXCEPTION)e).lineNum + ")\r\n");
 			}
-            file_writer.close();
+            // file_writer.close();
 			e.printStackTrace();
 		}
 	}

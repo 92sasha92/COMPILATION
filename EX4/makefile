@@ -7,7 +7,6 @@ CUP_DIR           = ${BASEDIR}/FOLDER_1_CUP
 SRC_DIR           = ${BASEDIR}/FOLDER_2_SRC
 BIN_DIR           = ${BASEDIR}/FOLDER_3_BIN
 INPUT_DIR         = ${BASEDIR}/FOLDER_4_INPUT
-OUTPUT_DIR        = ${BASEDIR}/FOLDER_5_OUTPUT
 EXTERNAL_JARS_DIR = ${BASEDIR}/FOLDER_7_EXTERNAL_JARS
 MANIFEST_DIR      = ${BASEDIR}/FOLDER_8_MANIFEST
 
@@ -63,7 +62,6 @@ CUP_FLAGS =                                \
 # DEFINITIONS :: PARSER #
 #########################
 INPUT    = ${INPUT_DIR}/Input.txt
-OUTPUT   = ${OUTPUT_DIR}/SemanticStatus.txt
 
 ##########
 # TARGET #
@@ -186,46 +184,4 @@ everything:
 	@echo "***********************************************************"
 	jar cfm COMPILER ${MANIFEST_FILE} -C ${BIN_DIR} .
 	@echo "\n"
-	@echo "*****************************"
-	@echo "*                           *"
-	@echo "*                           *"
-	@echo "* [6] Run resulting program *"
-	@echo "*                           *"
-	@echo "*                           *"
-	@echo "*****************************"
-	java -jar COMPILER ${INPUT} ${OUTPUT}
-	@echo "\n"
-	@echo "***************************************"
-	@echo "*                                     *"
-	@echo "*                                     *"
-	@echo "* [7] Create a jpeg AST visualization *"
-	@echo "*                                     *"
-	@echo "*                                     *"
-	@echo "***************************************"
-	dot -Tjpeg -o${OUTPUT_DIR}/AST.jpeg ${OUTPUT_DIR}/AST_IN_GRAPHVIZ_DOT_FORMAT.txt
-	@echo "\n"
-	@echo "************************************************"
-	@echo "*                                              *"
-	@echo "*                                              *"
-	@echo "* [8] Open the jpeg AST visualization with eog *"
-	@echo "*                                              *"
-	@echo "*                                              *"
-	@echo "************************************************"
-	eog ${OUTPUT_DIR}/AST.jpeg &
-	@echo "\n"
-	@echo "***********************************************************"
-	@echo "*                                                         *"
-	@echo "*                                                         *"
-	@echo "* [10] Allocate registers (just for this running example) *"
-	@echo "*                                                         *"
-	@echo "*                                                         *"
-	@echo "***********************************************************"
-	@echo "\n"
-	@echo "*****************************************"
-	@echo "*                                       *"
-	@echo "*                                       *"
-	@echo "* [11] Run spim and redirect its output *"
-	@echo "*                                       *"
-	@echo "*                                       *"
-	@echo "*****************************************"
-	spim -f ${OUTPUT_DIR}/MIPS.txt > ${OUTPUT_DIR}/MIPS_OUTPUT.txt	
+	

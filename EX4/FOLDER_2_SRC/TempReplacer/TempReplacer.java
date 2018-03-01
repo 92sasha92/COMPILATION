@@ -11,13 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 
 public class TempReplacer {
-	static String dirname = "FOLDER_5_OUTPUT/";
-	public static final String inputFilename = dirname + "MIPS.txt";
-	public static final String originalFilename = dirname + "MIPS_TEMPS.txt";
+	// static String dirname = "FOLDER_5_OUTPUT/";
+	// public static final String inputFilename = dirname + "MIPS.txt";
+	public static final String originalFilename = "MIPS_TEMPS.txt";
 	public static InstrList last = null, instList = null;
 	public static FlowGraph flowGraph = null;
 
-	public static void ReplaceTemps() throws IOException {
+	public static void ReplaceTemps(String inputFilename) throws IOException {
 
 
 		BufferedReader file_reader;
@@ -137,12 +137,12 @@ public class TempReplacer {
 		ReplacerMap replacerMap = new ReplacerMap();
 		Color color = new Color(interGraph, replacerMap, registers);
 		file_reader.close();
-		tempReplaceToReg(color);
+		tempReplaceToReg(color, inputFilename);
 		// color.tempMap(color.map.temp);
 
 	}
 	
-	private static void tempReplaceToReg(Color color) throws IOException{
+	private static void tempReplaceToReg(Color color, String inputFilename) throws IOException{
 		// TODO Auto-generated method stub
 		BufferedReader file_reader = new BufferedReader(new FileReader(inputFilename));
 		String line;

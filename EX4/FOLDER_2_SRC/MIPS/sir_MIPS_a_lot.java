@@ -21,6 +21,7 @@ public class sir_MIPS_a_lot
 	/* The file writer ... */
 	/***********************/
 	public PrintWriter fileWriter;
+        public static String filename;
 
 	/***********************/
 	/* The file writer ... */
@@ -402,13 +403,13 @@ public class sir_MIPS_a_lot
 				/*********************************************************************************/
 				/* [1] Open the MIPS text file and write data section with error message strings */
 				/*********************************************************************************/
-				String dirname="./FOLDER_5_OUTPUT/";
-				String filename=String.format("MIPS.txt");
+				// String dirname="./FOLDER_5_OUTPUT/";
+				// String filename=String.format("MIPS.txt");
 
 				/***************************************/
 				/* [2] Open MIPS text file for writing */
 				/***************************************/
-				instance.fileWriter = new PrintWriter(dirname+filename);
+				instance.fileWriter = new PrintWriter(filename);
 			}
 			catch (Exception e)
 			{
