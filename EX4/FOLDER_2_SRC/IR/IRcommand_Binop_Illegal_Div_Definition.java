@@ -9,7 +9,7 @@ package IR;
 
 /*******************/
 /* PROJECT IMPORTS */
-/*******************/;
+/*******************/
 import Temp.*;
 import MIPS.*;
 
